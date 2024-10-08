@@ -10,11 +10,11 @@ export default function Sidebar() {
 
   const sidebarItems = [
     { icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
-    { icon: "bx bx-user", name: "User", tooltip: "User" },
+    { icon: "bx bx-user", name: "Users", tooltip: "User" },
+    { icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
     { icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
-    { icon: "bx bx-folder", name: "File Manager", tooltip: "Files" },
-    { icon: "bx bx-cart-alt", name: "Order", tooltip: "Order" },
-    { icon: "bx bx-heart", name: "Saved", tooltip: "Saved" },
+    { icon: "bx bx-package", name: "Products", tooltip: "Products" },
+    { icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
     { icon: "bx bx-cog", name: "Setting", tooltip: "Setting" },
   ];
 
