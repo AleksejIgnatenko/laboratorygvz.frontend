@@ -9,13 +9,13 @@ export default function Sidebar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Установите значение в зависимости от состояния входа в систему
 
   const sidebarItems = [
-    { icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
-    { icon: "bx bx-user", name: "Users", tooltip: "User" },
-    { icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
-    { icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
-    { icon: "bx bx-package", name: "Products", tooltip: "Products" },
-    { icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
-    { icon: "bx bx-cog", name: "Setting", tooltip: "Setting" },
+    { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
+    { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "User" },
+    { link: "#", icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
+    { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
+    { link: "#", icon: "bx bx-package", name: "Products", tooltip: "Products" },
+    { link: "#", icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
+    { link: "#", icon: "bx bx-cog", name: "Setting", tooltip: "Setting" },
   ];
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function Sidebar() {
         </li>
         {sidebarItems.map((item, index) => (
           <li key={index}>
-            <Link href="#">
+            <Link href={item.link}>
               <i className={item.icon}></i>
               <span className="links_name">{item.name}</span>
             </Link>
@@ -86,7 +86,7 @@ export default function Sidebar() {
             <div className="profile-details">
               <i className="bx bx-export"></i>
               <div className="name_job">
-                <div className="name">Login</div>
+                <div className="name">Login or Registration</div>
               </div>
             </div>
             <i className="bx bx-log-in" id="log_in"></i>
