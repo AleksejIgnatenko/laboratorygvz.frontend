@@ -11,7 +11,7 @@ export default function Sidebar() {
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
     { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "User" },
-    { link: "#", icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
+    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
     { link: "#", icon: "bx bx-package", name: "Products", tooltip: "Products" },
     { link: "#", icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
@@ -86,7 +86,7 @@ export default function Sidebar() {
             <div className="profile-details">
               <i className="bx bx-export"></i>
               <div className="name_job">
-                <div className="name">Login or Registration</div>
+                <div className="name"><Link href="#">Login</Link> or <Link href="#">Registration</Link></div>
               </div>
             </div>
             <i className="bx bx-log-in" id="log_in"></i>
