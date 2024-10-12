@@ -260,11 +260,11 @@
 .name a {
   display: inline !important; /* Устанавливаем ссылки в строку */
   background-color: #1d1b31 !important;
+  color: wheat !important;
 }
 
 .name a:hover {
   text-decoration: underline;
-  color: wheat !important;
   text-underline-offset: 0.3em;
 }
 
