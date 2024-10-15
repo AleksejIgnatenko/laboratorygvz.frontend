@@ -7,9 +7,13 @@
 	height: 100vh;
 	display: flex;
 	align-items: center;
-	/* Центрирует по вертикали */
+
+    /* background-image: url('/Images/registration2.png');
+    background-size: contain; 
+    background-position: left; 
+    background-repeat: no-repeat;  */
+	
 	justify-content: center;
-	/* Центрирует по горизонтали */
 }
 
 .container {

@@ -115,7 +115,7 @@ export default function Registration() {
             </div>
           </form>
           <div className="signup-image">
-            <img src="/Images/registration.png" className="registration-img" alt="Sign up image" />
+            <img src="/Images/registration2.png" className="registration-img" alt="Sign up image" />
             <Link href="/login" className="signup-link">
               I already have an account
             </Link>
