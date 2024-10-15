@@ -264,6 +264,7 @@
 }
 
 .name a:hover {
+  color: lightgrey !important;
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }

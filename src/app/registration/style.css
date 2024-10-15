@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.pageRegistration {
+	line-height: 1.8;
+	color: #fff;
+	/* font-weight: 400; */
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	/* Центрирует по вертикали */
+	justify-content: center;
+	/* Центрирует по горизонтали */
+}
+
+.container {
+	width: 900px;
+	height: 650px;
+	background: #1d1b31;
+	box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+	border-radius: 20px;
+	margin-left: 150px;
+}
+
+.display-flex,
+.display-flex-center,
+.signup-content,
+.signin-content,
+.social-login,
+.socials {
+	display: flex;
+	display: -webkit-flex;
+}
+
+.signup-content {
+	padding: 75px 0;
+}
+
+.signup-form,
+.signup-image,
+.signin-form,
+.signin-image {
+	width: 50%;
+	overflow: hidden;
+}
+
+.signup-form {
+	margin-left: 0px;
+	margin-right: 0px;
+	padding: 0 30px;
+}
+
+/* .signup-image,
+.signin-form,
+.signin-image {
+	width: auto;
+} */
+
+/* .signup-image {
+	margin: 0 55px;
+	margin-top: 45px;
+} */
+
+.form-title {
+	margin-bottom: 33px;
+	text-align: center;
+	font-size: 28px;
+}
+
+.register-form {
+	width: 100%;
+}
+
+.form-group {
+	position: relative;
+    /* padding-bottom: 20px; */
+}
+
+.form-group label {
+	position: absolute;
+	left: 10px;
+	top: 55%;
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+.material-icons-name {
+	font-size: 18px;
+}
+
+.signup-link {
+	font-size: 14px;
+	color: wheat;
+	text-decoration: none;
+	display: block;
+	align-items: center;
+	width: 250px;
+	margin: 0 auto;
+}
+
+.signup-link:hover {
+	color: lightgrey;
+	text-decoration: underline;
+	text-underline-offset: 0.3em;
+}
+
+.pageRegistration input {
+	width: 100%;
+	padding: 10px 10px 10px 20px;
+	border: none;
+	border-bottom: 1px solid #fff;
+	/* #999 */
+    margin-bottom: 20px;
+	box-sizing: border-box;
+	background-color: #1d1b31;
+	font-size: 20px;
+	color: #fff;
+}
+
+
+.pageRegistration input:focus {
+	border-bottom: 1px solid #fff;
+	outline: none;
+}
+
+.form-button {
+	text-align: center;
+}
+
+.form-submit {
+	background-color: #6a91fa;
+	color: white; 
+	border: none; 
+	padding: 12px 20px;
+	border-radius: 5px; 
+	width: 100%; 
+	font-size: 16px; 
+	cursor: pointer; 
+	text-align: center; 
+	transition: background-color 0.3s; 
+  }
+  
+  .form-submit:hover {
+	background-color: #406ff3;
+  }
+
+.registration-img {
+	height: 85%;
+	margin-top: 20px;
+}

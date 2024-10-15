@@ -86,7 +86,7 @@ export default function Sidebar() {
             <div className="profile-details">
               <i className="bx bx-export"></i>
               <div className="name_job">
-                <div className="name"><Link href="#">Login</Link> or <Link href="#">Registration</Link></div>
+                <div className="name"><Link href="#">Login</Link> or <Link href="/registration">Registration</Link></div>
               </div>
             </div>
             <i className="bx bx-log-in" id="log_in"></i>
