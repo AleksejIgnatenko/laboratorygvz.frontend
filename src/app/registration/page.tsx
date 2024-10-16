@@ -6,7 +6,6 @@ import "./style.css";
 import Link from "next/link";
 
 export default function Registration() {
-  const scriptIconsLoaded = useRef(false);
   const router = useRouter();
   const [formData, setFormData] = useState({
     userName: "",
@@ -24,8 +23,8 @@ export default function Registration() {
 
 
   return (
-    <div className="pageRegistration">
-      <div className="container">
+    <div className="page-registration">
+      <div className="registration-container">
         <div className="signup-content">
           <form className="signup-form">
             <h2 className="form-title">Registration</h2>
@@ -116,7 +115,7 @@ export default function Registration() {
           </form>
           <div className="signup-image">
             <img src="/Images/registration2.png" className="registration-img" alt="Sign up image" />
-            <Link href="/login" className="signup-link">
+            <Link href="/login" className="signin-link">
               I already have an account
             </Link>
           </div>

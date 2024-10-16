@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-.page-registration {
+.page-login {
 	line-height: 1.8;
 	color: #fff;
 	/* font-weight: 400; */
@@ -16,7 +16,7 @@
 	justify-content: center;
 }
 
-.registration-container {
+.login-container {
 	width: 900px;
 	height: 650px;
 	background: #1d1b31;
@@ -25,36 +25,36 @@
 	margin-left: 150px;
 }
 
-.signup-content,
+.signin-content,
 .social-login,
 .socials {
 	display: flex;
 	display: -webkit-flex;
 }
 
-.signup-content {
+.signin-content {
 	padding: 75px 0;
 }
 
-.signup-form,
-.signup-image {
+.signin-form,
+.signin-image {
 	width: 50%;
 	overflow: hidden;
 }
 
-.signup-form {
+.signin-form {
 	margin-left: 0px;
 	margin-right: 0px;
 	padding: 0 30px;
 }
 
-/* .signup-image,
+/* .signin-image,
 .signin-form,
 .signin-image {
 	width: auto;
 } */
 
-/* .signup-image {
+/* .signin-image {
 	margin: 0 55px;
 	margin-top: 45px;
 } */
@@ -65,7 +65,7 @@
 	font-size: 28px;
 }
 
-.register-form {
+.login-form {
 	width: 100%;
 }
 
@@ -102,7 +102,7 @@
 	text-underline-offset: 0.3em;
 }
 
-.page-registration input {
+.page-login input {
 	width: 100%;
 	padding: 10px 10px 10px 20px;
 	border: none;
@@ -116,7 +116,7 @@
 }
 
 
-.page-registration input:focus {
+.page-login input:focus {
 	border-bottom: 1px solid #fff;
 	outline: none;
 }
@@ -142,7 +142,7 @@
 	background-color: #406ff3;
   }
 
-.registration-img {
+.login-img {
 	height: 85%;
 	margin-top: 20px;
 }
