@@ -32,7 +32,7 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
 
   return (
     <div className="data-table flex flex-column">
-      <main className="flex flex-column gap-3 grow">
+      <main className="flex flex-column gap-1 grow">
         <section className="flex gap-2 items-center justify-between">
           <div id="bulkActions" className="bulk-actions hidden items-center">
             <i className="icon">
@@ -62,11 +62,11 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
             </i>
           </div>
 
-          <h1 id="title" className="leading-none">
+          <h1 id="title" className="leading-none data-table-title">
             Contacts
           </h1>
 
-          <div className="flex gap-1 items-center">
+          <div className="flex gap-1 items-center action-buttons">
             <button className="button icon link">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

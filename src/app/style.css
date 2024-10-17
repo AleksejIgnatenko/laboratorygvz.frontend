@@ -94,22 +94,22 @@
     font-weight: 500;
 }
 .carousel .list .item .introduce .des {
-    font-size: 16px; /* Увеличьте значение до желаемого размера */
-    color: #fff;
+    font-size: 16px;
+    /* color: #fff; */
 }
 .carousel .list .item .introduce .seeMore{
     font-family: Poppins;
     margin-top: 1.2em;
     padding: 5px 0;
     border: none;
-    border-bottom: 1px solid #555;
+    border-bottom: 1px solid #333;
     background-color: transparent;
     font-weight: bold;
     letter-spacing: 3px;
     transition: background 0.5s;
 }
 .carousel .list .item .introduce .seeMore:hover{
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #999;
 }
 .carousel .list .item:nth-child(1){
     transform: var(--item1-transform);
@@ -314,6 +314,7 @@
 }
 #prev,
 #next{
+    color: #eee;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -334,7 +335,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: none;
-    border-bottom: 1px solid #555;
+    border-bottom: 1px solid #333;
     font-family: Poppins;
     font-weight: bold;
     letter-spacing: 3px;
@@ -345,7 +346,7 @@
 }
 
 #back:hover {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #999;
 }
 
 .carousel.showDetail #back{

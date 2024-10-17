@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Sidebar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Установите значение в зависимости от состояния входа в систему
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Значение в зависимости от состояния входа в систему
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
@@ -42,11 +43,13 @@ export default function Sidebar() {
 
     closeBtn?.addEventListener("click", handleSidebarToggle);
     searchBtn?.addEventListener("click", handleSidebarToggle);
+    
 
     return () => {
       closeBtn?.removeEventListener("click", handleSidebarToggle);
       searchBtn?.removeEventListener("click", handleSidebarToggle);
     };
+    
   }, []);
 
   return (
@@ -57,11 +60,11 @@ export default function Sidebar() {
         <i className="bx bx-menu" id="btn"></i>
       </div>
       <ul className="nav-list">
-        <li>
+        {/* <li>
           <i className="bx bx-search"></i>
           <input type="text" placeholder="Search..." />
           <span className="tooltip">Search</span>
-        </li>
+        </li> */}
         {sidebarItems.map((item, index) => (
           <li key={index}>
             <Link href={item.link}>

@@ -16,37 +16,6 @@
   --font-family-title: 'Lora', serif;
 }
 
-/* * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font: normal 16px sans-serif;
-  line-height: 1.5;
-}
-
-body {
-  background: var(--color-neutral-1);
-  color: var(--color-black);
-  font: inherit;
-  font-family: var(--font-family-text);
-  font-size: 1rem;
-  line-height: inherit;
-  position: relative;
-}
-
-body::before {
-  background: var(--color-primary);
-  content: '';
-  display: block;
-  height: 30rem;
-  position: absolute;
-  width: 100%;
-  z-index: -1;
-} */
-
 .data-table a {
   color: inherit;
   cursor: pointer;
@@ -89,26 +58,19 @@ body::before {
 }
 
 
-/*
-  body content + header + main
-*/
-
-
 .data-table {
-  /* margin: 0 auto; */
   margin-left: 3rem;
   max-width: 100vw;
   min-height: 100vh;
-  /* padding: 0 3rem; */
 }
 
 .data-table main {
-  /* background: var(--color-white); */
   border-radius: .25rem .25rem 0 0;
   box-shadow: 0 0 1rem rgba(55, 54, 54, .3);
-  color: lightgrey;
+  /* color: lightgrey; */
   overflow-x: hidden;
-  padding: 3rem;
+  /* padding: 3rem; */
+  padding-left: 1.8rem;
 }
 
 
@@ -137,6 +99,15 @@ body::before {
   justify-content: center;
   gap: 1rem;
   padding: 1rem 2rem;
+}
+
+.data-table-title {
+  margin-left: 2rem;
+  margin-top: 20px;
+}
+
+.action-buttons {
+  margin-right: 2rem;
 }
 
 button.icon,
@@ -241,7 +212,7 @@ button.icon,
 
 .data-table tr:hover:not(.selected):not(.no-hover),
 .data-table tr.hover {
-  background: var(--color-primary-1);
+  background: var(--color-neutral-5);
   cursor: pointer;
 }
 
