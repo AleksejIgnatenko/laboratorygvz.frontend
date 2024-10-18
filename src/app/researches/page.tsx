@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import DataTable from "@/components/DataTableComponent/DataTable";
-import { Product } from "@/components/DataTableComponent/DataTable";
+import { ProductModel } from "@/app/Models/ProductModel";
 import "./style.css";
 
 export default function Researches() {
-    const data: Product[] = [
+    const data: ProductModel[] = [
       {
         id: 12,
         dateOfReceipt: "00.00.0000",

@@ -1,23 +1,7 @@
+"use client"; 
+
 import React from "react";
 import "./DataTable.css";
-
-export interface Product {
-  id: number;
-  dateOfReceipt: string;
-  name: string;
-  providerId: string;
-  batchSize: number;
-  sampleSize: number;
-  ttn: number;
-  documentQuality: number;
-  testReport: string;
-  experements: string;
-}
-
-export interface Provider {
-  id: number;
-  name: string;
-}
 
 interface DataTableProps<T extends object> {
   data: T[];
@@ -28,7 +12,20 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
     return <p>No data available</p>;
   }
 
+  let maxPageNumber = 2;
+  let countItems = 21;
+
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
+
+  const decrementValue = () => {
+    let inputPageNumber = document.getElementById("inputPageNumber") as HTMLInputElement;
+    inputPageNumber.stepDown();
+  };
+
+  const incrementValue = () => {
+    let inputPageNumber = document.getElementById("inputPageNumber") as HTMLInputElement;
+    inputPageNumber.stepUp();
+  };
 
   return (
     <div className="data-table flex flex-column">
@@ -136,48 +133,51 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
             </tbody>
           </table>
 
-          {/* <section className="flex items-center justify-between">
-            <small className="muted">1-10 / 123 items</small>
+          <section className="flex items-center justify-between">
+            <small className="muted pagination-info">1-20 / {countItems} item(s)</small>
 
             <div className="flex gap-2 items-center">
               <div className="flex gap-05 items-center">
-                <input
-                  className="input number small"
-                  readOnly
-                  type="number"
-                  value="1"
-                />
+              <input
+                className="input number small"
+                type="number"
+                readOnly
+                id="inputPageNumber"
+                min={1}
+                max={maxPageNumber}
+                defaultValue={1}
+              />
                 <small className="muted">/</small>
-                <small className="muted">13 pages</small>
+                <small className="muted">{maxPageNumber}</small>
               </div>
 
               <div className="flex gap-05 items-center">
-                <button className="button icon link">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    fill="#247783"
-                    viewBox="0 0 256 256"
+              <button className="prevPageTable button icon link" onClick={decrementValue}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 256 256"
+                  className="icon-svg"
                   >
-                    <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
-                  </svg>
-                </button>
+                  <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
+                </svg>
+              </button>
 
-                <button className="button icon link">
-                  <svg
+              <button className="nextPageTable button icon link" onClick={incrementValue}>
+                <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
-                    fill="#247783"
                     viewBox="0 0 256 256"
-                  >
+                    className="icon-svg"
+                >
                     <path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path>
-                  </svg>
-                </button>
+                </svg>
+              </button>
               </div>
             </div>
-          </section> */}
+          </section>
         </section>
       </main>
     </div>

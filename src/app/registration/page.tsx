@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import "./style.css";
 import Link from "next/link";
+import { RegistrationUserModel } from "../Models/RegistrationUserModel";
 
 export default function Registration() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegistrationUserModel>({
+    surname: "",
     userName: "",
-    secondName: "",
     patronymic: "",
     email: "",
     password: "",
@@ -19,6 +20,11 @@ export default function Registration() {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleRegistration = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log("Form submitted: ", formData);
   };
 
 
@@ -32,20 +38,20 @@ export default function Registration() {
               <div className="form-group">
                 <input
                   type="text"
-                  name="userName"
-                  id="userName"
-                  placeholder="Your Name"
-                  value={formData.userName}
+                  name="surname"
+                  id="surname"
+                  placeholder="Your surname"
+                  value={formData.surname}
                   onChange={handleInputChange}
                 />
               </div>
               <div className="form-group">
                 <input
                   type="text"
-                  name="secondName"
-                  id="secondName"
-                  placeholder="Your Secondname"
-                  value={formData.secondName}
+                  name="userName"
+                  id="userName"
+                  placeholder="Your Name"
+                  value={formData.userName}
                   onChange={handleInputChange}
                 />
               </div>
@@ -103,10 +109,11 @@ export default function Registration() {
               </div>
               <div className="form-group form-button">
                 <button
-                  type="submit" // Измените на type="submit"
+                  type="submit"
                   name="signup"
                   id="signup"
                   className="form-submit"
+                  onClick={handleRegistration}
                 >
                   Register
                 </button>

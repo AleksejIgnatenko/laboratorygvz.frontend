@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import "./style.css";
 import Link from "next/link";
+import { LoginUserModel } from "../Models/LoginUserModel";
 
 export default function Login() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginUserModel>({
     email: "",
     password: "",
   });
@@ -17,6 +18,10 @@ export default function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleLogin = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log("Form submitted: ", formData);
+  };
 
   return (
     <div className="page-login">
@@ -51,6 +56,7 @@ export default function Login() {
                   name="signup"
                   id="signup"
                   className="form-submit"
+                  onClick={handleLogin}
                 >
                   Sign in
                 </button>

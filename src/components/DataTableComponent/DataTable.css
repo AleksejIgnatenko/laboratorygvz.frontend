@@ -63,10 +63,9 @@
   letter-spacing: .5px;
 }
 
-.data-table small.muted {
-  color: var(--color-neutral-5);
+.pagination-info {
+  margin-left: 20px;
 }
-
 
 .data-table {
   margin-left: 3rem;
@@ -194,13 +193,22 @@ button.icon,
 */
 
 .input {
-  background: var(--color-white);
   border: 1px solid var(--color-primary-3);
   border-radius: .25rem;
-  color: var(--color-black);
+  /* color: var(--color-black); */
   font: inherit;
   height: 3rem;
   padding: .75rem 1rem;
+}
+
+[data-theme='dark']
+.input {
+  border: 1px solid var(--color-primary-4);
+}
+
+[data-theme='light']
+.input {
+  border: 1px solid var(--color-primary);
 }
 
 .input.checkbox {
@@ -211,7 +219,6 @@ button.icon,
 }
 
 .input.checkbox::after {
-  background: var(--color-white);
   border: 1px solid var(--color-primary-3);
   border-radius: .25rem;
   box-sizing: border-box;
@@ -225,21 +232,53 @@ button.icon,
   width: 1.5rem;
 }
 
+[data-theme='dark']
+.input.checkbox::after {
+  background: var(--color-black);
+}
+
+[data-theme='light']
+.input.checkbox::after {
+  background: var(--color-white);
+}
+
 .input.checkbox:checked::after {
-  background-color: var(--color-primary);
   background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iI2ZkZmRmZSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxwYXRoIGQ9Ik0yMzIuNDksODAuNDlsLTEyOCwxMjhhMTIsMTIsMCwwLDEtMTcsMGwtNTYtNTZhMTIsMTIsMCwxLDEsMTctMTdMOTYsMTgzLDIxNS41MSw2My41MWExMiwxMiwwLDAsMSwxNywxN1oiPjwvcGF0aD48L3N2Zz4=");
   background-position: center;
   background-repeat: no-repeat;
   border: 0;
 }
 
+[data-theme='dark']
+.input.checkbox:checked::after {
+  background-color: var(--color-primary-4);
+}
+
+[data-theme='light']
+.input.checkbox:checked::after {
+  background-color: var(--color-primary);
+}
+
 .input.number {
   padding-right: .75rem;
   text-align: right;
+  outline: none;
 }
 
 .input.small {
   max-width: 4rem;
+}
+
+[data-theme='dark']
+.icon-svg {
+  fill: var(--color-primary-4); 
+  transition: fill 0.3s; /* Плавный переход цвета при наведении */
+}
+
+[data-theme='light']
+.icon-svg {
+  fill: var(--color-primary); 
+  transition: fill 0.3s; /* Плавный переход цвета при наведении */
 }
 
 
