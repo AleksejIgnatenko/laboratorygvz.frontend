@@ -63,10 +63,15 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
           </div>
 
           <h1 id="title" className="leading-none data-table-title">
-            Contacts
+            Researches
           </h1>
 
           <div className="flex gap-1 items-center action-buttons">
+            <input 
+              className="search-input" 
+              type="search"
+              placeholder="Search..." 
+            />
             <button className="button icon link">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

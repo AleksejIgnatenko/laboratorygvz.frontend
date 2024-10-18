@@ -2,7 +2,7 @@
 
 .page-registration {
 	line-height: 1.8;
-	color: #fff;
+	/* color: #fff; */
 	/* font-weight: 400; */
 	height: 100vh;
 	display: flex;
@@ -19,10 +19,19 @@
 .registration-container {
 	width: 900px;
 	height: 650px;
-	background: #1d1b31;
-	box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+	/* background: #1d1b31; */
 	border-radius: 20px;
 	margin-left: 150px;
+}
+
+[data-theme='dark']
+.registration-container {
+	box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.75);
+}
+
+[data-theme='light']
+.registration-container {
+	box-shadow: 0 0 10px 1px rgba(116, 115, 115, 0.75);
 }
 
 .signup-content,
@@ -88,7 +97,6 @@
 
 .signin-link {
 	font-size: 14px;
-	color: wheat;
 	text-decoration: none;
 	display: block;
 	align-items: center;
@@ -96,29 +104,65 @@
 	margin: 0 auto;
 }
 
+[data-theme='dark']
+.signin-link {
+	color: wheat;
+}
+
+[data-theme='light']
+.signin-link {
+	color: #333;
+}
+
 .signin-link:hover {
-	color: lightgrey;
 	text-decoration: underline;
 	text-underline-offset: 0.3em;
+}
+
+[data-theme='dark']
+.signin-link:hover {
+	color: lightgrey;
+}
+
+[data-theme='light']
+.signin-link:hover {
+	color: #666;
 }
 
 .page-registration input {
 	width: 100%;
 	padding: 10px 10px 10px 20px;
 	border: none;
-	border-bottom: 1px solid #fff;
 	/* #999 */
     margin-bottom: 20px;
 	box-sizing: border-box;
-	background-color: #1d1b31;
+	/* background-color: #1d1b31; */
 	font-size: 20px;
-	color: #fff;
+	/* color: #fff; */
+}
+
+.page-registration input {
+	border-bottom: 1px solid #eee;
+}
+
+[data-theme='light']
+.page-registration input {
+	border-bottom: 1px solid #333;
 }
 
 
 .page-registration input:focus {
-	border-bottom: 1px solid #fff;
 	outline: none;
+}
+
+[data-theme='dark']
+.page-registration input:focus {
+	border-bottom: 1px solid #fff;
+}
+
+[data-theme='light']
+.page-registration input:focus {
+	border-bottom: 1px solid #333;
 }
 
 .form-button {

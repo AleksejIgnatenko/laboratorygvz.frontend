@@ -314,7 +314,6 @@
 }
 #prev,
 #next{
-    color: #eee;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -328,6 +327,18 @@
     left: unset;
     right: 10%;
 }
+
+[data-theme='light']
+#prev{
+    background-color: #bbb9b9;
+}
+
+[data-theme='light']
+#next{
+    background-color: #bbb9b9;
+}
+
+
 #back{
     position: absolute;
     z-index: 100;

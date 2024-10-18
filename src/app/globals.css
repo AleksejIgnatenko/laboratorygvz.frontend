@@ -11,8 +11,23 @@ body {
   overflow-x: hidden;
 }
 
+/* Стили для темной темы при предпочтении пользователя */
 @media (prefers-color-scheme: dark) {
-  html {
+  html[data-theme='dark'] {
     color-scheme: dark;
   }
+
+  html[data-theme='light'] {
+    color-scheme: light;
+  }
+}
+
+[data-theme='dark'] {
+  /* background-color: black;  */
+  color: white;
+}
+
+[data-theme='light'] {
+  /* background-color: #eee; */
+  color: black;
 }

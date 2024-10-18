@@ -2,7 +2,7 @@
 
 .page-login {
 	line-height: 1.8;
-	color: #fff;
+	/* color: #fff; */
 	/* font-weight: 400; */
 	height: 100vh;
 	display: flex;
@@ -19,10 +19,19 @@
 .login-container {
 	width: 900px;
 	height: 650px;
-	background: #1d1b31;
-	box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+	/* background: #1d1b31; */
 	border-radius: 20px;
 	margin-left: 150px;
+}
+
+[data-theme='dark']
+.login-container {
+	box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.75);
+}
+
+[data-theme='light']
+.login-container {
+	box-shadow: 0 0 10px 1px rgba(116, 115, 115, 0.75);
 }
 
 .signin-content,
@@ -86,9 +95,8 @@
 	font-size: 18px;
 }
 
-.signin-link {
+.signup-link {
 	font-size: 14px;
-	color: wheat;
 	text-decoration: none;
 	display: block;
 	align-items: center;
@@ -96,29 +104,65 @@
 	margin: 0 auto;
 }
 
-.signin-link:hover {
-	color: lightgrey;
+[data-theme='dark']
+.signup-link {
+	color: wheat;
+}
+
+[data-theme='light']
+.signup-link {
+	color: #333;
+}
+
+.signup-link:hover {
 	text-decoration: underline;
 	text-underline-offset: 0.3em;
+}
+
+[data-theme='dark']
+.signup-link:hover {
+	color: lightgrey;
+}
+
+[data-theme='light']
+.signup-link:hover {
+	color: #666;
 }
 
 .page-login input {
 	width: 100%;
 	padding: 10px 10px 10px 20px;
 	border: none;
-	border-bottom: 1px solid #fff;
 	/* #999 */
     margin-bottom: 20px;
 	box-sizing: border-box;
-	background-color: #1d1b31;
+	/* background-color: #1d1b31; */
 	font-size: 20px;
-	color: #fff;
+	/* color: #fff; */
+}
+
+.page-login input {
+	border-bottom: 1px solid #eee;
+}
+
+[data-theme='light']
+.page-login input {
+	border-bottom: 1px solid #333;
 }
 
 
 .page-login input:focus {
-	border-bottom: 1px solid #fff;
 	outline: none;
+}
+
+[data-theme='dark']
+.page-login input:focus {
+	border-bottom: 1px solid #fff;
+}
+
+[data-theme='light']
+.page-login input:focus {
+	border-bottom: 1px solid #333;
 }
 
 .form-button {

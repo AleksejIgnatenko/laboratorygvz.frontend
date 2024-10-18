@@ -1,13 +1,16 @@
 "use client";
 
 import "./Sidebar.css";
-import "boxicons/css/boxicons.min.css"; // Обновленный импорт стилей Boxicons
+import "boxicons/css/boxicons.min.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Sidebar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Значение в зависимости от состояния входа в систему
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme ? savedTheme === 'dark' : true;
+  });
 
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
@@ -43,14 +46,22 @@ export default function Sidebar() {
 
     closeBtn?.addEventListener("click", handleSidebarToggle);
     searchBtn?.addEventListener("click", handleSidebarToggle);
-    
 
     return () => {
       closeBtn?.removeEventListener("click", handleSidebarToggle);
       searchBtn?.removeEventListener("click", handleSidebarToggle);
     };
-    
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
+    localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+  }, [isDarkTheme]);
+
+  const toggleColorScheme = () => {
+    setIsDarkTheme(prev => !prev);
+  };
 
   return (
     <div className="sidebar">
@@ -60,11 +71,6 @@ export default function Sidebar() {
         <i className="bx bx-menu" id="btn"></i>
       </div>
       <ul className="nav-list">
-        {/* <li>
-          <i className="bx bx-search"></i>
-          <input type="text" placeholder="Search..." />
-          <span className="tooltip">Search</span>
-        </li> */}
         {sidebarItems.map((item, index) => (
           <li key={index}>
             <Link href={item.link}>
@@ -74,6 +80,14 @@ export default function Sidebar() {
             <span className="tooltip">{item.tooltip}</span>
           </li>
         ))}
+        <li className="switch-themes">
+          <input
+            type="checkbox"
+            className="l"
+            checked={!isDarkTheme}
+            onChange={toggleColorScheme} // Обработчик изменения
+          />
+        </li>
         {isLoggedIn ? (
           <li className="profile">
             <div className="profile-details">
@@ -89,7 +103,9 @@ export default function Sidebar() {
             <div className="profile-details">
               <i className="bx bx-export"></i>
               <div className="name_job">
-                <div className="name"><Link href="/login">Login</Link> or <Link href="/registration">Registration</Link></div>
+                <div className="name">
+                  <Link href="/login">Login</Link> or <Link href="/registration">Registration</Link>
+                </div>
               </div>
             </div>
             <i className="bx bx-log-in" id="log_in"></i>

@@ -59,7 +59,7 @@ export default function Login() {
           </form>
           <div className="signin-image">
             <img src="/Images/login2.png" className="login-img" alt="Login image" />
-            <Link href="/registration" className="signin-link">
+            <Link href="/registration" className="signup-link">
               I already have an account
             </Link>
           </div>
