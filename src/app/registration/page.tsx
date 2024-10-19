@@ -1,20 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import "./style.css";
 import Link from "next/link";
-import { RegistrationUserModel } from "../Models/RegistrationUserModel";
+import { RegistrationUserModelRequest } from "../Models/RegistrationUserModelRequest";
+import { RegistrationUserAsync } from "@/services/UserServices/RegistrationUserAsync";
 
 export default function Registration() {
-  const router = useRouter();
-  const [formData, setFormData] = useState<RegistrationUserModel>({
+  const [formData, setFormData] = useState<RegistrationUserModelRequest>({
     surname: "",
     userName: "",
     patronymic: "",
     email: "",
     password: "",
-    rePassword: "",
+    repeatPassword: "",
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,9 +21,9 @@ export default function Registration() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleRegistration = (event: React.FormEvent) => {
+  const handleRegistration = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Form submitted: ", formData);
+    await RegistrationUserAsync(formData);
   };
 
 
@@ -77,10 +76,7 @@ export default function Registration() {
               </div>
               <div className="form-group">
                 <label>
-                  <i
-                    data-feather="lock"
-                    className="material-icons-name"
-                  ></i>
+                  <i data-feather="lock" className="material-icons-name"></i>
                 </label>
                 <input
                   type="password"
@@ -93,17 +89,14 @@ export default function Registration() {
               </div>
               <div className="form-group">
                 <label>
-                  <i
-                    data-feather="lock"
-                    className="material-icon-name"
-                  ></i>
+                  <i data-feather="lock" className="material-icon-name"></i>
                 </label>
                 <input
                   type="password"
-                  name="rePassword"
-                  id="re_pass"
+                  name="repeatPassword"
+                  id="repeatPassword"
                   placeholder="Repeat your password"
-                  value={formData.rePassword}
+                  value={formData.repeatPassword}
                   onChange={handleInputChange}
                 />
               </div>
@@ -121,7 +114,11 @@ export default function Registration() {
             </div>
           </form>
           <div className="signup-image">
-            <img src="/Images/registration2.png" className="registration-img" alt="Sign up image" />
+            <img
+              src="/Images/registration2.png"
+              className="registration-img"
+              alt="Sign up image"
+            />
             <Link href="/login" className="signin-link">
               I already have an account
             </Link>

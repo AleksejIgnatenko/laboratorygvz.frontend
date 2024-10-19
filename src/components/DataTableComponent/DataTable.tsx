@@ -12,18 +12,20 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
     return <p>No data available</p>;
   }
 
-  let maxPageNumber = 2;
-  let countItems = 21;
+  const maxPageNumber = 2;
+  const countItems = 21;
 
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
   const decrementValue = () => {
-    let inputPageNumber = document.getElementById("inputPageNumber") as HTMLInputElement;
+    const inputPageNumber = document.getElementById(
+      "inputPageNumber"
+    ) as HTMLInputElement;
     inputPageNumber.stepDown();
   };
 
   const incrementValue = () => {
-    let inputPageNumber = document.getElementById("inputPageNumber") as HTMLInputElement;
+    const inputPageNumber = document.getElementById("inputPageNumber") as HTMLInputElement;
     inputPageNumber.stepUp();
   };
 

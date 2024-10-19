@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import "./style.css";
 import Link from "next/link";
 import { LoginUserModel } from "../Models/LoginUserModel";
 
 export default function Login() {
-  const router = useRouter();
   const [formData, setFormData] = useState<LoginUserModel>({
     email: "",
     password: "",
@@ -64,7 +62,11 @@ export default function Login() {
             </div>
           </form>
           <div className="signin-image">
-            <img src="/Images/login2.png" className="login-img" alt="Login image" />
+            <img
+              src="/Images/login2.png"
+              className="login-img"
+              alt="Login image"
+            />
             <Link href="/registration" className="signup-link">
               I already have an account
             </Link>

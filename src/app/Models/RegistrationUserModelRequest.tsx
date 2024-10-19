@@ -1,10 +1,10 @@
 "use client";
 
-export interface RegistrationUserModel {
-  surname: string;  
+export interface RegistrationUserModelRequest {
+  surname: string;
   userName: string;
   patronymic: string;
   email: string;
   password: string;
-  rePassword: string;
+  repeatPassword: string;
 }

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import DataTable from "@/components/DataTableComponent/DataTable";
 import { ProductModel } from "@/app/Models/ProductModel";
 import "./style.css";

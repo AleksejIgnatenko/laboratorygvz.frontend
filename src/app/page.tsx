@@ -22,25 +22,27 @@ export default function Home() {
     let unAcceppClick: NodeJS.Timeout | undefined;
 
     const showSlider = (type: 'next' | 'prev') => {
-      nextButton.style.pointerEvents = 'none';
-      prevButton.style.pointerEvents = 'none';
+      nextButton.style.pointerEvents = "none";
+      prevButton.style.pointerEvents = "none";
 
-      carousel.classList.remove('next', 'prev');
-      let items = document.querySelectorAll('.carousel .list .item') as NodeListOf<HTMLElement>;
-      if (type === 'next') {
+      carousel.classList.remove("next", "prev");
+      const items = document.querySelectorAll(
+        ".carousel .list .item"
+      ) as NodeListOf<HTMLElement>; // Changed to const
+      if (type === "next") {
         listHTML.appendChild(items[0]);
-        carousel.classList.add('next');
+        carousel.classList.add("next");
       } else {
         listHTML.prepend(items[items.length - 1]);
-        carousel.classList.add('prev');
+        carousel.classList.add("prev");
       }
 
       if (unAcceppClick) {
         clearTimeout(unAcceppClick);
       }
       unAcceppClick = setTimeout(() => {
-        nextButton.style.pointerEvents = 'auto';
-        prevButton.style.pointerEvents = 'auto';
+        nextButton.style.pointerEvents = "auto";
+        prevButton.style.pointerEvents = "auto";
       }, 2000);
     }
 

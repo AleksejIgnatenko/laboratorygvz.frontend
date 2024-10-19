@@ -1,7 +1,7 @@
 "use client";
 
 import "./Sidebar.css";
-import "boxicons/css/boxicons.min.css";
+import 'boxicons/css/boxicons.min.css';
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -23,6 +23,7 @@ export default function Sidebar() {
   ];
 
   useEffect(() => {
+    setIsLoggedIn(true);
     const sidebar = document.querySelector(".sidebar");
     const closeBtn = document.querySelector("#btn");
     const searchBtn = document.querySelector(".bx-search");
