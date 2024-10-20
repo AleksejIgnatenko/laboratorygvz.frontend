@@ -63,7 +63,7 @@ export default function Login() {
           </form>
           <div className="signin-image">
             <img
-              src="/Images/login2.png"
+              src="/images/login2.png"
               className="login-img"
               alt="Login image"
             />

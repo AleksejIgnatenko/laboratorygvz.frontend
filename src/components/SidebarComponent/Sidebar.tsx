@@ -1,21 +1,18 @@
 "use client";
 
 import "./Sidebar.css";
-import 'boxicons/css/boxicons.min.css';
+import "boxicons/css/boxicons.min.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Sidebar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? savedTheme === 'dark' : true;
-  });
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
     { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "User" },
-    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
+    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Research"},
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
     { link: "#", icon: "bx bx-package", name: "Products", tooltip: "Products" },
     { link: "#", icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
@@ -23,45 +20,54 @@ export default function Sidebar() {
   ];
 
   useEffect(() => {
-    setIsLoggedIn(true);
-    const sidebar = document.querySelector(".sidebar");
-    const closeBtn = document.querySelector("#btn");
-    const searchBtn = document.querySelector(".bx-search");
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(false);
+      const savedTheme = localStorage.getItem("theme");
+      setIsDarkTheme(savedTheme ? savedTheme === "dark" : true);
 
-    const menuBtnChange = () => {
-      if (sidebar) {
-        if (sidebar.classList.contains("open")) {
-          closeBtn?.classList.replace("bx-menu", "bx-menu-alt-right");
-        } else {
-          closeBtn?.classList.replace("bx-menu-alt-right", "bx-menu");
+      const sidebar = document.querySelector(".sidebar");
+      const closeBtn = document.querySelector("#btn");
+      const searchBtn = document.querySelector(".bx-search");
+
+      const menuBtnChange = () => {
+        if (sidebar) {
+          if (sidebar.classList.contains("open")) {
+            closeBtn?.classList.replace("bx-menu", "bx-menu-alt-right");
+          } else {
+            closeBtn?.classList.replace("bx-menu-alt-right", "bx-menu");
+          }
         }
-      }
-    };
+      };
 
-    const handleSidebarToggle = () => {
-      if (sidebar) {
-        sidebar.classList.toggle("open");
-        menuBtnChange();
-      }
-    };
+      const handleSidebarToggle = () => {
+        if (sidebar) {
+          sidebar.classList.toggle("open");
+          menuBtnChange();
+        }
+      };
 
-    closeBtn?.addEventListener("click", handleSidebarToggle);
-    searchBtn?.addEventListener("click", handleSidebarToggle);
+      closeBtn?.addEventListener("click", handleSidebarToggle);
+      searchBtn?.addEventListener("click", handleSidebarToggle);
 
-    return () => {
-      closeBtn?.removeEventListener("click", handleSidebarToggle);
-      searchBtn?.removeEventListener("click", handleSidebarToggle);
-    };
+      return () => {
+        closeBtn?.removeEventListener("click", handleSidebarToggle);
+        searchBtn?.removeEventListener("click", handleSidebarToggle);
+      };
+    }
   }, []);
 
   useEffect(() => {
     const root = document.documentElement;
-    root.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
-    localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+    root.setAttribute("data-theme", isDarkTheme ? "dark" : "light");
+
+    // Check if we're in the browser before accessing localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", isDarkTheme ? "dark" : "light");
+    }
   }, [isDarkTheme]);
 
   const toggleColorScheme = () => {
-    setIsDarkTheme(prev => !prev);
+    setIsDarkTheme((prev) => !prev);
   };
 
   return (
@@ -105,7 +111,8 @@ export default function Sidebar() {
               <i className="bx bx-export"></i>
               <div className="name_job">
                 <div className="name">
-                  <Link href="/login">Login</Link> or <Link href="/registration">Registration</Link>
+                  <Link href="/login">Login</Link> or{" "}
+                  <Link href="/registration">Registration</Link>
                 </div>
               </div>
             </div>
