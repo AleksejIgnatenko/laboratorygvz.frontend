@@ -305,6 +305,16 @@ button.icon,
   cursor: pointer;
 }
 
+.column-header {
+  display: flex;
+  align-items: center;
+}
+
+.sort-chevron {
+  width: 16px;
+  height: 16px;
+}
+
 .data-table tr.selected {
   background: var(--color-primary-2);
 }

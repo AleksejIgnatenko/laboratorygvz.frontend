@@ -3,11 +3,12 @@
 import "./Sidebar.css";
 import "boxicons/css/boxicons.min.css";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function Sidebar() {
+  const initialized = useRef(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
@@ -20,8 +21,9 @@ export default function Sidebar() {
   ];
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (!initialized.current && typeof window !== "undefined") {
       setIsLoggedIn(false);
+      initialized.current = true;
       const savedTheme = localStorage.getItem("theme");
       setIsDarkTheme(savedTheme ? savedTheme === "dark" : true);
 

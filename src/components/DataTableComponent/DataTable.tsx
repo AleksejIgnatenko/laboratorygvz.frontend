@@ -1,13 +1,22 @@
-"use client"; 
+"use client";
 
-import React from "react";
+import React, { useState } from "react";
 import "./DataTable.css";
 
 interface DataTableProps<T extends object> {
   data: T[];
 }
 
+type Order = 'asc' | 'desc';
+
+interface SortConfig<T> {
+  key: keyof T | undefined;
+  direction: Order | undefined;
+}
+
 const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
+  const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
+
   if (!data || data.length === 0) {
     return <p>No data available</p>;
   }
@@ -16,6 +25,30 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
   const countItems = 21;
 
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
+
+  const sortedData = () => {
+    let sortableItems = [...data];
+    if (sortConfig.key) {
+      sortableItems.sort((a, b) => {
+        if (a[sortConfig.key as keyof T] < b[sortConfig.key as keyof T]) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key as keyof T] > b[sortConfig.key as keyof T]) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  };
+
+  const requestSort = (key: keyof T) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
 
   const decrementValue = () => {
     const inputPageNumber = document.getElementById(
@@ -66,10 +99,10 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
           </h1>
 
           <div className="flex gap-1 items-center action-buttons">
-            <input 
-              className="search-input" 
+            <input
+              className="search-input"
               type="search"
-              placeholder="Search..." 
+              placeholder="Search..."
             />
             <button className="button icon link">
               <svg
@@ -115,14 +148,23 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
               <tr className="no-hover">
                 <th></th>
                 {columns.map((column) => (
-                  <th key={String(column)}>
-                    <span>{String(column)}</span>
+                  <th key={String(column)} onClick={() => requestSort(column)} style={{ cursor: 'pointer' }}>
+                    <div className="column-header">
+                      <span>{String(column)}</span>
+                      {sortConfig.key === column && (
+                        <img
+                          className="sort-chevron"
+                          src={sortConfig.direction === 'asc' ? '/images/up-chevron.png' : '/images/down-chevron.png'}
+                          alt="Sort direction"
+                        />
+                      )}
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {data.map((item, index) => (
+              {sortedData().map((item, index) => (
                 <tr key={index}>
                   <td>
                     <input className="input checkbox" type="checkbox" />
@@ -140,43 +182,43 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
 
             <div className="flex gap-2 items-center">
               <div className="flex gap-05 items-center">
-              <input
-                className="input number small"
-                type="number"
-                readOnly
-                id="inputPageNumber"
-                min={1}
-                max={maxPageNumber}
-                defaultValue={1}
-              />
+                <input
+                  className="input number small"
+                  type="number"
+                  readOnly
+                  id="inputPageNumber"
+                  min={1}
+                  max={maxPageNumber}
+                  defaultValue={1}
+                />
                 <small className="muted">/</small>
                 <small className="muted">{maxPageNumber}</small>
               </div>
 
               <div className="flex gap-05 items-center">
-              <button className="prevPageTable button icon link" onClick={decrementValue}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 256 256"
-                  className="icon-svg"
-                  >
-                  <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
-                </svg>
-              </button>
-
-              <button className="nextPageTable button icon link" onClick={incrementValue}>
-                <svg
+                <button className="prevPageTable button icon link" onClick={decrementValue}>
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
                     viewBox="0 0 256 256"
                     className="icon-svg"
-                >
+                  >
+                    <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
+                  </svg>
+                </button>
+
+                <button className="nextPageTable button icon link" onClick={incrementValue}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 256 256"
+                    className="icon-svg"
+                  >
                     <path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path>
-                </svg>
-              </button>
+                  </svg>
+                </button>
               </div>
             </div>
           </section>
