@@ -37,8 +37,23 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
 
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
 
-if (!data || data.length === 0) {
-    return <p className="no-data-message">Нет доступных данных</p>;
+  if (!data || data.length === 0) {
+    return (
+      <div className="no-data-containet">
+        <p className="no-data-message">Нет доступных данных</p>
+        <button className="addButton icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="#fdfdfe"
+            viewBox="0 0 256 256"
+          >
+            <path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"></path>
+          </svg>
+        </button>
+      </div>
+    )
   }
 
   const maxPageNumber = 2;
@@ -197,7 +212,7 @@ if (!data || data.length === 0) {
             </tbody>
           </table>
 
-          <section className="flex items-center justify-between">
+          <section className="flex items-center justify-between margin-bottom-30">
             <small className="muted pagination-info">1-20 / {countItems} item(s)</small>
 
             <div className="flex gap-2 items-center">
