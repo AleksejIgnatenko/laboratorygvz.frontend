@@ -16,6 +16,11 @@
   --font-family-title: 'Lora', serif;
 }
 
+.no-data-message {
+  text-align: center;
+  margin-top: 50px; 
+}
+
 .data-table a {
   color: inherit;
   cursor: pointer;

@@ -3,27 +3,25 @@
 import "./Sidebar.css";
 import "boxicons/css/boxicons.min.css";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 export default function Sidebar() {
-  const initialized = useRef(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
     { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "User" },
     { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Research"},
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
-    { link: "#", icon: "bx bx-package", name: "Products", tooltip: "Products" },
+    { link: "/products", icon: "bx bx-package", name: "Products", tooltip: "Products" },
     { link: "#", icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
     { link: "#", icon: "bx bx-cog", name: "Setting", tooltip: "Setting" },
   ];
 
   useEffect(() => {
-    if (!initialized.current && typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
       setIsLoggedIn(false);
-      initialized.current = true;
       const savedTheme = localStorage.getItem("theme");
       setIsDarkTheme(savedTheme ? savedTheme === "dark" : true);
 
@@ -62,7 +60,6 @@ export default function Sidebar() {
     const root = document.documentElement;
     root.setAttribute("data-theme", isDarkTheme ? "dark" : "light");
 
-    // Check if we're in the browser before accessing localStorage
     if (typeof window !== "undefined") {
       localStorage.setItem("theme", isDarkTheme ? "dark" : "light");
     }

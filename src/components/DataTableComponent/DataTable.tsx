@@ -5,6 +5,25 @@ import "./DataTable.css";
 
 interface DataTableProps<T extends object> {
   data: T[];
+  tableName: string;
+}
+
+enum DataFields {
+  id = "Id",
+
+  //ProductModel
+  dateOfReceipt = "Дата получения",
+  productName = "Название",
+  providerId = "Поставщик",
+  batchSize = "Размер партии",
+  sampleSize = "Размер выборки",
+  ttn = "ТТН",
+  documentQuality = "Документ по качеству и безопасности",
+  testReport = "Протокол испытаний",
+  experements = "Эксперементы",
+
+  //ProviderModel
+  providerName = "Поставщик"
 }
 
 type Order = 'asc' | 'desc';
@@ -14,11 +33,12 @@ interface SortConfig<T> {
   direction: Order | undefined;
 }
 
-const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
+const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => {
+
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
 
-  if (!data || data.length === 0) {
-    return <p>No data available</p>;
+if (!data || data.length === 0) {
+    return <p className="no-data-message">Нет доступных данных</p>;
   }
 
   const maxPageNumber = 2;
@@ -95,7 +115,7 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
           </div>
 
           <h1 id="title" className="leading-none data-table-title">
-            Researches
+            {tableName}
           </h1>
 
           <div className="flex gap-1 items-center action-buttons">
@@ -150,7 +170,7 @@ const DataTable = <T extends object>({ data }: DataTableProps<T>) => {
                 {columns.map((column) => (
                   <th key={String(column)} onClick={() => requestSort(column)} style={{ cursor: 'pointer' }}>
                     <div className="column-header">
-                      <span>{String(column)}</span>
+                      <span>{DataFields[column as keyof typeof DataFields]}</span>
                       {sortConfig.key === column && (
                         <img
                           className="sort-chevron"

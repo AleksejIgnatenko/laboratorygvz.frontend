@@ -3,7 +3,7 @@
 export interface ProductModel {
   id: number;
   dateOfReceipt: string;
-  name: string;
+  productName: string;
   providerId: string;
   batchSize: number;
   sampleSize: number;
