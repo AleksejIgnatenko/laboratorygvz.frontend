@@ -1,29 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from 'next/navigation';
 import "./DataTable.css";
+import { DataFieldsEnum } from "../Enums/DataFieldsEnum";
+import Link from "next/link";
 
 interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
-}
-
-enum DataFields {
-  id = "Id",
-
-  //ProductModel
-  dateOfReceipt = "Дата получения",
-  productName = "Название",
-  providerId = "Поставщик",
-  batchSize = "Размер партии",
-  sampleSize = "Размер выборки",
-  ttn = "ТТН",
-  documentQuality = "Документ по качеству и безопасности",
-  testReport = "Протокол испытаний",
-  experements = "Эксперементы",
-
-  //ProviderModel
-  providerName = "Поставщик"
 }
 
 type Order = 'asc' | 'desc';
@@ -34,14 +19,12 @@ interface SortConfig<T> {
 }
 
 const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => {
-
-  const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
-
+  const router = useRouter();
   if (!data || data.length === 0) {
     return (
       <div className="no-data-containet">
         <p className="no-data-message">Нет доступных данных</p>
-        <button className="addButton icon">
+        <Link className="addLink icon" href={`/addPage?tableName=${tableName}`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -51,7 +34,7 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
           >
             <path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"></path>
           </svg>
-        </button>
+        </Link>
       </div>
     )
   }
@@ -59,6 +42,7 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
   const maxPageNumber = 2;
   const countItems = 21;
 
+  const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
   const sortedData = () => {
@@ -163,7 +147,7 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
               </svg>
             </button>
 
-            <button className="addButton icon">
+            <Link className="addLink icon" href={`/addPage?tableName=${tableName}`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -173,7 +157,7 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
               >
                 <path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"></path>
               </svg>
-            </button>
+            </Link>
           </div>
         </section>
 
@@ -185,7 +169,7 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
                 {columns.map((column) => (
                   <th key={String(column)} onClick={() => requestSort(column)} style={{ cursor: 'pointer' }}>
                     <div className="column-header">
-                      <span>{DataFields[column as keyof typeof DataFields]}</span>
+                      <span>{DataFieldsEnum[column as keyof typeof DataFieldsEnum]}</span>
                       {sortConfig.key === column && (
                         <img
                           className="sort-chevron"

@@ -113,7 +113,7 @@
   color: var(--color-primary-6);
 }
 
-.addButton {
+.addLink {
   align-items: center;
   /* background: var(--color-primary-4); */
   border-radius: .25rem;
@@ -128,12 +128,12 @@
 }
 
 [data-theme='dark']
-.addButton {
+.addLink {
   background: var(--color-primary-4);
 }
 
 [data-theme='light']
-.addButton  {
+.addLink  {
   background: var(--color-primary);
 }
 
@@ -156,6 +156,7 @@
 }
 
 button.icon,
+a.icon,
 .button.icon {
   border-radius: 50%;
   height: 3rem;
@@ -164,12 +165,12 @@ button.icon,
 }
 
 [data-theme='dark']
-.addButton:hover {
+.addLink:hover {
   background: var(--color-primary);
 }
 
 [data-theme='light']
-.addButton:hover  {
+.addLink:hover  {
   background: var(--color-primary-4);
 }
 
