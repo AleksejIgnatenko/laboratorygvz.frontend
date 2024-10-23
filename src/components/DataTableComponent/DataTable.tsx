@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from 'next/navigation';
 import "./DataTable.css";
 import { DataFieldsEnum } from "../Enums/DataFieldsEnum";
 import Link from "next/link";
@@ -19,7 +18,11 @@ interface SortConfig<T> {
 }
 
 const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => {
-  const router = useRouter();
+    const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
+      key: undefined,
+      direction: undefined,
+    });
+
   if (!data || data.length === 0) {
     return (
       <div className="no-data-containet">
@@ -42,11 +45,11 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
   const maxPageNumber = 2;
   const countItems = 21;
 
-  const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
+  // const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
   const sortedData = () => {
-    let sortableItems = [...data];
+    const sortableItems = [...data];
     if (sortConfig.key) {
       sortableItems.sort((a, b) => {
         if (a[sortConfig.key as keyof T] < b[sortConfig.key as keyof T]) {
