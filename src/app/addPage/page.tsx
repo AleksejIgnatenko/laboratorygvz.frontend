@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import "./style.css";
 
@@ -53,9 +53,11 @@ export default function AddPage() {
 
     const [options, setOptions] = useState<Option[]>([]);
     const [formData, setFormData] = useState({});
+    const [image, setImg] = useState<string>();
+    const router = useRouter();
 
     useEffect(() => {
-        const fetchOptions = async () => {
+        const fetchGetOptions = async () => {
             switch (tableName) {
                 case "Products":
                     console.log("Products");
@@ -94,7 +96,32 @@ export default function AddPage() {
             }
         };
 
-        fetchOptions();
+        const setImages = async () => {
+            switch (tableName) {
+                case "Providers":
+                    setImg("provider");
+                    break;
+
+                case "Products":
+                    setImg("apple");
+                    break;
+
+                case "Researches":
+                    setImg("research");
+                    break;
+
+                case "Experiments":
+                    setImg("experiment");
+                    break;
+
+                default:
+                    setImg("apple");
+                    break;
+            }
+        };
+
+        fetchGetOptions();
+        setImages();
     }, []);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -105,6 +132,10 @@ export default function AddPage() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         console.log('Form submitted:', formData);
+    };
+
+    const handleGoBack = () => {
+        router.back();
     };
 
     return (
@@ -170,13 +201,11 @@ export default function AddPage() {
                     </form>
                     <div className="add-image">
                         <img
-                            src="/images/registration2.png"
-                            className="registration-img"
-                            alt="Add image"
+                            src={`/images/${image}.png`}
+                            className="dynamic-img"
+                            alt="Dynamic Image"
                         />
-                        <Link href="/login" className="add-link">
-                            Back
-                        </Link>
+                        <button onClick={handleGoBack} className="back-button">Go Back</button>
                     </div>
                 </div>
             </div>
