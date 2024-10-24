@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import "./DataTable.css";
 import { DataFieldsEnum } from "../Enums/DataFieldsEnum";
+import { fetchDeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
 import Link from "next/link";
+import { ProductModel } from "@/app/Models/ProductModel";
 
 interface DataTableProps<T extends object> {
   data: T[];
@@ -18,10 +20,10 @@ interface SortConfig<T> {
 }
 
 const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => {
-    const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
-      key: undefined,
-      direction: undefined,
-    });
+  const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
+    key: undefined,
+    direction: undefined,
+  });
 
   if (!data || data.length === 0) {
     return (
@@ -44,7 +46,8 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
 
   const maxPageNumber = 2;
   const countItems = 21;
-
+  const [selectedCount, setSelectedCount] = useState(0);
+  const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
   // const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
@@ -84,41 +87,79 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
     inputPageNumber.stepUp();
   };
 
+  const handleCheckboxChange = (item: T) => {
+    const newSelectedItems = new Set(selectedItems);
+    if (newSelectedItems.has(item)) {
+      newSelectedItems.delete(item);
+    } else {
+      newSelectedItems.add(item);
+    }
+    console.log(newSelectedItems);
+    setSelectedCount(newSelectedItems.size);
+    setSelectedItems(newSelectedItems);
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedItems(new Set());
+    setSelectedCount(0);
+  };
+
+  const handleDelete = () => {
+    switch (tableName) {
+      case "Providers":
+        break;
+
+      case "Products":
+        fetchDeleteProductAsync(selectedItems as Set<ProductModel>);
+        break;
+
+      case "Researches":
+        break;
+
+      case "Experiments":
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="data-table flex flex-column">
       <main className="flex flex-column gap-1 grow">
         <section className="flex gap-2 items-center justify-between">
-          <div id="bulkActions" className="bulk-actions hidden items-center">
-            <i className="icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="currentColor"
-                viewBox="0 0 256 256"
-              >
-                <path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path>
-              </svg>
-            </i>
+          <div className="header-container">
+            <h1 id="title" className="leading-none data-table-title">
+              {tableName}
+            </h1>
+            <div id="bulkActions" className={`bulk-actions ${selectedCount > 0 ? '' : 'hidden'} items-center`}>
+              <i className="icon" onClick={handleDelete}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path>
+                </svg>
+              </i>
 
-            <small id="labelItemsSelected">0 items selected</small>
+              <small id="labelItemsSelected">{selectedCount} item{selectedCount !== 1 ? 's' : ''} selected</small>
 
-            <i className="icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 256 256"
-              >
-                <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
-              </svg>
-            </i>
+              <i className="icon" onClick={handleDeselectAll}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+                </svg>
+              </i>
+            </div>
           </div>
-
-          <h1 id="title" className="leading-none data-table-title">
-            {tableName}
-          </h1>
 
           <div className="flex gap-1 items-center action-buttons">
             <input
@@ -189,11 +230,19 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
               {sortedData().map((item, index) => (
                 <tr key={index}>
                   <td>
-                    <input className="input checkbox" type="checkbox" />
+                    <input
+                      className="input checkbox"
+                      type="checkbox"
+                      onChange={() => handleCheckboxChange(item)}
+                      checked={selectedItems.has(item)}
+                    />
                   </td>
                   {columns.map((column) => (
                     <td key={String(column)}>{String(item[column])}</td>
                   ))}
+                  <td>
+                    <img className="edit-img" src="/images/pencil.png"/>
+                  </td>
                 </tr>
               ))}
             </tbody>

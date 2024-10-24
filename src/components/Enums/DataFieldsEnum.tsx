@@ -6,7 +6,7 @@ export enum DataFieldsEnum {
   //ProductModel
   dateOfReceipt = "Дата получения",
   productName = "Название",
-  // providerId = "Поставщик",
+  //providerId = "Поставщик",
   batchSize = "Размер партии",
   sampleSize = "Размер выборки",
   ttn = "ТТН",

@@ -5,10 +5,10 @@ export interface ProductModel {
   dateOfReceipt: string;
   productName: string;
   providerId: string;
+  providerName: string;
   batchSize: number;
   sampleSize: number;
   ttn: number;
   documentQuality: number;
   testReport: string;
-  experements: string;
 }
