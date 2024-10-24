@@ -10,6 +10,7 @@ import { ProductModel } from "@/app/Models/ProductModel";
 interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
+  countItemsAll: number; 
 }
 
 type Order = 'asc' | 'desc';
@@ -19,11 +20,13 @@ interface SortConfig<T> {
   direction: Order | undefined;
 }
 
-const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => {
+const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTableProps<T>) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
     key: undefined,
     direction: undefined,
   });
+  const [selectedCount, setSelectedCount] = useState(0);
+  const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
 
   if (!data || data.length === 0) {
     return (
@@ -41,14 +44,11 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
           </svg>
         </Link>
       </div>
-    )
+    );
   }
 
-  const maxPageNumber = 2;
-  const countItems = 21;
-  const [selectedCount, setSelectedCount] = useState(0);
-  const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
-  // const [sortConfig, setSortConfig] = useState<SortConfig<T>>({ key: undefined, direction: undefined });
+  const itemsPerPage = 20;
+  const maxPageNumber = Math.ceil(countItemsAll / itemsPerPage);
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
   const sortedData = () => {
@@ -56,10 +56,10 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
     if (sortConfig.key) {
       sortableItems.sort((a, b) => {
         if (a[sortConfig.key as keyof T] < b[sortConfig.key as keyof T]) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
+          return sortConfig.direction === "asc" ? -1 : 1;
         }
         if (a[sortConfig.key as keyof T] > b[sortConfig.key as keyof T]) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
+          return sortConfig.direction === "asc" ? 1 : -1;
         }
         return 0;
       });
@@ -68,9 +68,9 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
   };
 
   const requestSort = (key: keyof T) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
@@ -83,7 +83,9 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
   };
 
   const incrementValue = () => {
-    const inputPageNumber = document.getElementById("inputPageNumber") as HTMLInputElement;
+    const inputPageNumber = document.getElementById(
+      "inputPageNumber"
+    ) as HTMLInputElement;
     inputPageNumber.stepUp();
   };
 
@@ -132,7 +134,12 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
             <h1 id="title" className="leading-none data-table-title">
               {tableName}
             </h1>
-            <div id="bulkActions" className={`bulk-actions ${selectedCount > 0 ? '' : 'hidden'} items-center`}>
+            <div
+              id="bulkActions"
+              className={`bulk-actions ${
+                selectedCount > 0 ? "" : "hidden"
+              } items-center`}
+            >
               <i className="icon" onClick={handleDelete}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +152,9 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
                 </svg>
               </i>
 
-              <small id="labelItemsSelected">{selectedCount} item{selectedCount !== 1 ? 's' : ''} selected</small>
+              <small id="labelItemsSelected">
+                {selectedCount} item{selectedCount !== 1 ? "s" : ""} selected
+              </small>
 
               <i className="icon" onClick={handleDeselectAll}>
                 <svg
@@ -191,7 +200,10 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
               </svg>
             </button>
 
-            <Link className="addLink icon" href={`/addPage?tableName=${tableName}`}>
+            <Link
+              className="addLink icon"
+              href={`/addPage?tableName=${tableName}`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -210,20 +222,37 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
             <thead>
               <tr className="no-hover">
                 <th></th>
-                {columns.map((column) => (
-                  <th key={String(column)} onClick={() => requestSort(column)} style={{ cursor: 'pointer' }}>
-                    <div className="column-header">
-                      <span>{DataFieldsEnum[column as keyof typeof DataFieldsEnum]}</span>
-                      {sortConfig.key === column && (
-                        <img
-                          className="sort-chevron"
-                          src={sortConfig.direction === 'asc' ? '/images/up-chevron.png' : '/images/down-chevron.png'}
-                          alt="Sort direction"
-                        />
-                      )}
-                    </div>
-                  </th>
-                ))}
+                {columns.map(
+                  (column) =>
+                    column !== "id" && ( // Hide the Id column
+                      <th
+                        key={String(column)}
+                        onClick={() => requestSort(column)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="column-header">
+                          <span>
+                            {
+                              DataFieldsEnum[
+                                column as keyof typeof DataFieldsEnum
+                              ]
+                            }
+                          </span>
+                          {sortConfig.key === column && (
+                            <img
+                              className="sort-chevron"
+                              src={
+                                sortConfig.direction === "asc"
+                                  ? "/images/up-chevron.png"
+                                  : "/images/down-chevron.png"
+                              }
+                              alt="Sort direction"
+                            />
+                          )}
+                        </div>
+                      </th>
+                    )
+                )}
               </tr>
             </thead>
             <tbody>
@@ -237,11 +266,14 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
                       checked={selectedItems.has(item)}
                     />
                   </td>
-                  {columns.map((column) => (
-                    <td key={String(column)}>{String(item[column])}</td>
-                  ))}
+                  {columns.map(
+                    (column) =>
+                      column !== "id" && ( // Hide the Id column
+                        <td key={String(column)}>{String(item[column])}</td>
+                      )
+                  )}
                   <td>
-                    <img className="edit-img" src="/images/pencil.png"/>
+                    <img className="edit-img" src="/images/pencil.png" />
                   </td>
                 </tr>
               ))}
@@ -249,7 +281,9 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
           </table>
 
           <section className="flex items-center justify-between margin-bottom-30">
-            <small className="muted pagination-info">1-20 / {countItems} item(s)</small>
+            <small className="muted pagination-info">
+              1-20 / {countItemsAll} item(s)
+            </small>
 
             <div className="flex gap-2 items-center">
               <div className="flex gap-05 items-center">
@@ -267,7 +301,10 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
               </div>
 
               <div className="flex gap-05 items-center">
-                <button className="prevPageTable button icon link" onClick={decrementValue}>
+                <button
+                  className="prevPageTable button icon link"
+                  onClick={decrementValue}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -279,7 +316,10 @@ const DataTable = <T extends object>({ data, tableName }: DataTableProps<T>) => 
                   </svg>
                 </button>
 
-                <button className="nextPageTable button icon link" onClick={incrementValue}>
+                <button
+                  className="nextPageTable button icon link"
+                  onClick={incrementValue}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"

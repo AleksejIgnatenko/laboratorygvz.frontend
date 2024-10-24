@@ -5,7 +5,6 @@ import { jwtDecode } from "jwt-decode";
 export const RegistrationUserAsync = async (
   userRequest: RegistrationUserModelRequest
 ) => {
-  console.log("Form submitted: ", userRequest);
 
   try {
     const response = await fetch(
@@ -37,7 +36,7 @@ export const RegistrationUserAsync = async (
       }
     } else if (response.status === 400) {
       const validationErrors = await response.json();
-      console.error("Registration failed:", validationErrors);
+      return validationErrors.error;
     }
   } catch (error) {
     console.error("Error fetching:", error);

@@ -43,7 +43,7 @@ export default function Researches() {
     ];
     return (
         <div className="researches-page">
-            <DataTable data={data} tableName="Researches"/>
+            <DataTable data={data} tableName="Researches" countItemsAll={1}/>
         </div>
     );
 }

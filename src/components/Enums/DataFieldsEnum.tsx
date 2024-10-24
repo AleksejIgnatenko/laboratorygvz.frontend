@@ -3,6 +3,16 @@
 export enum DataFieldsEnum {
   id = "Id",
 
+  //UserModel
+  role = "Роль",
+  surname = "Фамилия",
+  userName = "Имя",
+  patronymic = "Отчество",
+  email = "Почта",
+
+  //ProviderModel
+  providerName = "Поставщик",
+
   //ProductModel
   dateOfReceipt = "Дата получения",
   productName = "Название",
@@ -14,6 +24,5 @@ export enum DataFieldsEnum {
   testReport = "Протокол испытаний",
   experements = "Эксперементы",
 
-  //ProviderModel
-  providerName = "Поставщик"
+
 }
