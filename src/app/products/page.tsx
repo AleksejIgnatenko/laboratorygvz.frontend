@@ -43,7 +43,7 @@ export default function Products() {
     ];
     return (
         <div className="products-page">
-            <DataTable data={data} tableName="Products" countItemsAll={1}/>
+            <DataTable data={data} tableName="Products" countItemsAll={21}/>
         </div>
     );
 }

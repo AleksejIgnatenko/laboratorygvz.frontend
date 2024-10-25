@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./DataTable.css";
 import { DataFieldsEnum } from "../Enums/DataFieldsEnum";
 import { fetchDeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
 import Link from "next/link";
 import { ProductModel } from "@/app/Models/ProductModel";
+import { useRouter } from "next/navigation";
 
 interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
-  countItemsAll: number; 
+  countItemsAll: number;
 }
 
 type Order = 'asc' | 'desc';
@@ -27,6 +28,21 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
   });
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Alt + A
+      if (event.altKey && (event.key.toLowerCase() === 'a') || event.key.toLowerCase() === 'ф') {
+        router.push(`/addPage?tableName=${tableName}`);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   if (!data || data.length === 0) {
     return (
@@ -136,9 +152,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
             </h1>
             <div
               id="bulkActions"
-              className={`bulk-actions ${
-                selectedCount > 0 ? "" : "hidden"
-              } items-center`}
+              className={`bulk-actions ${selectedCount > 0 ? "" : "hidden"
+                } items-center`}
             >
               <i className="icon" onClick={handleDelete}>
                 <svg
@@ -200,20 +215,22 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
               </svg>
             </button>
 
-            <Link
-              className="addLink icon"
-              href={`/addPage?tableName=${tableName}`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="#fdfdfe"
-                viewBox="0 0 256 256"
+            {tableName !== "Users" && (
+              <Link
+                className="addLink icon"
+                href={`/addPage?tableName=${tableName}`}
               >
-                <path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"></path>
-              </svg>
-            </Link>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="#fdfdfe"
+                  viewBox="0 0 256 256"
+                >
+                  <path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"></path>
+                </svg>
+              </Link>
+            )}
           </div>
         </section>
 
@@ -224,7 +241,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
                 <th></th>
                 {columns.map(
                   (column) =>
-                    column !== "id" && ( // Hide the Id column
+                    column !== "id" && (
                       <th
                         key={String(column)}
                         onClick={() => requestSort(column)}
@@ -234,7 +251,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
                           <span>
                             {
                               DataFieldsEnum[
-                                column as keyof typeof DataFieldsEnum
+                              column as keyof typeof DataFieldsEnum
                               ]
                             }
                           </span>
@@ -268,7 +285,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
                   </td>
                   {columns.map(
                     (column) =>
-                      column !== "id" && ( // Hide the Id column
+                      column !== "id" && (
                         <td key={String(column)}>{String(item[column])}</td>
                       )
                   )}
@@ -290,7 +307,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
                 <input
                   className="input number small"
                   type="number"
-                  readOnly
+                  // readOnly
                   id="inputPageNumber"
                   min={1}
                   max={maxPageNumber}

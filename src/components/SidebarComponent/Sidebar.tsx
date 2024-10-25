@@ -4,15 +4,17 @@ import "./Sidebar.css";
 import "boxicons/css/boxicons.min.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const router = useRouter();
 
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
     { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "User" },
-    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Research"},
+    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
     { link: "/products", icon: "bx bx-package", name: "Products", tooltip: "Products" },
     { link: "#", icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
@@ -22,13 +24,20 @@ export default function Sidebar() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsLoggedIn(false);
+      
+      // Получаем сохранённую тему из localStorage
       const savedTheme = localStorage.getItem("theme");
-      setIsDarkTheme(savedTheme ? savedTheme === "dark" : true);
-
+      const initialTheme = savedTheme ? savedTheme === "dark" : true;
+      setIsDarkTheme(initialTheme);
+      
+      const root = document.documentElement;
+      root.setAttribute("data-theme", initialTheme ? "dark" : "light");
+      localStorage.setItem("theme", initialTheme ? "dark" : "light");
+  
       const sidebar = document.querySelector(".sidebar");
       const closeBtn = document.querySelector("#btn");
       const searchBtn = document.querySelector(".bx-search");
-
+  
       const menuBtnChange = () => {
         if (sidebar) {
           if (sidebar.classList.contains("open")) {
@@ -38,39 +47,66 @@ export default function Sidebar() {
           }
         }
       };
-
+  
       const handleSidebarToggle = () => {
         if (sidebar) {
           sidebar.classList.toggle("open");
           menuBtnChange();
         }
       };
-
+  
+      // Sidebar hotkey
+      const handleKeyDown = (event: KeyboardEvent) => {
+        // Alt + 1
+        if (event.altKey && event.key === '1') {
+          router.push("/");
+        }
+        // Alt + 2
+        if (event.altKey && event.key === '2') {
+          router.push("/users");
+        }
+        // Alt + 3
+        if (event.altKey && event.key === '3') {
+          router.push("/researches");
+        }
+        // Alt + 4
+        if (event.altKey && event.key === '4') {
+          router.push("/#");
+        }
+        // Alt + 5
+        if (event.altKey && event.key === '5') {
+          router.push("/products");
+        }
+        // Alt + T
+        if (event.altKey && (event.key.toLowerCase() === 't') || event.key.toLowerCase() === 'е') {
+          toggleColorScheme();
+        }
+      };
+  
       closeBtn?.addEventListener("click", handleSidebarToggle);
       searchBtn?.addEventListener("click", handleSidebarToggle);
-
+      window.addEventListener('keydown', handleKeyDown);
+  
       return () => {
         closeBtn?.removeEventListener("click", handleSidebarToggle);
         searchBtn?.removeEventListener("click", handleSidebarToggle);
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, []);
 
-  useEffect(() => {
-    const root = document.documentElement;
-    root.setAttribute("data-theme", isDarkTheme ? "dark" : "light");
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem("theme", isDarkTheme ? "dark" : "light");
-    }
-  }, [isDarkTheme]);
-
   const toggleColorScheme = () => {
-    setIsDarkTheme((prev) => !prev);
+    setIsDarkTheme((prev) => {
+      const newTheme = !prev;
+      const root = document.documentElement;
+      root.setAttribute("data-theme", newTheme ? "dark" : "light");
+      localStorage.setItem("theme", newTheme ? "dark" : "light");
+      return newTheme;
+    });
   };
 
   return (
-    <div className="sidebar">
+    <div className="sidebar" tabIndex={0}>
       <div className="logo-details">
         <i className="bx bxl-codepen icon"></i>
         <div className="logo_name">SideMenu</div>

@@ -52,8 +52,7 @@ const inputConfig: Record<string, InputConfig[]> = {
 function AddPageContent() {
   const searchParams = useSearchParams();
   const tableName = searchParams.get("tableName");
-  const inputs =
-    tableName && tableName in inputConfig ? inputConfig[tableName] : [];
+  const inputs = tableName && tableName in inputConfig ? inputConfig[tableName] : [];
 
   const [options, setOptions] = useState<Option[]>([]);
   const [formData, setFormData] = useState({});
@@ -124,8 +123,25 @@ function AddPageContent() {
       }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Alt + A
+      if (event.altKey && (event.key.toLowerCase() === 'a') || event.key.toLowerCase() === 'ф') {
+        router.push(`/addPage?tableName=${tableName}`);
+      }
+      // Alt + B
+      if (event.altKey && (event.key.toLowerCase() === 'b') || event.key.toLowerCase() === 'и') {
+        router.back();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
     fetchGetOptions();
     setImages();
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [tableName]);
 
   const handleInputChange = (

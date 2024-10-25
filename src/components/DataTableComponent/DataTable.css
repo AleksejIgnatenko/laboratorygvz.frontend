@@ -214,6 +214,11 @@ a.icon,
 /*
   inputs
 */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin-right: 45%;
+}
 
 .input {
   border: 1px solid var(--color-primary-3);
