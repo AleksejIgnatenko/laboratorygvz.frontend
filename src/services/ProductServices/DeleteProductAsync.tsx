@@ -1,4 +1,4 @@
-import { ProductModel } from "@/app/Models/ProductModel";
+import { ProductModel } from "@/Models/UserModels/ProductModel";
 
 export const fetchDeleteProductAsync = async (data: Set<ProductModel>) => {
     const productArray = Array.from(data);

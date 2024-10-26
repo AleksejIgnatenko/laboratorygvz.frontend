@@ -3,9 +3,9 @@
 import { useState } from "react";
 import "./style.css";
 import Link from "next/link";
-import { RegistrationUserModelRequest } from "../Models/RegistrationUserModelRequest";
+import { RegistrationUserModelRequest } from "../../Models/UserModels/RegistrationUserModelRequest";
 import { RegistrationUserAsync } from "@/services/UserServices/RegistrationUserAsync";
-import { UserValidationErrorModel } from "../Models/UserValidationErrorModel";
+import { UserValidationErrorModel } from "../../Models/UserModels/UserValidationErrorModel";
 
 export default function Registration() {
   const [formData, setFormData] = useState<RegistrationUserModelRequest>({

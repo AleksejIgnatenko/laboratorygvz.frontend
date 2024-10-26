@@ -13,12 +13,11 @@ export default function Sidebar() {
 
   const sidebarItems = [
     { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
-    { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "User" },
-    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Research" },
+    { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "Users" },
+    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Researches" },
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
     { link: "/products", icon: "bx bx-package", name: "Products", tooltip: "Products" },
-    { link: "#", icon: "bx bx-receipt", name: "Orders", tooltip: "Orders" },
-    { link: "#", icon: "bx bx-cog", name: "Setting", tooltip: "Setting" },
+    { link: "/suppliers", icon: "bx bx-car", name: "Suppliers", tooltip: "Suppliers" },
   ];
 
   useEffect(() => {
@@ -58,29 +57,33 @@ export default function Sidebar() {
       // Sidebar hotkey
       const handleKeyDown = (event: KeyboardEvent) => {
         // Alt + 1
-        if (event.altKey && event.key === '1') {
+        if (event.altKey && event.key === "1") {
           router.push("/");
         }
         // Alt + 2
-        if (event.altKey && event.key === '2') {
+        if (event.altKey && event.key === "2") {
           router.push("/users");
         }
         // Alt + 3
-        if (event.altKey && event.key === '3') {
+        if (event.altKey && event.key === "3") {
           router.push("/researches");
         }
         // Alt + 4
-        if (event.altKey && event.key === '4') {
+        if (event.altKey && event.key === "4") {
           router.push("/#");
         }
         // Alt + 5
-        if (event.altKey && event.key === '5') {
+        if (event.altKey && event.key === "5") {
           router.push("/products");
         }
-        // Alt + T
-        if (event.altKey && (event.key.toLowerCase() === 't') || event.key.toLowerCase() === 'е') {
-          toggleColorScheme();
+        // Alt + 6
+        if (event.altKey && event.key === "6") {
+          router.push("/suppliers");
         }
+        // // Alt + T
+        // if (event.altKey && (event.key.toLowerCase() === 't') || event.key.toLowerCase() === 'е') {
+        //   toggleColorScheme();
+        // }
       };
   
       closeBtn?.addEventListener("click", handleSidebarToggle);

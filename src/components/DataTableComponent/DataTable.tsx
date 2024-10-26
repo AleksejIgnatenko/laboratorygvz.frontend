@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import "./DataTable.css";
-import { DataFieldsEnum } from "../Enums/DataFieldsEnum";
+import { DataFieldsEnum } from "../../Enums/DataFieldsEnum";
 import { fetchDeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
 import Link from "next/link";
-import { ProductModel } from "@/app/Models/ProductModel";
+import { ProductModel } from "@/Models/UserModels/ProductModel";
 import { useRouter } from "next/navigation";
 
 interface DataTableProps<T extends object> {

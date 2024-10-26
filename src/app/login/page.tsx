@@ -3,7 +3,7 @@
 import { useState } from "react";
 import "./style.css";
 import Link from "next/link";
-import { LoginUserModel } from "../Models/LoginUserModel";
+import { LoginUserModel } from "../../Models/UserModels/LoginUserModel";
 
 export default function Login() {
   const [formData, setFormData] = useState<LoginUserModel>({

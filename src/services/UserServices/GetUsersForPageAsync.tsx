@@ -1,4 +1,4 @@
-import { UserModel } from "@/app/Models/UserModel";
+import { UserModel } from "@/Models/UserModels/UserModel";
 
 export const GetUsersForPageAsync = async (
   pageNumber: number
@@ -18,7 +18,7 @@ export const GetUsersForPageAsync = async (
       const responseData = await response.json();
       
       const users: UserModel[] = responseData.users;
-      const countItemsAll: number = responseData.countUser;
+      const countItemsAll: number = responseData.numberUsers;
 
       return { users, countItemsAll };
     } else {

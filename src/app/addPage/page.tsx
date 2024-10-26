@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense } from "react"; // Import Suspense
+import { Suspense } from "react";
+import { AddSupplierAsync } from "@/services/SupplierServices/AddSupplierAsync";
 import "./style.css";
+import { AddSupplierModel } from "@/Models/SupplierModels/AddSupplierModel";
 
 interface InputConfig {
   name: string;
@@ -17,15 +19,15 @@ interface Option {
 }
 
 const inputConfig: Record<string, InputConfig[]> = {
-  Providers: [
-    { name: "providerName", placeholder: "Поставщик" },
-    { name: "legalAddress	", placeholder: "Юредический адрес" },
+  Suppliers: [
+    { name: "supplierName", placeholder: "Поставщик" },
+    { name: "manufacturer", placeholder: "Производитель" },
   ],
 
   Products: [
     { name: "dateOfReceipt", placeholder: "Дата получения" },
     { name: "productName", placeholder: "Название продукта" },
-    { name: "providerId", placeholder: "Поставщик", isSelect: true },
+    { name: "supplierId", placeholder: "Поставщик", isSelect: true },
     { name: "batchSize", placeholder: "Размер партии" },
     { name: "sampleSize", placeholder: "Размер выборки" },
     { name: "ttn", placeholder: "ТТН" },
@@ -52,7 +54,8 @@ const inputConfig: Record<string, InputConfig[]> = {
 function AddPageContent() {
   const searchParams = useSearchParams();
   const tableName = searchParams.get("tableName");
-  const inputs = tableName && tableName in inputConfig ? inputConfig[tableName] : [];
+  const inputs =
+    tableName && tableName in inputConfig ? inputConfig[tableName] : [];
 
   const [options, setOptions] = useState<Option[]>([]);
   const [formData, setFormData] = useState({});
@@ -101,8 +104,8 @@ function AddPageContent() {
 
     const setImages = async () => {
       switch (tableName) {
-        case "Providers":
-          setImg("provider");
+        case "Suppliers":
+          setImg("supplier");
           break;
 
         case "Products":
@@ -123,25 +126,31 @@ function AddPageContent() {
       }
     };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Alt + A
-      if (event.altKey && (event.key.toLowerCase() === 'a') || event.key.toLowerCase() === 'ф') {
-        router.push(`/addPage?tableName=${tableName}`);
-      }
-      // Alt + B
-      if (event.altKey && (event.key.toLowerCase() === 'b') || event.key.toLowerCase() === 'и') {
-        router.back();
-      }
-    };
+    // const handleKeyDown = (event: KeyboardEvent) => {
+    //   // Alt + A
+    //   if (
+    //     (event.altKey && event.key.toLowerCase() === "a") ||
+    //     event.key.toLowerCase() === "ф"
+    //   ) {
+    //     router.push(`/addPage?tableName=${tableName}`);
+    //   }
+    //   // Alt + B
+    //   if (
+    //     (event.altKey && event.key.toLowerCase() === "b") ||
+    //     event.key.toLowerCase() === "и"
+    //   ) {
+    //     router.back();
+    //   }
+    // };
 
-    window.addEventListener('keydown', handleKeyDown);
+    // window.addEventListener("keydown", handleKeyDown);
 
     fetchGetOptions();
     setImages();
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    // return () => {
+    //   window.removeEventListener("keydown", handleKeyDown);
+    // };
   }, [tableName]);
 
   const handleInputChange = (
@@ -151,9 +160,30 @@ function AddPageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Form submitted:", formData);
+    switch (tableName) {
+      case "Suppliers":
+        const errors = await AddSupplierAsync(formData as AddSupplierModel);
+        if(errors) {
+          alert(errors);
+        } else {
+            setFormData({});
+        }
+        break;
+
+      case "Products":
+        break;
+
+      case "Researches":
+        break;
+
+      case "Experiments":
+        break;
+
+      default:
+        break;
+    }
   };
 
   const handleGoBack = () => {

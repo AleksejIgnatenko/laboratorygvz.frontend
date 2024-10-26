@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserModel } from "@/app/Models/UserModel";
+import { UserModel } from "@/Models/UserModels/UserModel";
 import DataTable from "@/components/DataTableComponent/DataTable";
 import { GetUsersForPageAsync } from "@/services/UserServices/GetUsersForPageAsync";
 import "./style.css";
@@ -25,7 +25,7 @@ export default function Users() {
       <DataTable
         data={data}
         tableName="Users"
-        countItemsAll={countItemsAll} // Ensure this prop is passed
+        countItemsAll={countItemsAll}
       />
     </div>
   );

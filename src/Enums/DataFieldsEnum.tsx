@@ -10,8 +10,9 @@ export enum DataFieldsEnum {
   patronymic = "Отчество",
   email = "Почта",
 
-  //ProviderModel
-  providerName = "Поставщик",
+  //SupplierModel
+  supplierName = "Поставщик",
+  manufacturer = "Производитель",
 
   //ProductModel
   dateOfReceipt = "Дата получения",
@@ -23,6 +24,4 @@ export enum DataFieldsEnum {
   documentQuality = "Документ по качеству и безопасности",
   testReport = "Протокол испытаний",
   experements = "Эксперементы",
-
-
 }

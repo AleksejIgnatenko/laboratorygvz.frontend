@@ -1,4 +1,4 @@
-import { RegistrationUserModelRequest } from "@/app/Models/RegistrationUserModelRequest";
+import { RegistrationUserModelRequest } from "@/Models/UserModels/RegistrationUserModelRequest";
 import { setCookies } from "../Infrastructure/setCookies";
 import { jwtDecode } from "jwt-decode";
 
@@ -23,7 +23,6 @@ export const RegistrationUserAsync = async (
       const token = responseData.token;
       if (token) {
         const decodedToken = jwtDecode(token);
-
         if (
           decodedToken.exp !== undefined &&
           typeof decodedToken.exp === "number"
@@ -37,6 +36,9 @@ export const RegistrationUserAsync = async (
     } else if (response.status === 400) {
       const validationErrors = await response.json();
       return validationErrors.error;
+    } else if (response.status === 409) {
+      const errors = await response.json();
+      console.log(errors);
     }
   } catch (error) {
     console.error("Error fetching:", error);
