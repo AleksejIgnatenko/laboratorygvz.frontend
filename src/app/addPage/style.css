@@ -81,6 +81,7 @@
 .form-group {
 	position: relative;
     /* padding-bottom: 20px; */
+	margin-bottom: 20px;
 }
 
 .form-group label {
@@ -89,6 +90,20 @@
 	top: 55%;
 	transform: translateY(-50%);
 	pointer-events: none;
+}
+
+.success-message {
+	/* margin-left: 15px; */
+	margin-top: 15px;
+	color: #34eb3d;
+	font-size: 16px;
+}
+
+.error-message {
+	/* margin-left: 15px; */
+	margin-top: 15px;
+	color: #ce0000;
+	font-size: 16px;
 }
 
 .material-icons-name {
@@ -135,7 +150,7 @@
 	padding: 10px 10px 10px 20px;
 	border: none;
 	/* #999 */
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 	box-sizing: border-box;
 	/* background-color: #1d1b31; */
 	font-size: 20px;

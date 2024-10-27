@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./DataTable.css";
 import { DataFieldsEnum } from "../../Enums/DataFieldsEnum";
-import { fetchDeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
+import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
+import { DeleteSuppliersAsync } from "@/services/SupplierServices/DeleteSuppliersAsync";
 import Link from "next/link";
 import { ProductModel } from "@/Models/UserModels/ProductModel";
-import { useRouter } from "next/navigation";
+import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
+// import { useRouter } from "next/navigation";
+import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 
 interface DataTableProps<T extends object> {
   data: T[];
@@ -28,21 +31,21 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
   });
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Alt + A
-      if (event.altKey && (event.key.toLowerCase() === 'a') || event.key.toLowerCase() === 'ф') {
-        router.push(`/addPage?tableName=${tableName}`);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
+  // useEffect(() => {
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //     // Alt + A
+  //     if (event.altKey && (event.key.toLowerCase() === 'a') || event.key.toLowerCase() === 'ф') {
+  //       router.push(`/addPage?tableName=${tableName}`);
+  //     }
+  //   };
+  //   window.addEventListener('keydown', handleKeyDown);
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, []);
 
   if (!data || data.length === 0) {
     return (
@@ -64,6 +67,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
   }
 
   const itemsPerPage = 20;
+  const numberPage = 0;
   const maxPageNumber = Math.ceil(countItemsAll / itemsPerPage);
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
@@ -112,7 +116,6 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
     } else {
       newSelectedItems.add(item);
     }
-    console.log(newSelectedItems);
     setSelectedCount(newSelectedItems.size);
     setSelectedItems(newSelectedItems);
   };
@@ -122,13 +125,17 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
     setSelectedCount(0);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     switch (tableName) {
-      case "Providers":
+      case "Suppliers":
+        DeleteSuppliersAsync(selectedItems as Set<SupplierModel>);
+        const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(numberPage);
+        console.log(countItemsAll);
+        data = suppliers as T[];
         break;
 
       case "Products":
-        fetchDeleteProductAsync(selectedItems as Set<ProductModel>);
+        DeleteProductAsync(selectedItems as Set<ProductModel>);
         break;
 
       case "Researches":
@@ -152,8 +159,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
             </h1>
             <div
               id="bulkActions"
-              className={`bulk-actions ${selectedCount > 0 ? "" : "hidden"
-                } items-center`}
+              className={`bulk-actions ${
+                selectedCount > 0 ? "" : "hidden"
+              } items-center`}
             >
               <i className="icon" onClick={handleDelete}>
                 <svg
@@ -251,7 +259,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
                           <span>
                             {
                               DataFieldsEnum[
-                              column as keyof typeof DataFieldsEnum
+                                column as keyof typeof DataFieldsEnum
                               ]
                             }
                           </span>

@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { AddSupplierAsync } from "@/services/SupplierServices/AddSupplierAsync";
 import "./style.css";
 import { AddSupplierModel } from "@/Models/SupplierModels/AddSupplierModel";
+import { SupplierValidationErrorModel } from "@/Models/SupplierModels/SupplierValidationErrorModel";
 
 interface InputConfig {
   name: string;
@@ -18,12 +19,15 @@ interface Option {
   name: string;
 }
 
+// export interface SupplierValidationErrorModel {
+//   [key: string]: string | undefined;
+// }
+
 const inputConfig: Record<string, InputConfig[]> = {
   Suppliers: [
-    { name: "supplierName", placeholder: "Поставщик" },
-    { name: "manufacturer", placeholder: "Производитель" },
+    { name: "Name", placeholder: "Поставщик" },
+    { name: "Manufacturer", placeholder: "Производитель" },
   ],
-
   Products: [
     { name: "dateOfReceipt", placeholder: "Дата получения" },
     { name: "productName", placeholder: "Название продукта" },
@@ -37,13 +41,10 @@ const inputConfig: Record<string, InputConfig[]> = {
     },
     { name: "testReport", placeholder: "Протокол испытаний" },
   ],
-
   Researches: [
     { name: "researchName", placeholder: "Название исследования" },
     { name: "ProductId", placeholder: "Название продукта", isSelect: true },
-    // { name: 'сonclusion', placeholder: 'Вывод' },
   ],
-
   Experiments: [
     { name: "experimentName", placeholder: "Да" },
     { name: "result", placeholder: "Результат" },
@@ -56,6 +57,12 @@ function AddPageContent() {
   const tableName = searchParams.get("tableName");
   const inputs =
     tableName && tableName in inputConfig ? inputConfig[tableName] : [];
+
+  const [successMessage, setSuccessMessage] = useState<string>();
+  const [errors, setErrors] = useState<string>();
+
+  const [supplierErrors, setSupplierErrors] =
+    useState<SupplierValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
   const [formData, setFormData] = useState({});
@@ -164,11 +171,23 @@ function AddPageContent() {
     event.preventDefault();
     switch (tableName) {
       case "Suppliers":
-        const errors = await AddSupplierAsync(formData as AddSupplierModel);
-        if(errors) {
-          alert(errors);
-        } else {
-            setFormData({});
+        const result = await AddSupplierAsync(formData as AddSupplierModel);
+        const [response, statusCode] = result;
+        if (statusCode === 200) {
+          setSuccessMessage(response);
+          setErrors("");
+              // setFormData({
+              //   Name: "",
+              //   Manufacturer: "",
+              // });
+              // // setFormData({});
+              // inputConfig.Suppliers.map((input) => [input.name, ""]);
+        } else if (statusCode === 400) {
+          setSuccessMessage("");
+          setSupplierErrors(response);
+        } else if (statusCode === 409) {
+          setSuccessMessage("");
+          setErrors(response);
         }
         break;
 
@@ -207,7 +226,7 @@ function AddPageContent() {
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="" disabled selected>
+                        <option value="" disabled>
                           {input.placeholder}
                         </option>
                         {options.map((option) => (
@@ -218,23 +237,24 @@ function AddPageContent() {
                       </select>
                     </div>
                   ) : (
-                    // : input.name === 'сonclusion' ? (
-                    //     <input
-                    //         type="text"
-                    //         name={input.name}
-                    //         id={input.name}
-                    //         placeholder={input.placeholder}
-                    //         onChange={handleInputChange}
-                    //     />
-                    // )
-                    <input
-                      type="text"
-                      name={input.name}
-                      id={input.name}
-                      placeholder={input.placeholder}
-                      onChange={handleInputChange}
-                      required
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        name={input.name}
+                        id={input.name}
+                        placeholder={input.placeholder}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {tableName === "Suppliers" && supplierErrors[input.name] && (
+                    <div>
+                      <span className="error-message">
+                        {supplierErrors[input.name]}
+                      </span>
+                    </div>
                   )}
                 </div>
               ))}
@@ -249,6 +269,8 @@ function AddPageContent() {
                 Add
               </button>
             </div>
+            <span className="success-message">{successMessage}</span>
+            <span className="error-message">{errors}</span>
           </form>
           <div className="add-image">
             <img
