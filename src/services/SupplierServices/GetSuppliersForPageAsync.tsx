@@ -16,9 +16,8 @@ export const GetSuppliersForPageAsync = async (
 
     if (response.ok) {
       const responseData = await response.json();
-
       const suppliers: SupplierModel[] = responseData.suppliers;
-      const countItemsAll: number = responseData.numberUsers;
+      const countItemsAll: number = responseData.numberSuppliers;
 
       return { suppliers, countItemsAll };
     } else {

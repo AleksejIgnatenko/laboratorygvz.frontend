@@ -11,31 +11,30 @@ export default function Suppliers() {
   const [countItemsAll, setCount] = useState<number>(0);
 
   const handleDelete = async (selectedItems: Set<SupplierModel>, numberPage: number) => {
-    // await DeleteSuppliersAsync(selectedItems);
-    // const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(numberPage);
-    // setData(suppliers);
-    // setCount(countItemsAll);
-    console.log(selectedItems)
+    await DeleteSuppliersAsync(selectedItems);
+    const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(numberPage);
+    setData(suppliers);
+    setCount(countItemsAll);
   };
 
-  const suppliers: SupplierModel[] = [
-    {
-      id: 1,
-      Name: "Supplier 1",
-      Manufacturer: "Manufacturer A"
-    },
-    {
-      id: 2,
-      Name: "Supplier 2",
-      Manufacturer: "Manufacturer B"
-    },
-    {
-      id: 3,
-      Name: "Supplier 3",
-      Manufacturer: "Manufacturer C"
-    },
-    // Добавьте другие поставщики по аналогии
-  ];
+  // const supplierss: SupplierModel[] = [
+  //   {
+  //     id: "1",
+  //     name: "Supplier 1",
+  //     manufacturer: "Manufacturer A"
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "Supplier 2",
+  //     manufacturer: "Manufacturer B"
+  //   },
+  //   {
+  //     id: "3",
+  //     name: "Supplier 3",
+  //     manufacturer: "Manufacturer C"
+  //   },
+  //   // Добавьте другие поставщики по аналогии
+  // ];
 
   useEffect(() => {
     const getSuppliers = async () => {
@@ -49,8 +48,8 @@ export default function Suppliers() {
 
   return (
     <div className="suppliers-page">
-       <DataTable
-        data={suppliers}
+      <DataTable
+        data={data}
         tableName="Suppliers"
         countItemsAll={countItemsAll}
         handleDelete={handleDelete}

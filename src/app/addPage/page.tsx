@@ -21,8 +21,8 @@ interface Option {
 
 const inputConfig: Record<string, InputConfig[]> = {
   Suppliers: [
-    { name: "Name", placeholder: "Поставщик" },
-    { name: "Manufacturer", placeholder: "Производитель" },
+    { name: "supplierName", placeholder: "Поставщик" },
+    { name: "manufacturer", placeholder: "Производитель" },
   ],
   Products: [
     { name: "dateOfReceipt", placeholder: "Дата получения" },

@@ -1,7 +1,7 @@
 "use client";
 
 export interface SupplierModel {
-  id: number;
-  Name: string;
-  Manufacturer: string;
+  id: string;
+  supplierName: string; 
+  manufacturer: string; 
 }

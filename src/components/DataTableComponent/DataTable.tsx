@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import "./DataTable.css";
 import { DataFieldsEnum } from "../../Enums/DataFieldsEnum";
 import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
-import { DeleteSuppliersAsync } from "@/services/SupplierServices/DeleteSuppliersAsync";
+// import { DeleteSuppliersAsync } from "@/services/SupplierServices/DeleteSuppliersAsync";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ProductModel } from "@/Models/UserModels/ProductModel";
-import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
+// import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 // import { useRouter } from "next/navigation";
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 
@@ -16,7 +16,7 @@ interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
   countItemsAll: number;
-  handleDelete: (selectedItems: Set<SupplierModel>, numberPage: number) => void;
+  handleDelete?: (selectedItems: Set<SupplierModel>, numberPage: number) => void;
 }
 
 type Order = 'asc' | 'desc';
@@ -157,7 +157,11 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   const onDeleteClick = () => {
       switch (tableName) {
       case "Suppliers":
-        handleDelete(selectedItems as Set<SupplierModel>, numberPage);
+        if (handleDelete){
+          handleDelete(selectedItems as Set<SupplierModel>, numberPage);
+          setSelectedItems(new Set());
+          setSelectedCount(0);
+        }
         break;
 
       case "Products":
@@ -329,8 +333,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       src="/images/pencil.png"
                       onClick={() => {
                         const queryString = new URLSearchParams({
-                          tableName: "Suppliers", // Or dynamically set based on your context
-                          item: JSON.stringify(item), // Pass the object as a string
+                          tableName: "Suppliers",
+                          item: JSON.stringify(item), 
                         }).toString();
                         router.push(`/updatePage?${queryString}`);
                       }}

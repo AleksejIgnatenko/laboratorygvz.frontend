@@ -1,7 +1,7 @@
 "use client";
 
 export interface SupplierValidationErrorModel {
-  [key: string]: string | undefined; 
-  Name?: string; 
-  Manufacturer?: string; 
+  [key: string]: string | undefined;
+  supplierName?: string; 
+  manufacturer?: string;
 }
