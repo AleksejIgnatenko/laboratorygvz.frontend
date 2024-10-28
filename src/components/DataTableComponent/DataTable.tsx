@@ -6,6 +6,7 @@ import { DataFieldsEnum } from "../../Enums/DataFieldsEnum";
 import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
 import { DeleteSuppliersAsync } from "@/services/SupplierServices/DeleteSuppliersAsync";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ProductModel } from "@/Models/UserModels/ProductModel";
 import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 // import { useRouter } from "next/navigation";
@@ -15,6 +16,7 @@ interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
   countItemsAll: number;
+  handleDelete: (selectedItems: Set<SupplierModel>, numberPage: number) => void;
 }
 
 type Order = 'asc' | 'desc';
@@ -24,11 +26,14 @@ interface SortConfig<T> {
   direction: Order | undefined;
 }
 
-const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTableProps<T>) => {
+const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDelete }: DataTableProps<T>) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
     key: undefined,
     direction: undefined,
   });
+
+  const router = useRouter();
+  
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
   // const router = useRouter();
@@ -125,13 +130,34 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
     setSelectedCount(0);
   };
 
-  const handleDelete = async () => {
-    switch (tableName) {
+  // const handleDelete = async () => {
+  //   switch (tableName) {
+  //     case "Suppliers":
+  //       DeleteSuppliersAsync(selectedItems as Set<SupplierModel>);
+  //       const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(numberPage);
+  //       console.log(countItemsAll);
+  //       data = suppliers as T[];
+  //       break;
+
+  //     case "Products":
+  //       DeleteProductAsync(selectedItems as Set<ProductModel>);
+  //       break;
+
+  //     case "Researches":
+  //       break;
+
+  //     case "Experiments":
+  //       break;
+
+  //     default:
+  //       break;
+  //   }
+  // };
+
+  const onDeleteClick = () => {
+      switch (tableName) {
       case "Suppliers":
-        DeleteSuppliersAsync(selectedItems as Set<SupplierModel>);
-        const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(numberPage);
-        console.log(countItemsAll);
-        data = suppliers as T[];
+        handleDelete(selectedItems as Set<SupplierModel>, numberPage);
         break;
 
       case "Products":
@@ -163,7 +189,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
                 selectedCount > 0 ? "" : "hidden"
               } items-center`}
             >
-              <i className="icon" onClick={handleDelete}>
+              <i className="icon" onClick={onDeleteClick}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -298,7 +324,17 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll }: DataTab
                       )
                   )}
                   <td>
-                    <img className="edit-img" src="/images/pencil.png" />
+                    <img
+                      className="edit-img"
+                      src="/images/pencil.png"
+                      onClick={() => {
+                        const queryString = new URLSearchParams({
+                          tableName: "Suppliers", // Or dynamically set based on your context
+                          item: JSON.stringify(item), // Pass the object as a string
+                        }).toString();
+                        router.push(`/updatePage?${queryString}`);
+                      }}
+                    />
                   </td>
                 </tr>
               ))}

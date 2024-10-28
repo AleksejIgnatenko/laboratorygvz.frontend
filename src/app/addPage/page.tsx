@@ -19,10 +19,6 @@ interface Option {
   name: string;
 }
 
-// export interface SupplierValidationErrorModel {
-//   [key: string]: string | undefined;
-// }
-
 const inputConfig: Record<string, InputConfig[]> = {
   Suppliers: [
     { name: "Name", placeholder: "Поставщик" },

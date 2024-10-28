@@ -2,6 +2,6 @@
 
 export interface SupplierModel {
   id: number;
-  supplierName: string;
-  manufacturer: string;
+  Name: string;
+  Manufacturer: string;
 }
