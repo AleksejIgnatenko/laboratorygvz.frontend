@@ -10,9 +10,22 @@ export default function Suppliers() {
   const [data, setData] = useState<SupplierModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
 
-  const handleDelete = async (selectedItems: Set<SupplierModel>, numberPage: number) => {
+  const handleDelete = async (
+    selectedItems: Set<SupplierModel>,
+    numberPage: number
+  ) => {
     await DeleteSuppliersAsync(selectedItems);
-    const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(numberPage);
+    const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(
+      numberPage
+    );
+    setData(suppliers);
+    setCount(countItemsAll);
+  };
+
+  const handleGet = async (numberPage: number) => {
+    const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(
+      numberPage
+    );
     setData(suppliers);
     setCount(countItemsAll);
   };
@@ -53,6 +66,7 @@ export default function Suppliers() {
         tableName="Suppliers"
         countItemsAll={countItemsAll}
         handleDelete={handleDelete}
+        handleGet={handleGet}
       />
     </div>
   );

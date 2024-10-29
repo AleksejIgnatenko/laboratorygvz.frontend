@@ -1,3 +1,4 @@
+import { SupplierErrorMapper } from "@/Mappers/SupplierMappers/SupplierErrorMapper";
 import { AddSupplierModel } from "@/Models/SupplierModels/AddSupplierModel";
 
 export const AddSupplierAsync = async (supplier: AddSupplierModel) => {
@@ -14,15 +15,8 @@ export const AddSupplierAsync = async (supplier: AddSupplierModel) => {
       return ["Поставщик добавлен", 200];
     } else if (response.status === 400) {
       const errors = await response.json();
-      console.log(errors.error);
-      const mappedErrors: Record<string, string> = {};
 
-      if (errors.error.SupplierName) {
-        mappedErrors.supplierName = errors.error.SupplierName;
-      }
-      if (errors.error.Manufacturer) {
-        mappedErrors.manufacturer = errors.error.Manufacturer;
-      }
+      const mappedErrors = SupplierErrorMapper(errors.error);
 
       return [mappedErrors, 400];
     } else if (response.status === 409) {

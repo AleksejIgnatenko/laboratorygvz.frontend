@@ -66,7 +66,7 @@ function UpdatePageContent() {
     useState<SupplierValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [image, setImg] = useState<string>();
 
   useEffect(() => {
@@ -75,7 +75,6 @@ function UpdatePageContent() {
 
     setTableName(tableNameParam || "");
     const parsedItem = itemString ? JSON.parse(itemString) : null;
-    console.log(parsedItem);
     setItem(parsedItem);
   }, [searchParams]);
 
@@ -179,25 +178,33 @@ function UpdatePageContent() {
       case "Suppliers":
         if (item !== null) {
           const supplierItem = item as SupplierModel;
-          if (supplierItem.id) {
-            const updateItem = {
-              id: supplierItem.id,
-              ...formData,
-            };
-            const result = await UpdateSupplierAsync(updateItem as SupplierModel);
 
-            const [response, statusCode] = result;
+          const updateItem: SupplierModel = Object.keys(supplierItem).reduce(
+            (acc, key) => {
+              acc[key as keyof SupplierModel] =
+                formData[key] !== undefined && formData[key] !== ""
+                  ? formData[key]
+                  : supplierItem[key as keyof SupplierModel];
+              return acc;
+            },
+            { id: supplierItem.id, supplierName: "", manufacturer: "" }
+          );
 
-            if (statusCode === 200) {
-              setSuccessMessage(response);
-              setErrors("");
-            } else if (statusCode === 400) {
-              setSuccessMessage("");
-              setSupplierErrors(response);
-            } else if (statusCode === 409) {
-              setSuccessMessage("");
-              setErrors(response);
-            }
+          const result = await UpdateSupplierAsync(updateItem);
+          const [response, statusCode] = result;
+
+          if (statusCode === 200) {
+            setSuccessMessage(response);
+            setSupplierErrors({});
+            setErrors("");
+          } else if (statusCode === 400) {
+            setSuccessMessage("");
+            setSupplierErrors(response);
+            setErrors("");
+          } else if (statusCode === 409) {
+            setSuccessMessage("");
+            setSupplierErrors({});
+            setErrors(response);
           }
         }
         break;
@@ -259,8 +266,8 @@ function UpdatePageContent() {
                         placeholder={
                           item ? item[input.name] : input.placeholder
                         }
-                        onChange={handleInputChange} // Обработчик изменения
-                        required
+                        onChange={handleInputChange}
+                        // required
                       />
                     </div>
                   )}

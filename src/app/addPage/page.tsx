@@ -171,18 +171,21 @@ function AddPageContent() {
         const [response, statusCode] = result;
         if (statusCode === 200) {
           setSuccessMessage(response);
+          setSupplierErrors({});
           setErrors("");
-              // setFormData({
-              //   Name: "",
-              //   Manufacturer: "",
-              // });
-              // // setFormData({});
-              // inputConfig.Suppliers.map((input) => [input.name, ""]);
+          // setFormData({
+          //   Name: "",
+          //   Manufacturer: "",
+          // });
+          // setFormData({});
+          // inputConfig.Suppliers.map((input) => [input.name, ""]);
         } else if (statusCode === 400) {
           setSuccessMessage("");
           setSupplierErrors(response);
+          setErrors("");
         } else if (statusCode === 409) {
           setSuccessMessage("");
+          setSupplierErrors({});
           setErrors(response);
         }
         break;

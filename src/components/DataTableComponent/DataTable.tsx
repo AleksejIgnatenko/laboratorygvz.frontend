@@ -16,7 +16,13 @@ interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
   countItemsAll: number;
-  handleDelete?: (selectedItems: Set<SupplierModel>, numberPage: number) => void;
+  handleDelete?: (
+    selectedItems: Set<SupplierModel>,
+    numberPage: number
+  ) => void;
+  handleGet?: (
+    numberPage: number
+  ) => void;
 }
 
 type Order = 'asc' | 'desc';
@@ -26,7 +32,7 @@ interface SortConfig<T> {
   direction: Order | undefined;
 }
 
-const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDelete }: DataTableProps<T>) => {
+const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDelete, handleGet }: DataTableProps<T>) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
     key: undefined,
     direction: undefined,
@@ -72,7 +78,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   }
 
   const itemsPerPage = 20;
-  const numberPage = 0;
+  let numberPage = 0;
   const maxPageNumber = Math.ceil(countItemsAll / itemsPerPage);
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
@@ -100,19 +106,31 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
     setSortConfig({ key, direction });
   };
 
-  const decrementValue = () => {
-    const inputPageNumber = document.getElementById(
-      "inputPageNumber"
-    ) as HTMLInputElement;
-    inputPageNumber.stepDown();
-  };
+const decrementValue = () => {
+  const inputPageNumber = document.getElementById(
+    "inputPageNumber"
+  ) as HTMLInputElement;
+  inputPageNumber.stepDown();
+  numberPage = parseInt(inputPageNumber.value, 10) -1;
+  console.log(numberPage);
 
-  const incrementValue = () => {
-    const inputPageNumber = document.getElementById(
-      "inputPageNumber"
-    ) as HTMLInputElement;
-    inputPageNumber.stepUp();
-  };
+  if (handleGet) {
+    handleGet(numberPage);
+  }
+};
+
+const incrementValue = () => {
+  const inputPageNumber = document.getElementById(
+    "inputPageNumber"
+  ) as HTMLInputElement;
+  inputPageNumber.stepUp();
+  numberPage = parseInt(inputPageNumber.value, 10) -1;
+  console.log(numberPage);
+
+  if (handleGet) {
+    handleGet(numberPage);
+  }
+};
 
   const handleCheckboxChange = (item: T) => {
     const newSelectedItems = new Set(selectedItems);
