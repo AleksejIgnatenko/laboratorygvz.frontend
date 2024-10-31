@@ -7,11 +7,15 @@ import { AddSupplierAsync } from "@/services/SupplierServices/AddSupplierAsync";
 import "./style.css";
 import { AddSupplierModel } from "@/Models/SupplierModels/AddSupplierModel";
 import { SupplierValidationErrorModel } from "@/Models/SupplierModels/SupplierValidationErrorModel";
+import { AddManufacturerModel } from "@/Models/ManufactureModels/AddManufacturerModel";
+import { AddManufacturerAsync } from "@/services/ManufacturerServices/AddManufacturerAsync";
+import { ManufacturerValidationErrorModel } from "@/Models/ManufactureModels/ManufacturerValidationErrorModel";
 
 interface InputConfig {
   name: string;
   placeholder: string;
-  isSelect?: boolean; // Make isSelect optional
+  isSelect?: boolean;
+  isCheckbox?: boolean;
 }
 
 interface Option {
@@ -20,12 +24,17 @@ interface Option {
 }
 
 const inputConfig: Record<string, InputConfig[]> = {
+  Manufacturers: [
+    { name: "manufacturerName", placeholder: "Производитель" },
+  ],
+
   Suppliers: [
     { name: "supplierName", placeholder: "Поставщик" },
-    { name: "manufacturer", placeholder: "Производитель" },
+    { name: "manufacturer", placeholder: "Производитель", isCheckbox: true },
   ],
+
   Products: [
-    { name: "dateOfReceipt", placeholder: "Дата получения" },
+    { name: "dateOfReceipt", placeholder: "Дата получения", },
     { name: "productName", placeholder: "Название продукта" },
     { name: "supplierId", placeholder: "Поставщик", isSelect: true },
     { name: "batchSize", placeholder: "Размер партии" },
@@ -57,6 +66,11 @@ function AddPageContent() {
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errors, setErrors] = useState<string>();
 
+  const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([]);
+
+  const [manufacturerErrors, setManufacturerErrors] =
+    useState<ManufacturerValidationErrorModel>({});
+
   const [supplierErrors, setSupplierErrors] =
     useState<SupplierValidationErrorModel>({});
 
@@ -68,8 +82,20 @@ function AddPageContent() {
   useEffect(() => {
     const fetchGetOptions = async () => {
       switch (tableName) {
+        case "Suppliers":
+          const supplierOptions: Option[] = [
+            { id: "1", name: "Manufacturer A" },
+            { id: "2", name: "Manufacturer B" },
+            { id: "3", name: "Manufacturer C" },
+            { id: "4", name: "Manufacturer D" },
+            { id: "5", name: "Manufacturer E" },
+            { id: "6", name: "Manufacturer F" },
+            { id: "7", name: "Manufacturer G" }
+          ];
+          setOptions(supplierOptions);
+          break;
+
         case "Products":
-          console.log("Products");
           const productOptions: Option[] = [
             { id: "1", name: "Provider A" },
             { id: "2", name: "Provider B" },
@@ -78,11 +104,9 @@ function AddPageContent() {
             { id: "5", name: "Provider E" },
           ];
           setOptions(productOptions);
-          // Call method to fetch providers
           break;
 
         case "Researches":
-          console.log("Researches");
           const researchOptions: Option[] = [
             { id: "1", name: "Product A" },
             { id: "2", name: "Product B" },
@@ -95,18 +119,19 @@ function AddPageContent() {
           break;
 
         case "Experiments":
-          console.log("Experiments");
-          // Call method to fetch studies and users
           break;
 
         default:
-          console.log("Unknown table name");
           break;
       }
     };
 
     const setImages = async () => {
       switch (tableName) {
+        case "Manufacturers":
+          setImg("factory");
+          break;
+
         case "Suppliers":
           setImg("supplier");
           break;
@@ -163,15 +188,28 @@ function AddPageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleInputCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, checked } = event.target;
+
+    if (checked) {
+      setSelectedCheckbox((prev) => [...prev, id]);
+    } else {
+      setSelectedCheckbox((prev) => prev.filter((supplierId) => supplierId !== id));
+    }
+
+    console.log(id);
+  };
+
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     switch (tableName) {
-      case "Suppliers":
-        const result = await AddSupplierAsync(formData as AddSupplierModel);
+      case "Manufacturers":
+        const result = await AddManufacturerAsync(formData as AddManufacturerModel);
         const [response, statusCode] = result;
         if (statusCode === 200) {
           setSuccessMessage(response);
-          setSupplierErrors({});
+          setManufacturerErrors({});
           setErrors("");
           // setFormData({
           //   Name: "",
@@ -181,12 +219,37 @@ function AddPageContent() {
           // inputConfig.Suppliers.map((input) => [input.name, ""]);
         } else if (statusCode === 400) {
           setSuccessMessage("");
-          setSupplierErrors(response);
+          setManufacturerErrors(response);
           setErrors("");
         } else if (statusCode === 409) {
           setSuccessMessage("");
-          setSupplierErrors({});
+          setManufacturerErrors({});
           setErrors(response);
+        }
+        break;
+
+      case "Suppliers":
+        console.log(formData);
+        const supplierResult = await AddSupplierAsync(formData as AddSupplierModel);
+        const [supplierResponse, supplierStatusCode] = supplierResult;
+        if (supplierStatusCode === 200) {
+          setSuccessMessage(supplierResponse);
+          setSupplierErrors({});
+          setErrors("");
+          // setFormData({
+          //   Name: "",
+          //   Manufacturer: "",
+          // });
+          // setFormData({});
+          // inputConfig.Suppliers.map((input) => [input.name, ""]);
+        } else if (supplierStatusCode === 400) {
+          setSuccessMessage("");
+          setSupplierErrors(supplierResponse);
+          setErrors("");
+        } else if (supplierStatusCode === 409) {
+          setSuccessMessage("");
+          setSupplierErrors({});
+          setErrors(supplierResponse);
         }
         break;
 
@@ -235,6 +298,19 @@ function AddPageContent() {
                         ))}
                       </select>
                     </div>
+                  ) : input.isCheckbox ? (
+                    <div className="checkbox-container">
+                      {options.map((option) => (
+                        <label key={option.id}>
+                          <input
+                            type="checkbox"
+                            id={option.id}
+                            onChange={handleInputCheckboxChange}
+                          />
+                          {option.name}
+                        </label>
+                      ))}
+                    </div>
                   ) : (
                     <div>
                       <input
@@ -248,6 +324,13 @@ function AddPageContent() {
                     </div>
                   )}
 
+                  {tableName === "Manufacturers" && manufacturerErrors[input.name] && (
+                    <div>
+                      <span className="error-message">
+                        {manufacturerErrors[input.name]}
+                      </span>
+                    </div>
+                  )}
                   {tableName === "Suppliers" && supplierErrors[input.name] && (
                     <div>
                       <span className="error-message">

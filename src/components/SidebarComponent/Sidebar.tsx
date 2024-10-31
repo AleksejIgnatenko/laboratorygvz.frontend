@@ -12,12 +12,13 @@ export default function Sidebar() {
   const router = useRouter();
 
   const sidebarItems = [
-    { link: "/", icon: "bx bx-home-alt-2", name: "Home", tooltip: "Home" },
-    { link: "/users", icon: "bx bx-user", name: "Users", tooltip: "Users" },
-    { link: "/researches", icon: "bx bx-book-content", name: "Research", tooltip: "Researches" },
+    { link: "/", icon: "bx bx-home-alt-2", name: "Домашняя", tooltip: "Домашняя" },
+    { link: "/users", icon: "bx bx-user", name: "Пользователи", tooltip: "Пользователи" },
+    { link: "/researches", icon: "bx bx-book-content", name: "Иследования", tooltip: "Иследования" },
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
-    { link: "/products", icon: "bx bx-package", name: "Products", tooltip: "Products" },
-    { link: "/suppliers", icon: "bx bx-car", name: "Suppliers", tooltip: "Suppliers" },
+    { link: "/products", icon: "bx bx-package", name: "Продукты", tooltip: "Продукты" },
+    { link: "/suppliers", icon: "bx bx-car", name: "Поставщики", tooltip: "Поставщики" },
+    { link: "/manufacturers", icon: "bx bx-buildings", name: "Производители", tooltip: "Производители" },
   ];
 
   useEffect(() => {

@@ -10,14 +10,17 @@ export enum DataFieldsEnum {
   patronymic = "Отчество",
   email = "Почта",
 
+  //ManufacturerModel
+  manufacturerName = "Производитель",
+
   //SupplierModel
   supplierName = "Поставщик",
-  manufacturer = "Производитель",
 
   //ProductModel
+  productName = "Продукт",
+
+  //PartyModel
   dateOfReceipt = "Дата получения",
-  productName = "Название",
-  //providerId = "Поставщик",
   batchSize = "Размер партии",
   sampleSize = "Размер выборки",
   ttn = "ТТН",

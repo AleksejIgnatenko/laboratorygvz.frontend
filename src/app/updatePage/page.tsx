@@ -8,6 +8,9 @@ import "./style.css";
 import { SupplierValidationErrorModel } from "@/Models/SupplierModels/SupplierValidationErrorModel";
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 import { UpdateSupplierAsync } from "@/services/SupplierServices/UpdateSupplierAsync";
+import { ManufacturerValidationErrorModel } from "@/Models/ManufactureModels/ManufacturerValidationErrorModel";
+import { ManufacturerModel } from "@/Models/ManufactureModels/ManufacturerModel";
+import { UpdateManufacturerAsync } from "@/services/ManufacturerServices/UpdateManufacturerAsync";
 
 interface InputConfig {
   name: string;
@@ -21,11 +24,16 @@ interface Option {
 }
 
 const inputConfig: Record<string, InputConfig[]> = {
+  Manufacturers: [
+    { name: "id", placeholder: "" },
+    { name: "manufacturerName", placeholder: "Производитель" },
+  ],
+  
   Suppliers: [
     { name: "id", placeholder: "" },
     { name: "supplierName", placeholder: "Поставщик" },
-    { name: "manufacturer", placeholder: "Производитель" },
   ],
+
   Products: [
     { name: "dateOfReceipt", placeholder: "Дата получения" },
     { name: "productName", placeholder: "Название продукта" },
@@ -61,6 +69,9 @@ function UpdatePageContent() {
 
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errors, setErrors] = useState<string>();
+
+  const [manufacturerErrors, setManufacturerErrors] =
+    useState<ManufacturerValidationErrorModel>({});
 
   const [supplierErrors, setSupplierErrors] =
     useState<SupplierValidationErrorModel>({});
@@ -116,6 +127,10 @@ function UpdatePageContent() {
 
     const setImages = async () => {
       switch (tableName) {
+        case "Manufacturers":
+          setImg("factory");
+          break;
+          
         case "Suppliers":
           setImg("supplier");
           break;
@@ -175,6 +190,40 @@ function UpdatePageContent() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     switch (tableName) {
+      case "Manufacturers":
+        if (item !== null) {
+          const manufacturerItem = item as ManufacturerModel;
+
+          const updateItem: ManufacturerModel = Object.keys(manufacturerItem).reduce(
+            (acc, key) => {
+              acc[key as keyof ManufacturerModel] =
+                formData[key] !== undefined && formData[key] !== ""
+                  ? formData[key]
+                  : manufacturerItem[key as keyof ManufacturerModel];
+              return acc;
+            },
+            { id: manufacturerItem.id, manufacturerName: ""}
+          );
+
+          const result = await UpdateManufacturerAsync(updateItem);
+          const [response, statusCode] = result;
+
+          if (statusCode === 200) {
+            setSuccessMessage(response);
+            setManufacturerErrors({});
+            setErrors("");
+          } else if (statusCode === 400) {
+            setSuccessMessage("");
+            setManufacturerErrors(response);
+            setErrors("");
+          } else if (statusCode === 409) {
+            setSuccessMessage("");
+            setManufacturerErrors({});
+            setErrors(response);
+          }
+        }
+        break;
+
       case "Suppliers":
         if (item !== null) {
           const supplierItem = item as SupplierModel;

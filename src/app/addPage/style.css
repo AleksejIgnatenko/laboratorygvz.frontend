@@ -83,12 +83,30 @@
 }
 
 .form-group label {
-	position: absolute;
+	/* position: absolute; */
 	left: 10px;
 	top: 55%;
 	transform: translateY(-50%);
-	pointer-events: none;
+	/* pointer-events: none; */
 }
+
+.checkbox-container {
+	display: flex;
+	flex-direction: column; 
+	margin: 10px 0;
+	max-height: 250px; 
+	overflow-y: auto; 
+  }
+  
+  .checkbox-container label {
+	cursor: pointer;
+  }
+  
+  .checkbox-container input[type="checkbox"] {
+	margin-right: 8px; 
+	margin-top: 25px;
+	width: 10% !important;
+  }
 
 .success-message {
 	/* margin-left: 15px; */

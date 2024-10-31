@@ -11,13 +11,14 @@ import { ProductModel } from "@/Models/UserModels/ProductModel";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 // import { useRouter } from "next/navigation";
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
+import { it } from "node:test";
 
 interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
   countItemsAll: number;
   handleDelete?: (
-    selectedItems: Set<SupplierModel>,
+    selectedItems: Set<T>,
     numberPage: number
   ) => void;
   handleGet?: (
@@ -133,6 +134,7 @@ const incrementValue = () => {
 };
 
   const handleCheckboxChange = (item: T) => {
+    console.log(item);
     const newSelectedItems = new Set(selectedItems);
     if (newSelectedItems.has(item)) {
       newSelectedItems.delete(item);
@@ -174,9 +176,17 @@ const incrementValue = () => {
 
   const onDeleteClick = () => {
       switch (tableName) {
-      case "Suppliers":
+      case "Manufacturers":
         if (handleDelete){
-          handleDelete(selectedItems as Set<SupplierModel>, numberPage);
+          handleDelete(selectedItems, numberPage);
+          setSelectedItems(new Set());
+          setSelectedCount(0);
+        }
+        break;
+      
+        case "Suppliers":
+        if (handleDelete){
+          handleDelete(selectedItems, numberPage);
           setSelectedItems(new Set());
           setSelectedCount(0);
         }
@@ -351,7 +361,7 @@ const incrementValue = () => {
                       src="/images/pencil.png"
                       onClick={() => {
                         const queryString = new URLSearchParams({
-                          tableName: "Suppliers",
+                          tableName: tableName,
                           item: JSON.stringify(item), 
                         }).toString();
                         router.push(`/updatePage?${queryString}`);

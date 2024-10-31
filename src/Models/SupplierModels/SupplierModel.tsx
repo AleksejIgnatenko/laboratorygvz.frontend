@@ -3,5 +3,4 @@
 export interface SupplierModel {
   id: string;
   supplierName: string; 
-  manufacturer: string; 
 }
