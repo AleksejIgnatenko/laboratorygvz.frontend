@@ -8,14 +8,14 @@ import "./style.css";
 import { SupplierValidationErrorModel } from "@/Models/SupplierModels/SupplierValidationErrorModel";
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 import { UpdateSupplierAsync } from "@/services/SupplierServices/UpdateSupplierAsync";
-import { ManufacturerValidationErrorModel } from "@/Models/ManufactureModels/ManufacturerValidationErrorModel";
-import { ManufacturerModel } from "@/Models/ManufactureModels/ManufacturerModel";
+import { ManufacturerValidationErrorModel } from "@/Models/ManufacturerModels/ManufacturerValidationErrorModel";
+import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 import { UpdateManufacturerAsync } from "@/services/ManufacturerServices/UpdateManufacturerAsync";
 
 interface InputConfig {
   name: string;
   placeholder: string;
-  isSelect?: boolean; // Make isSelect optional
+  isSelect?: boolean;
 }
 
 interface Option {
@@ -59,7 +59,7 @@ const inputConfig: Record<string, InputConfig[]> = {
 };
 
 function UpdatePageContent() {
-  const searchParams = useSearchParams(); // Use useSearchParams to get query params
+  const searchParams = useSearchParams();
   const [tableName, setTableName] = useState("");
   const [item, setItem] = useState(null);
   const router = useRouter();
@@ -320,6 +320,16 @@ function UpdatePageContent() {
                       />
                     </div>
                   )}
+
+                  {tableName === "Manufacturers" &&
+                    manufacturerErrors[input.name] &&
+                    input.name !== "id" && (
+                      <div>
+                        <span className="error-message">
+                          {manufacturerErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
 
                   {tableName === "Suppliers" &&
                     supplierErrors[input.name] &&

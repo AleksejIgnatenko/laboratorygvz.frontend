@@ -7,9 +7,11 @@ import { AddSupplierAsync } from "@/services/SupplierServices/AddSupplierAsync";
 import "./style.css";
 import { AddSupplierModel } from "@/Models/SupplierModels/AddSupplierModel";
 import { SupplierValidationErrorModel } from "@/Models/SupplierModels/SupplierValidationErrorModel";
-import { AddManufacturerModel } from "@/Models/ManufactureModels/AddManufacturerModel";
+import { AddManufacturerModel } from "@/Models/ManufacturerModels/AddManufacturerModel";
 import { AddManufacturerAsync } from "@/services/ManufacturerServices/AddManufacturerAsync";
-import { ManufacturerValidationErrorModel } from "@/Models/ManufactureModels/ManufacturerValidationErrorModel";
+import { ManufacturerValidationErrorModel } from "@/Models/ManufacturerModels/ManufacturerValidationErrorModel";
+import { GetManufacturersAsync } from "@/services/ManufacturerServices/GetManufacturersAsync";
+import { CreateSupplierRequest } from "@/Models/SupplierModels/CreateSupplierRequest";
 
 interface InputConfig {
   name: string;
@@ -70,7 +72,6 @@ function AddPageContent() {
 
   const [manufacturerErrors, setManufacturerErrors] =
     useState<ManufacturerValidationErrorModel>({});
-
   const [supplierErrors, setSupplierErrors] =
     useState<SupplierValidationErrorModel>({});
 
@@ -83,15 +84,11 @@ function AddPageContent() {
     const fetchGetOptions = async () => {
       switch (tableName) {
         case "Suppliers":
-          const supplierOptions: Option[] = [
-            { id: "1", name: "Manufacturer A" },
-            { id: "2", name: "Manufacturer B" },
-            { id: "3", name: "Manufacturer C" },
-            { id: "4", name: "Manufacturer D" },
-            { id: "5", name: "Manufacturer E" },
-            { id: "6", name: "Manufacturer F" },
-            { id: "7", name: "Manufacturer G" }
-          ];
+          const manufacturers = await GetManufacturersAsync();
+          const supplierOptions: Option[] = manufacturers.map(manufacturer => ({
+            id: manufacturer.id,
+            name: manufacturer.manufacturerName,
+          }));
           setOptions(supplierOptions);
           break;
 
@@ -196,8 +193,6 @@ function AddPageContent() {
     } else {
       setSelectedCheckbox((prev) => prev.filter((supplierId) => supplierId !== id));
     }
-
-    console.log(id);
   };
 
 
@@ -229,8 +224,12 @@ function AddPageContent() {
         break;
 
       case "Suppliers":
-        console.log(formData);
-        const supplierResult = await AddSupplierAsync(formData as AddSupplierModel);
+        const addSupplierModel = formData as AddSupplierModel;
+        const createSupplierRequest: CreateSupplierRequest = {
+          supplierName: addSupplierModel.supplierName,
+          manufacturersIds: selectedCheckbox,
+        };
+        const supplierResult = await AddSupplierAsync(createSupplierRequest);
         const [supplierResponse, supplierStatusCode] = supplierResult;
         if (supplierStatusCode === 200) {
           setSuccessMessage(supplierResponse);

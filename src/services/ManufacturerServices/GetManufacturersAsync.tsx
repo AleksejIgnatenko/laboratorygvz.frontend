@@ -1,11 +1,9 @@
 import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 
-export const GetManufacturersForPageAsync = async (
-  pageNumber: number
-): Promise<{ manufacturers: ManufacturerModel[]; countItemsAll: number }> => {
+export const GetManufacturersAsync = async (): Promise<ManufacturerModel[]> => {
   try {
     const response = await fetch(
-      `http://localhost:5002/api/Manufacturer?pageNumber=${pageNumber}`,
+      'http://localhost:5002/api/Manufacturer/getManufacturersAsync',
       {
         method: "GET",
         headers: {
@@ -16,15 +14,13 @@ export const GetManufacturersForPageAsync = async (
 
     if (response.ok) {
       const responseData = await response.json();
-      const manufacturers: ManufacturerModel[] = responseData.manufacturers;
-      const countItemsAll: number = responseData.numberManufacturers;
-
-      return { manufacturers, countItemsAll };
+      const manufacturers: ManufacturerModel[] = responseData;
+      return manufacturers;
     } else {
       console.error("Failed to fetch suppliers:", response.status);
     }
   } catch (error) {
     console.error("Error fetching:", error);
   }
-  return { manufacturers: [], countItemsAll: 0 };
+  return [];
 };

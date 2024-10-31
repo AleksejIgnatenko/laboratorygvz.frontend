@@ -1,11 +1,10 @@
 import { ManufacturerErrorMapper } from "@/Mappers/ManufacturerMapper/ManufacturerErrorMapper";
-import { ManufacturerModel } from "@/Models/ManufactureModels/ManufacturerModel";
+import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 
 export const UpdateManufacturerAsync = async (manufacturer: ManufacturerModel) => {
   try {
-    console.log(manufacturer);
     const response = await fetch(
-      `http://localhost:5002/api/Supplier/${manufacturer.id}`,
+      `http://localhost:5002/api/Manufacturer/${manufacturer.id}`,
       {
         method: "PUT",
         headers: {
@@ -16,7 +15,7 @@ export const UpdateManufacturerAsync = async (manufacturer: ManufacturerModel) =
     );
 
     if (response.ok) {
-      return ["Поставщик обновлен", 200];
+      return ["Производитель обновлен", 200];
     } else if (response.status === 400) {
       const errors = await response.json();
 

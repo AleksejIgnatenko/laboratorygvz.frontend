@@ -1,7 +1,7 @@
 import { SupplierErrorMapper } from "@/Mappers/SupplierMappers/SupplierErrorMapper";
-import { AddSupplierModel } from "@/Models/SupplierModels/AddSupplierModel";
+import { CreateSupplierRequest } from "@/Models/SupplierModels/CreateSupplierRequest";
 
-export const AddSupplierAsync = async (supplier: AddSupplierModel) => {
+export const AddSupplierAsync = async (supplier: CreateSupplierRequest) => {
   try {
     const response = await fetch("http://localhost:5004/api/Supplier", {
       method: "POST",

@@ -10,8 +10,6 @@ import { useRouter } from "next/navigation";
 import { ProductModel } from "@/Models/UserModels/ProductModel";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 // import { useRouter } from "next/navigation";
-import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
-import { it } from "node:test";
 
 interface DataTableProps<T extends object> {
   data: T[];
@@ -113,7 +111,6 @@ const decrementValue = () => {
   ) as HTMLInputElement;
   inputPageNumber.stepDown();
   numberPage = parseInt(inputPageNumber.value, 10) -1;
-  console.log(numberPage);
 
   if (handleGet) {
     handleGet(numberPage);
@@ -126,7 +123,6 @@ const incrementValue = () => {
   ) as HTMLInputElement;
   inputPageNumber.stepUp();
   numberPage = parseInt(inputPageNumber.value, 10) -1;
-  console.log(numberPage);
 
   if (handleGet) {
     handleGet(numberPage);
@@ -134,7 +130,6 @@ const incrementValue = () => {
 };
 
   const handleCheckboxChange = (item: T) => {
-    console.log(item);
     const newSelectedItems = new Set(selectedItems);
     if (newSelectedItems.has(item)) {
       newSelectedItems.delete(item);

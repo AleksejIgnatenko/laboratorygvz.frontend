@@ -14,7 +14,6 @@ export default function Suppliers() {
     selectedItems: Set<SupplierModel>,
     numberPage: number
   ) => {
-    console.log(selectedItems);
     await DeleteSuppliersAsync(selectedItems);
     const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(
       numberPage
@@ -31,21 +30,21 @@ export default function Suppliers() {
     setCount(countItemsAll);
   };
 
-  const supplierss: SupplierModel[] = [
-    {
-      id: "1",
-      supplierName: "Supplier 1"
-    },
-    {
-      id: "2",
-      supplierName: "Supplier 2",
-    },
-    {
-      id: "3",
-      supplierName: "Supplier 3",
-    },
-    // Добавьте другие поставщики по аналогии
-  ];
+  // const supplierss: SupplierModel[] = [
+  //   {
+  //     id: "1",
+  //     supplierName: "Supplier 1"
+  //   },
+  //   {
+  //     id: "2",
+  //     supplierName: "Supplier 2",
+  //   },
+  //   {
+  //     id: "3",
+  //     supplierName: "Supplier 3",
+  //   },
+  //   // Добавьте другие поставщики по аналогии
+  // ];
 
   useEffect(() => {
     const getSuppliers = async () => {
@@ -60,7 +59,7 @@ export default function Suppliers() {
   return (
     <div className="suppliers-page">
       <DataTable
-        data={supplierss}
+        data={data}
         tableName="Suppliers"
         countItemsAll={countItemsAll}
         handleDelete={handleDelete}

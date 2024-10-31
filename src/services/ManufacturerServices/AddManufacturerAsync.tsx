@@ -1,5 +1,5 @@
 import { ManufacturerErrorMapper } from "@/Mappers/ManufacturerMapper/ManufacturerErrorMapper";
-import { AddManufacturerModel } from "@/Models/ManufactureModels/AddManufacturerModel";
+import { AddManufacturerModel } from "@/Models/ManufacturerModels/AddManufacturerModel";
 
 export const AddManufacturerAsync = async (manufacturer: AddManufacturerModel) => {
   try {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ManufacturerModel } from "@/Models/ManufactureModels/ManufacturerModel";
+import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 import DataTable from "@/components/DataTableComponent/DataTable";
 import { GetManufacturersForPageAsync } from "@/services/ManufacturerServices/GetManufacturersForPageAsync";
 import { DeleteManufacturersAsync } from "@/services/ManufacturerServices/DeleteManufacturersAsync";
@@ -14,7 +14,6 @@ export default function Manufacturers() {
     selectedItems: Set<ManufacturerModel>,
     numberPage: number
   ) => {
-    console.log(selectedItems);
     await DeleteManufacturersAsync(selectedItems);
     const { manufacturers, countItemsAll } = await GetManufacturersForPageAsync(
       numberPage
@@ -31,20 +30,20 @@ export default function Manufacturers() {
     setCount(countItemsAll);
   };
 
-  const manufacturerss: ManufacturerModel[] = [
-    {
-      id: "1",
-      manufacturerName: "Manufacturer 1",
-    },
-    {
-      id: "2",
-      manufacturerName: "Manufacturer 2",
-    },
-    {
-      id: "3",
-      manufacturerName: "Manufacturer 3",
-    },
-  ];
+  // const manufacturerss: ManufacturerModel[] = [
+  //   {
+  //     id: "1",
+  //     manufacturerName: "Manufacturer 1",
+  //   },
+  //   {
+  //     id: "2",
+  //     manufacturerName: "Manufacturer 2",
+  //   },
+  //   {
+  //     id: "3",
+  //     manufacturerName: "Manufacturer 3",
+  //   },
+  // ];
 
   useEffect(() => {
     const getManufacturers = async () => {
@@ -59,7 +58,7 @@ export default function Manufacturers() {
   return (
     <div className="getManufacturers-page">
       <DataTable
-        data={manufacturerss}
+        data={data}
         tableName="Manufacturers"
         countItemsAll={countItemsAll}
         handleDelete={handleDelete}

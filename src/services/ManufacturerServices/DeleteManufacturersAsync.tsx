@@ -1,13 +1,13 @@
-import { ManufacturerModel } from "@/Models/ManufactureModels/ManufacturerModel";
+import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 
 export const DeleteManufacturersAsync = async (data: Set<ManufacturerModel>) => {
-  const productArray = Array.from(data);
+  const manufacturerArray = Array.from(data);
 
-  if (productArray.length > 0) {
+  if (manufacturerArray.length > 0) {
     try {
-      const ids = productArray.map((product) => product.id);
+      const ids = manufacturerArray.map((manufacturer) => manufacturer.id);
 
-      const response = await fetch("http://localhost:5004/api/Manufacturer", {
+      const response = await fetch("http://localhost:5002/api/Manufacturer", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
