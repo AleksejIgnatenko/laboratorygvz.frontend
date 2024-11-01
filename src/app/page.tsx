@@ -94,7 +94,7 @@ export default function Home() {
                 микроорганизмы и материалы, играя важную роль в научных
                 исследованиях и образовательных процессах.
               </div>
-              <div className="specifications">
+              {/* <div className="specifications">
                 <div>
                   <p>Used Time</p>
                   <p>6 hours</p>
@@ -115,7 +115,7 @@ export default function Home() {
                   <p>Controlled</p>
                   <p>Touch</p>
                 </div>
-              </div>
+              </div> */}
               {/* <div className="checkout">
               <button>ADD TO CART</button>
               <button>CHECKOUT</button>
@@ -153,7 +153,7 @@ export default function Home() {
                 и медицинских лабораториях для проведения экспериментов,
                 хранения реагентов и образцов.
               </div>
-              <div className="specifications">
+              {/* <div className="specifications">
                 <div>
                   <p>Used Time</p>
                   <p>6 hours</p>
@@ -174,7 +174,7 @@ export default function Home() {
                   <p>Controlled</p>
                   <p>Touch</p>
                 </div>
-              </div>
+              </div> */}
               {/* <div className="checkout">
               <button>ADD TO CART</button>
               <button>CHECKOUT</button>
@@ -215,7 +215,7 @@ export default function Home() {
                 критично для сохранения целостности и активности биологических и
                 химических образцов.
               </div>
-              <div className="specifications">
+              {/* <div className="specifications">
                 <div>
                   <p>Used Time</p>
                   <p>6 hours</p>
@@ -236,7 +236,7 @@ export default function Home() {
                   <p>Controlled</p>
                   <p>Touch</p>
                 </div>
-              </div>
+              </div> */}
               {/* <div className="checkout">
               <button>ADD TO CART</button>
               <button>CHECKOUT</button>
@@ -280,7 +280,7 @@ export default function Home() {
                 температуры, что является важным аспектом в лабораторных
                 исследованиях.
               </div>
-              <div className="specifications">
+              {/* <div className="specifications">
                 <div>
                   <p>Used Time</p>
                   <p>6 hours</p>
@@ -301,7 +301,7 @@ export default function Home() {
                   <p>Controlled</p>
                   <p>Touch</p>
                 </div>
-              </div>
+              </div> */}
               {/* <div className="checkout">
               <button>ADD TO CART</button>
               <button>CHECKOUT</button>
