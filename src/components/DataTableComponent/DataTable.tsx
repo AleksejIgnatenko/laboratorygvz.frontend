@@ -60,6 +60,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   if (!data || data.length === 0) {
     return (
       <div className="no-data-containet">
+        <h1 id="title" className="leading-none no-data-table-title">
+              {tableName}
+        </h1>
         <p className="no-data-message">Нет доступных данных</p>
         <Link className="addLink icon" href={`/addPage?tableName=${tableName}`}>
           <svg

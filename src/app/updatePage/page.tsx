@@ -11,16 +11,21 @@ import { UpdateSupplierAsync } from "@/services/SupplierServices/UpdateSupplierA
 import { ManufacturerValidationErrorModel } from "@/Models/ManufacturerModels/ManufacturerValidationErrorModel";
 import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 import { UpdateManufacturerAsync } from "@/services/ManufacturerServices/UpdateManufacturerAsync";
+import { GetManufacturersAsync } from "@/services/ManufacturerServices/GetManufacturersAsync";
+import { UpdateSupplierModel } from "@/Models/SupplierModels/UpdateSupplierModel";
+import { GetSupplierManufacturersAsync } from "@/services/SupplierServices/GetSupplierManufacturersAsync";
 
 interface InputConfig {
   name: string;
   placeholder: string;
   isSelect?: boolean;
+  isCheckbox?: boolean;
 }
 
 interface Option {
   id: string;
   name: string;
+  isChecked?: boolean;
 }
 
 const inputConfig: Record<string, InputConfig[]> = {
@@ -32,12 +37,13 @@ const inputConfig: Record<string, InputConfig[]> = {
   Suppliers: [
     { name: "id", placeholder: "" },
     { name: "supplierName", placeholder: "Поставщик" },
+    { name: "manufacturer", placeholder: "Производитель", isCheckbox: true },
   ],
 
   Products: [
     { name: "dateOfReceipt", placeholder: "Дата получения" },
     { name: "productName", placeholder: "Название продукта" },
-    { name: "supplierId", placeholder: "Поставщик", isSelect: true },
+    { name: "suppliers", placeholder: "Поставщики", isSelect: true },
     { name: "batchSize", placeholder: "Размер партии" },
     { name: "sampleSize", placeholder: "Размер выборки" },
     { name: "ttn", placeholder: "ТТН" },
@@ -70,6 +76,8 @@ function UpdatePageContent() {
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errors, setErrors] = useState<string>();
 
+  const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([]);
+
   const [manufacturerErrors, setManufacturerErrors] =
     useState<ManufacturerValidationErrorModel>({});
 
@@ -92,6 +100,29 @@ function UpdatePageContent() {
   useEffect(() => {
     const fetchGetOptions = async () => {
       switch (tableName) {
+        case "Suppliers":
+          if (item !== null) {
+            const supplierItem = item as SupplierModel;
+            
+            const manufacturers = await GetManufacturersAsync();
+            const supplierOptions: Option[] = manufacturers.map(manufacturer => ({
+              id: manufacturer.id,
+              name: manufacturer.manufacturerName,
+              isChecked: false,
+            }));
+
+            const supplierManufacturers = await GetSupplierManufacturersAsync(supplierItem.id);
+            const supplierManufacturerIds = supplierManufacturers.map(manufacturer => manufacturer.id);
+
+            const optionsWithCheckboxState = supplierOptions.map(option => ({
+              ...option,
+              isChecked: supplierManufacturerIds.includes(option.id),
+            }));
+        
+            setOptions(optionsWithCheckboxState);
+          }
+          break;
+
         case "Products":
           const productOptions: Option[] = [
             { id: "1", name: "Provider A" },
@@ -187,6 +218,16 @@ function UpdatePageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value })); // Обновляем состояние
   };
 
+  const handleInputCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, checked } = event.target;
+
+    if (checked) {
+      setSelectedCheckbox((prev) => [...prev, id]);
+    } else {
+      setSelectedCheckbox((prev) => prev.filter((supplierId) => supplierId !== id));
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     switch (tableName) {
@@ -239,7 +280,13 @@ function UpdatePageContent() {
             { id: supplierItem.id, supplierName: "", manufacturer: "" }
           );
 
-          const result = await UpdateSupplierAsync(updateItem);
+          const updateSupplierModel: UpdateSupplierModel = {
+            id: updateItem.id,
+            supplierName: updateItem.supplierName,
+            manufacturersIds: selectedCheckbox, 
+          }
+
+          const result = await UpdateSupplierAsync(updateSupplierModel);
           const [response, statusCode] = result;
 
           if (statusCode === 200) {
@@ -306,6 +353,20 @@ function UpdatePageContent() {
                         ))}
                       </select>
                     </div>
+                  ) : input.isCheckbox ? (
+                      <div className="checkbox-container">
+                        {options.map((option) => (
+                          <label key={option.id}>
+                            <input
+                              type="checkbox"
+                              id={option.id}
+                              checked={option.isChecked} // Устанавливаем состояние чекбокса
+                              onChange={handleInputCheckboxChange}
+                            />
+                            {option.name}
+                          </label>
+                        ))}
+                      </div>
                   ) : (
                     <div>
                       <input

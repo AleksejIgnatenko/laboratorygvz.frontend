@@ -1,7 +1,7 @@
 import { SupplierErrorMapper } from "@/Mappers/SupplierMappers/SupplierErrorMapper";
-import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
+import { UpdateSupplierModel } from "@/Models/SupplierModels/UpdateSupplierModel";
 
-export const UpdateSupplierAsync = async (supplier: SupplierModel) => {
+export const UpdateSupplierAsync = async (supplier: UpdateSupplierModel) => {
   try {
     console.log(supplier);
     const response = await fetch(
