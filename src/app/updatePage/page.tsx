@@ -33,7 +33,7 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "id", placeholder: "" },
     { name: "manufacturerName", placeholder: "Производитель" },
   ],
-  
+
   Suppliers: [
     { name: "id", placeholder: "" },
     { name: "supplierName", placeholder: "Поставщик" },
@@ -103,22 +103,27 @@ function UpdatePageContent() {
         case "Suppliers":
           if (item !== null) {
             const supplierItem = item as SupplierModel;
-            
+
             const manufacturers = await GetManufacturersAsync();
-            const supplierOptions: Option[] = manufacturers.map(manufacturer => ({
-              id: manufacturer.id,
-              name: manufacturer.manufacturerName,
-              isChecked: false,
-            }));
 
-            const supplierManufacturers = await GetSupplierManufacturersAsync(supplierItem.id);
-            const supplierManufacturerIds = supplierManufacturers.map(manufacturer => manufacturer.id);
+            const supplierManufacturers = await GetSupplierManufacturersAsync(
+              supplierItem.id
+            );
 
-            const optionsWithCheckboxState = supplierOptions.map(option => ({
-              ...option,
-              isChecked: supplierManufacturerIds.includes(option.id),
-            }));
-        
+            const supplierManufacturerIds = supplierManufacturers.map(
+              (manufacturer) => manufacturer.id
+            );
+
+            setSelectedCheckbox(supplierManufacturerIds);
+
+            const optionsWithCheckboxState = manufacturers.map(
+              (manufacturer) => ({
+                id: manufacturer.id,
+                name: manufacturer.manufacturerName,
+                isChecked: supplierManufacturerIds.includes(manufacturer.id), 
+              })
+            );
+
             setOptions(optionsWithCheckboxState);
           }
           break;
@@ -161,7 +166,7 @@ function UpdatePageContent() {
         case "Manufacturers":
           setImg("factory");
           break;
-          
+
         case "Suppliers":
           setImg("supplier");
           break;
@@ -218,15 +223,28 @@ function UpdatePageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value })); // Обновляем состояние
   };
 
-  const handleInputCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, checked } = event.target;
+const handleInputCheckboxChange = (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const { id, checked } = event.target;
 
-    if (checked) {
-      setSelectedCheckbox((prev) => [...prev, id]);
-    } else {
-      setSelectedCheckbox((prev) => prev.filter((supplierId) => supplierId !== id));
-    }
-  };
+  setOptions((prevOptions) =>
+    prevOptions.map((option) => {
+      if (option.id === id) {
+        return { ...option, isChecked: checked };
+      }
+      return option; 
+    })
+  );
+
+  if (checked) {
+    setSelectedCheckbox((prev) => [...prev, id]);
+  } else {
+    setSelectedCheckbox((prev) =>
+      prev.filter((supplierId) => supplierId !== id)
+    );
+  }
+};
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -235,7 +253,9 @@ function UpdatePageContent() {
         if (item !== null) {
           const manufacturerItem = item as ManufacturerModel;
 
-          const updateItem: ManufacturerModel = Object.keys(manufacturerItem).reduce(
+          const updateItem: ManufacturerModel = Object.keys(
+            manufacturerItem
+          ).reduce(
             (acc, key) => {
               acc[key as keyof ManufacturerModel] =
                 formData[key] !== undefined && formData[key] !== ""
@@ -243,7 +263,7 @@ function UpdatePageContent() {
                   : manufacturerItem[key as keyof ManufacturerModel];
               return acc;
             },
-            { id: manufacturerItem.id, manufacturerName: ""}
+            { id: manufacturerItem.id, manufacturerName: "" }
           );
 
           const result = await UpdateManufacturerAsync(updateItem);
@@ -268,7 +288,6 @@ function UpdatePageContent() {
       case "Suppliers":
         if (item !== null) {
           const supplierItem = item as SupplierModel;
-
           const updateItem: SupplierModel = Object.keys(supplierItem).reduce(
             (acc, key) => {
               acc[key as keyof SupplierModel] =
@@ -277,14 +296,14 @@ function UpdatePageContent() {
                   : supplierItem[key as keyof SupplierModel];
               return acc;
             },
-            { id: supplierItem.id, supplierName: "", manufacturer: "" }
+            { id: supplierItem.id, supplierName: "",}
           );
 
           const updateSupplierModel: UpdateSupplierModel = {
             id: updateItem.id,
             supplierName: updateItem.supplierName,
-            manufacturersIds: selectedCheckbox, 
-          }
+            manufacturersIds: selectedCheckbox,
+          };
 
           const result = await UpdateSupplierAsync(updateSupplierModel);
           const [response, statusCode] = result;
@@ -354,19 +373,19 @@ function UpdatePageContent() {
                       </select>
                     </div>
                   ) : input.isCheckbox ? (
-                      <div className="checkbox-container">
-                        {options.map((option) => (
-                          <label key={option.id}>
-                            <input
-                              type="checkbox"
-                              id={option.id}
-                              checked={option.isChecked} // Устанавливаем состояние чекбокса
-                              onChange={handleInputCheckboxChange}
-                            />
-                            {option.name}
-                          </label>
-                        ))}
-                      </div>
+                    <div className="checkbox-container">
+                      {options.map((option) => (
+                        <label key={option.id}>
+                          <input
+                            type="checkbox"
+                            id={option.id}
+                            checked={option.isChecked}
+                            onChange={handleInputCheckboxChange}
+                          />
+                          {option.name}
+                        </label>
+                      ))}
+                    </div>
                   ) : (
                     <div>
                       <input

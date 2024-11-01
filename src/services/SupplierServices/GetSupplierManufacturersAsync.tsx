@@ -3,7 +3,7 @@ import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel
 export const GetSupplierManufacturersAsync = async (supplierId: string): Promise<ManufacturerModel[]> => {
   try {
     const response = await fetch(
-      `http://localhost:5002/api/Manufacturer/getSupplierManufacturers?supplierId=${supplierId}`,
+      `http://localhost:5004/api/Manufacturer/getSupplierManufacturers?supplierId=${supplierId}`,
       {
         method: "GET",
         headers: {
