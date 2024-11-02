@@ -8,8 +8,8 @@ import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsyn
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ProductModel } from "@/Models/UserModels/ProductModel";
+import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
-// import { useRouter } from "next/navigation";
 
 interface DataTableProps<T extends object> {
   data: T[];
@@ -334,6 +334,9 @@ const incrementValue = () => {
                       </th>
                     )
                 )}
+                <th>
+                  {tableName === "Suppliers" && <span>Производители</span>}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -353,6 +356,17 @@ const incrementValue = () => {
                         <td key={String(column)}>{String(item[column])}</td>
                       )
                   )}
+                  {tableName === "Suppliers" && (
+                    <td>
+                      <Link
+                        href={`/manufacturers?supplierId=${
+                          (item as SupplierModel).id
+                        }`}
+                      >
+                        Перейти к списку
+                      </Link>
+                    </td>
+                  )}
                   <td>
                     <img
                       className="edit-img"
@@ -360,7 +374,7 @@ const incrementValue = () => {
                       onClick={() => {
                         const queryString = new URLSearchParams({
                           tableName: tableName,
-                          item: JSON.stringify(item), 
+                          item: JSON.stringify(item),
                         }).toString();
                         router.push(`/updatePage?${queryString}`);
                       }}

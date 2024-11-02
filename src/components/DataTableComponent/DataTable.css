@@ -352,6 +352,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .edit-img {
   width: 24px;
   height: 24px;
+  right: 0;
 }
 
 .data-table tr.selected {
