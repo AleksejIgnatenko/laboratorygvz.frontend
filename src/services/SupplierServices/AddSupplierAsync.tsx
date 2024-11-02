@@ -12,7 +12,7 @@ export const AddSupplierAsync = async (supplier: CreateSupplierRequest) => {
     });
 
     if (response.ok) {
-      return ["Поставщик добавлен", 200];
+      return [`${supplier.supplierName} добавлен`, 200];
     } else if (response.status === 400) {
       const errors = await response.json();
 

@@ -78,6 +78,7 @@ function AddPageContent() {
   const [options, setOptions] = useState<Option[]>([]);
   const [formData, setFormData] = useState({});
   const [image, setImg] = useState<string>();
+  const [titleName, setTitleName] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -123,18 +124,21 @@ function AddPageContent() {
       }
     };
 
-    const setImages = async () => {
+    const setImagesTitles = async () => {
       switch (tableName) {
         case "Manufacturers":
           setImg("factory");
+          setTitleName("Добавление производителя");
           break;
 
         case "Suppliers":
           setImg("supplier");
+          setTitleName("Добавление поставщика");
           break;
 
         case "Products":
           setImg("apple");
+          setTitleName("Добавление продукта");
           break;
 
         case "Researches":
@@ -171,7 +175,7 @@ function AddPageContent() {
     // window.addEventListener("keydown", handleKeyDown);
 
     fetchGetOptions();
-    setImages();
+    setImagesTitles();
 
     // return () => {
     //   window.removeEventListener("keydown", handleKeyDown);
@@ -275,7 +279,7 @@ function AddPageContent() {
       <div className="add-container">
         <div className="add-content">
           <form className="add-form" onSubmit={handleSubmit}>
-            <h2 className="form-title">Add {tableName}</h2>
+            <h2 className="form-title">{titleName}</h2>
             <div className="add-form-container" id="add-form-container">
               {inputs.map((input, index) => (
                 <div className="form-group" key={index}>
@@ -347,7 +351,7 @@ function AddPageContent() {
                 id="signup"
                 className="form-submit"
               >
-                Add
+                Добавить
               </button>
             </div>
             <span className="success-message">{successMessage}</span>
@@ -360,7 +364,7 @@ function AddPageContent() {
               alt="Dynamic Image"
             />
             <button onClick={handleGoBack} className="back-button">
-              Go Back
+              Назад
             </button>
           </div>
         </div>

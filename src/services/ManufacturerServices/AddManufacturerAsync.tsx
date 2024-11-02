@@ -12,7 +12,7 @@ export const AddManufacturerAsync = async (manufacturer: AddManufacturerModel) =
     });
 
     if (response.ok) {
-      return ["Производитель добавлен", 200];
+      return [`${manufacturer.manufacturerName} добавлен`, 200];
     } else if (response.status === 400) {
       const errors = await response.json();
 

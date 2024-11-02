@@ -68,6 +68,7 @@ function UpdatePageContent() {
   const searchParams = useSearchParams();
   const [tableName, setTableName] = useState("");
   const [item, setItem] = useState(null);
+  const [titleName, setTitleName] = useState("");
   const router = useRouter();
 
   const inputs =
@@ -161,18 +162,21 @@ function UpdatePageContent() {
       }
     };
 
-    const setImages = async () => {
+    const setImagesTitles = async () => {
       switch (tableName) {
         case "Manufacturers":
           setImg("factory");
+          setTitleName("Редактирование производителя");
           break;
 
         case "Suppliers":
           setImg("supplier");
+          setTitleName("Редактирование поставщика");
           break;
 
         case "Products":
           setImg("apple");
+          setTitleName("Редактирование продукта");
           break;
 
         case "Researches":
@@ -209,7 +213,7 @@ function UpdatePageContent() {
     // window.addEventListener("keydown", handleKeyDown);
 
     fetchGetOptions();
-    setImages();
+    setImagesTitles();
 
     // return () => {
     //   window.removeEventListener("keydown", handleKeyDown);
@@ -350,7 +354,7 @@ const handleInputCheckboxChange = (
       <div className="update-container">
         <div className="update-content">
           <form className="update-form" onSubmit={handleSubmit}>
-            <h2 className="form-title">Update {tableName}</h2>
+            <h2 className="form-title">{titleName}</h2>
             <div className="update-form-container" id="update-form-container">
               {inputs.map((input, index) => (
                 <div className="form-group" key={index}>
@@ -430,7 +434,7 @@ const handleInputCheckboxChange = (
                 id="signup"
                 className="form-submit"
               >
-                Update
+                Обновить
               </button>
             </div>
             <span className="success-message">{successMessage}</span>
@@ -443,7 +447,7 @@ const handleInputCheckboxChange = (
               alt="Dynamic Image"
             />
             <button onClick={handleGoBack} className="back-button">
-              Go Back
+              Назад
             </button>
           </div>
         </div>

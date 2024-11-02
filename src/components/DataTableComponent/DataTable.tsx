@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./DataTable.css";
 import { DataFieldsEnum } from "../../Enums/DataFieldsEnum";
 import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
@@ -41,27 +41,44 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
+  const [titleName, setTitleName] = useState("");
   // const router = useRouter();
 
-  // useEffect(() => {
-  //   const handleKeyDown = (event: KeyboardEvent) => {
-  //     // Alt + A
-  //     if (event.altKey && (event.key.toLowerCase() === 'a') || event.key.toLowerCase() === 'ф') {
-  //       router.push(`/addPage?tableName=${tableName}`);
-  //     }
-  //   };
-  //   window.addEventListener('keydown', handleKeyDown);
+useEffect(() => {
+  const setTitles = async () => {
+    switch (tableName) {
+      case "Manufacturers":
+        setTitleName("Производители");
+        break;
 
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // }, []);
+      case "Suppliers":
+        setTitleName("Поставщики");
+        break;
+
+      case "Products":
+        setTitleName("Продукты");
+        break;
+
+      case "Researches":
+        break;
+
+      case "Experiments":
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  setTitles();
+
+}, [tableName]);
 
   if (!data || data.length === 0) {
     return (
       <div className="no-data-containet">
         <h1 id="title" className="leading-none no-data-table-title">
-              {tableName}
+            {titleName}
         </h1>
         <p className="no-data-message">Нет доступных данных</p>
         <Link className="addLink icon" href={`/addPage?tableName=${tableName}`}>
@@ -211,7 +228,7 @@ const incrementValue = () => {
         <section className="flex gap-2 items-center justify-between">
           <div className="header-container">
             <h1 id="title" className="leading-none data-table-title">
-              {tableName}
+              {titleName}
             </h1>
             <div
               id="bulkActions"
@@ -232,7 +249,7 @@ const incrementValue = () => {
               </i>
 
               <small id="labelItemsSelected">
-                {selectedCount} item{selectedCount !== 1 ? "s" : ""} selected
+                {selectedCount} элемент(а)(ов)
               </small>
 
               <i className="icon" onClick={handleDeselectAll}>
@@ -253,7 +270,7 @@ const incrementValue = () => {
             <input
               className="search-input"
               type="search"
-              placeholder="Search..."
+              placeholder="Поиск..."
             />
             <button className="button icon link">
               <svg
@@ -362,8 +379,9 @@ const incrementValue = () => {
                         href={`/manufacturers?supplierId=${
                           (item as SupplierModel).id
                         }`}
+                        className="data-table-link-style"
                       >
-                        Перейти к списку
+                        Список производителей
                       </Link>
                     </td>
                   )}
@@ -387,7 +405,7 @@ const incrementValue = () => {
 
           <section className="flex items-center justify-between margin-bottom-30">
             <small className="muted pagination-info">
-              1-20 / {countItemsAll} item(s)
+              1-20 / {countItemsAll} элемент(а)(ов)
             </small>
 
             <div className="flex gap-2 items-center">

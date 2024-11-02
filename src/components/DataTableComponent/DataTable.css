@@ -112,6 +112,11 @@
 /*
   links + buttons
 */
+.data-table-link-style {
+  color: #46dbf5 !important;
+  border-bottom: 1px solid #46dbf5 !important;
+  padding-bottom: 2px !important;
+}
 
 .data-table a.link {
   color: var(--color-primary);
@@ -336,7 +341,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .data-table tr:hover:not(.selected):not(.no-hover),
 .data-table tr.hover {
   background: var(--color-neutral-5);
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .column-header {
@@ -352,7 +357,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .edit-img {
   width: 24px;
   height: 24px;
-  right: 0;
+  cursor: pointer;
 }
 
 .data-table tr.selected {
