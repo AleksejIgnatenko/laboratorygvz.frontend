@@ -18,6 +18,7 @@ import { GetSuppliersAsync } from "@/services/SupplierServices/GetSuppliersAsync
 import { ProductModel } from "@/Models/ProductModels/ProductModel";
 import { UpdateProductModel } from "@/Models/ProductModels/UpdateProductModel";
 import { UpdateProductAsync } from "@/services/ProductServices/UpdateProductAsync";
+import { GetProductSuppliersAsync } from "@/services/ProductServices/GetProductSuppliersAsync";
 
 interface InputConfig {
   name: string;
@@ -45,17 +46,9 @@ const inputConfig: Record<string, InputConfig[]> = {
   ],
 
   Products: [
-    { name: "dateOfReceipt", placeholder: "Дата получения" },
+    { name: "id", placeholder: "" },
     { name: "productName", placeholder: "Название продукта" },
-    { name: "suppliers", placeholder: "Поставщики", isSelect: true },
-    { name: "batchSize", placeholder: "Размер партии" },
-    { name: "sampleSize", placeholder: "Размер выборки" },
-    { name: "ttn", placeholder: "ТТН" },
-    {
-      name: "documentOnQualityAndSafety",
-      placeholder: "Документ по качеству и безопасности",
-    },
-    { name: "testReport", placeholder: "Протокол испытаний" },
+    { name: "supplier", placeholder: "Поставщик(и):", isCheckbox: true },
   ],
   Researches: [
     { name: "researchName", placeholder: "Название исследования" },
@@ -134,13 +127,30 @@ function UpdatePageContent() {
           break;
 
           case "Products":
+            if (item !== null) {
+            const productItem = item as ProductModel;
+
             const suppliers = await GetSuppliersAsync();
-            const productOptions: Option[] = suppliers.map(supplier => ({
+
+            const productSuppliers = await GetProductSuppliersAsync(
+              productItem.id
+            );
+
+            const productSupplierIds = productSuppliers.map(
+              (supplier) => supplier.id
+            );
+
+            setSelectedCheckbox(productSupplierIds);
+
+            const optionsWithCheckboxState = suppliers.map((supplier) => ({
               id: supplier.id,
               name: supplier.supplierName,
-            }))
-            setOptions(productOptions);
-            break;
+              isChecked: productSupplierIds.includes(supplier.id),
+            }));
+
+            setOptions(optionsWithCheckboxState);
+          }
+          break;
 
         case "Researches":
           const researchOptions: Option[] = [

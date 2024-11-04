@@ -4,7 +4,7 @@ import { CreateProductRequest } from "@/Models/ProductModels/CreateProductReques
 
 export const AddProductAsync = async (product: CreateProductRequest) => {
   try {
-    const response = await fetch("http://localhost:5003/api/Supplier", {
+    const response = await fetch("http://localhost:5003/api/Product", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

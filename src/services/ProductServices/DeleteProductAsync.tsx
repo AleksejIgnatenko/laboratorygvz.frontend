@@ -7,7 +7,7 @@ export const DeleteProductAsync = async (data: Set<ProductModel>) => {
     try {
       const ids = productArray.map((product) => product.id);
 
-      const response = await fetch("http://localhost:5004/api/Product", {
+      const response = await fetch("http://localhost:5003/api/Product", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

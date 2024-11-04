@@ -206,8 +206,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
             </h1>
             <div
               id="bulkActions"
-              className={`bulk-actions ${selectedCount > 0 ? "" : "hidden"
-                } items-center`}
+              className={`bulk-actions ${
+                selectedCount > 0 ? "" : "hidden"
+              } items-center`}
             >
               <i className="icon" onClick={onDeleteClick}>
                 <svg
@@ -305,7 +306,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                           <span>
                             {
                               DataFieldsEnum[
-                              column as keyof typeof DataFieldsEnum
+                                column as keyof typeof DataFieldsEnum
                               ]
                             }
                           </span>
@@ -324,12 +325,23 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       </th>
                     )
                 )}
-                <th>
-                  {tableName === "Suppliers" && <span>Производители</span>}
-                </th>
-                <th>
-                  {tableName === "Suppliers" && <span>Продукты</span>}
-                </th>
+                {tableName === "Suppliers" && (
+                  <>
+                    <th>
+                      <span>Производители</span>
+                    </th>
+                    <th>
+                      <span>Продукты</span>
+                    </th>
+                  </>
+                )}
+                {tableName === "Products" && (
+                  <>
+                    <th>
+                      <span>Поставщики</span>
+                    </th>
+                  </>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -353,8 +365,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     <>
                       <td>
                         <Link
-                          href={`/manufacturers?supplierId=${(item as SupplierModel).id
-                            }`}
+                          href={`/manufacturers?supplierId=${
+                            (item as SupplierModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список производителей
@@ -362,8 +375,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       </td>
                       <td>
                         <Link
-                          href={`/products?supplierId=${(item as SupplierModel).id
-                            }`}
+                          href={`/products?supplierId=${
+                            (item as SupplierModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список продуктов
@@ -374,8 +388,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                   {tableName === "Products" && (
                     <td>
                       <Link
-                        href={`/suppliers?productId=${(item as ProductModel).id
-                          }`}
+                        href={`/suppliers?productId=${
+                          (item as ProductModel).id
+                        }`}
                         className="data-table-link-style"
                       >
                         Список поставщиков

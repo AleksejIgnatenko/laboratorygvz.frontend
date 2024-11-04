@@ -78,7 +78,7 @@ export default function Products() {
       <div>
         <DataTable
           data={data}
-          tableName="Product"
+          tableName="Products"
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
           handleGet={handleGet}

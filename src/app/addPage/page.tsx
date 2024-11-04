@@ -250,9 +250,6 @@ function AddPageContent() {
         break;
 
       case "Products":
-        break;
-
-      case "Researches":
         const addProductModel = formData as AddProductModel;
         const createProductRequest: CreateProductRequest = {
           productName: addProductModel.productName,
@@ -279,6 +276,9 @@ function AddPageContent() {
           setSupplierErrors({});
           setErrors(productResponse);
         }
+        break;
+
+      case "Researches":
         break;
 
       case "Experiments":

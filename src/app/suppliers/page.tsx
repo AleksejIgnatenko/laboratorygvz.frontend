@@ -77,7 +77,7 @@ export default function Suppliers() {
       <div>
         <DataTable
           data={data}
-          tableName="Supplier"
+          tableName="Suppliers"
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
           handleGet={handleGet}

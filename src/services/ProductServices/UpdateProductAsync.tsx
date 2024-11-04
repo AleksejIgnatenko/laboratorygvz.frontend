@@ -1,8 +1,8 @@
 import { ProductErrorMapper } from "@/Mappers/ProductMapper/ProductErrorMapper";
-import { ProductModel } from "@/Models/ProductModels/ProductModel";
+import { UpdateProductModel } from "@/Models/ProductModels/UpdateProductModel";
 
 
-export const UpdateProductAsync = async (product: ProductModel) => {
+export const UpdateProductAsync = async (product: UpdateProductModel) => {
   try {
     const response = await fetch(
       `http://localhost:5003/api/Product/${product.id}`,
@@ -28,7 +28,7 @@ export const UpdateProductAsync = async (product: ProductModel) => {
       return [errors.error, 409];
     }
   } catch (error) {
-    console.error("Error adding supplier:", error);
+    console.error("Error update supplier:", error);
   }
   return ["Не получилось добавить поставщика", null];
 };
