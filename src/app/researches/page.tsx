@@ -1,5 +1,5 @@
 import DataTable from "@/components/DataTableComponent/DataTable";
-import { ProductModel } from "@/Models/UserModels/ProductModel";
+import { ProductModel } from "@/Models/ProductModels/ProductModel";
 import "./style.css";
 
 export default function Researches() {

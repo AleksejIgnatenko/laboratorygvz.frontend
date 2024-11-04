@@ -1,26 +1,26 @@
-import { SupplierErrorMapper } from "@/Mappers/SupplierMappers/SupplierErrorMapper";
-import { UpdateSupplierModel } from "@/Models/SupplierModels/UpdateSupplierModel";
+import { ProductErrorMapper } from "@/Mappers/ProductMapper/ProductErrorMapper";
+import { ProductModel } from "@/Models/ProductModels/ProductModel";
 
-export const UpdateSupplierAsync = async (supplier: UpdateSupplierModel) => {
+
+export const UpdateProductAsync = async (product: ProductModel) => {
   try {
-    console.log(supplier);
     const response = await fetch(
-      `http://localhost:5004/api/Supplier/${supplier.id}`,
+      `http://localhost:5003/api/Product/${product.id}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(supplier),
+        body: JSON.stringify(product),
       }
     );
 
     if (response.ok) {
-      return ["Поставщик обновлен", 200];
+      return ["Продукт обновлен", 200];
     } else if (response.status === 400) {
       const errors = await response.json();
 
-      const mappedErrors = SupplierErrorMapper(errors.error);
+      const mappedErrors = ProductErrorMapper(errors.error);
 
       return [mappedErrors, 400];
     } else if (response.status === 409) {

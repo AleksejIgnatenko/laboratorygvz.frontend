@@ -14,6 +14,10 @@ import { UpdateManufacturerAsync } from "@/services/ManufacturerServices/UpdateM
 import { GetManufacturersAsync } from "@/services/ManufacturerServices/GetManufacturersAsync";
 import { UpdateSupplierModel } from "@/Models/SupplierModels/UpdateSupplierModel";
 import { GetSupplierManufacturersAsync } from "@/services/SupplierServices/GetSupplierManufacturersAsync";
+import { GetSuppliersAsync } from "@/services/SupplierServices/GetSuppliersAsync";
+import { ProductModel } from "@/Models/ProductModels/ProductModel";
+import { UpdateProductModel } from "@/Models/ProductModels/UpdateProductModel";
+import { UpdateProductAsync } from "@/services/ProductServices/UpdateProductAsync";
 
 interface InputConfig {
   name: string;
@@ -129,17 +133,14 @@ function UpdatePageContent() {
           }
           break;
 
-        case "Products":
-          const productOptions: Option[] = [
-            { id: "1", name: "Provider A" },
-            { id: "2", name: "Provider B" },
-            { id: "3", name: "Provider C" },
-            { id: "4", name: "Provider D" },
-            { id: "5", name: "Provider E" },
-          ];
-          setOptions(productOptions);
-          // Call method to fetch providers
-          break;
+          case "Products":
+            const suppliers = await GetSuppliersAsync();
+            const productOptions: Option[] = suppliers.map(supplier => ({
+              id: supplier.id,
+              name: supplier.supplierName,
+            }))
+            setOptions(productOptions);
+            break;
 
         case "Researches":
           const researchOptions: Option[] = [
@@ -329,7 +330,42 @@ const handleInputCheckboxChange = (
         break;
 
       case "Products":
-        // Добавьте логику для обработки продуктов
+        if (item !== null) {
+          const productItem = item as ProductModel;
+          const updateItem: ProductModel = Object.keys(productItem).reduce(
+            (acc, key) => {
+              acc[key as keyof ProductModel] =
+                formData[key] !== undefined && formData[key] !== ""
+                  ? formData[key]
+                  : productItem[key as keyof ProductModel];
+              return acc;
+            },
+            { id: productItem.id, productName: "",}
+          );
+
+          const updateProductModel: UpdateProductModel = {
+            id: updateItem.id,
+            productName: updateItem.productName,
+            suppliersIds: selectedCheckbox,
+          };
+
+          const result = await UpdateProductAsync(updateProductModel);
+          const [response, statusCode] = result;
+
+          if (statusCode === 200) {
+            setSuccessMessage(response);
+            setSupplierErrors({});
+            setErrors("");
+          } else if (statusCode === 400) {
+            setSuccessMessage("");
+            setSupplierErrors(response);
+            setErrors("");
+          } else if (statusCode === 409) {
+            setSuccessMessage("");
+            setSupplierErrors({});
+            setErrors(response);
+          }
+        }
         break;
 
       case "Researches":

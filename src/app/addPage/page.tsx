@@ -12,6 +12,10 @@ import { AddManufacturerAsync } from "@/services/ManufacturerServices/AddManufac
 import { ManufacturerValidationErrorModel } from "@/Models/ManufacturerModels/ManufacturerValidationErrorModel";
 import { GetManufacturersAsync } from "@/services/ManufacturerServices/GetManufacturersAsync";
 import { CreateSupplierRequest } from "@/Models/SupplierModels/CreateSupplierRequest";
+import { GetSuppliersAsync } from "@/services/SupplierServices/GetSuppliersAsync";
+import { AddProductModel } from "@/Models/ProductModels/AddProductModel";
+import { CreateProductRequest } from "@/Models/ProductModels/CreateProductRequest";
+import { AddProductAsync } from "@/services/ProductServices/AddProductAsync";
 
 interface InputConfig {
   name: string;
@@ -32,21 +36,12 @@ const inputConfig: Record<string, InputConfig[]> = {
 
   Suppliers: [
     { name: "supplierName", placeholder: "Поставщик" },
-    { name: "manufacturer", placeholder: "Производитель", isCheckbox: true },
+    { name: "manufacturer", placeholder: "Производитель(и)", isCheckbox: true },
   ],
 
   Products: [
-    { name: "dateOfReceipt", placeholder: "Дата получения", },
     { name: "productName", placeholder: "Название продукта" },
-    { name: "supplierId", placeholder: "Поставщик", isSelect: true },
-    { name: "batchSize", placeholder: "Размер партии" },
-    { name: "sampleSize", placeholder: "Размер выборки" },
-    { name: "ttn", placeholder: "ТТН" },
-    {
-      name: "documentOnQualityAndSafety",
-      placeholder: "Документ по качеству и безопасности",
-    },
-    { name: "testReport", placeholder: "Протокол испытаний" },
+    { name: "supplier", placeholder: "Поставщик(и):", isCheckbox: true }
   ],
   Researches: [
     { name: "researchName", placeholder: "Название исследования" },
@@ -94,13 +89,11 @@ function AddPageContent() {
           break;
 
         case "Products":
-          const productOptions: Option[] = [
-            { id: "1", name: "Provider A" },
-            { id: "2", name: "Provider B" },
-            { id: "3", name: "Provider C" },
-            { id: "4", name: "Provider D" },
-            { id: "5", name: "Provider E" },
-          ];
+          const suppliers = await GetSuppliersAsync();
+          const productOptions: Option[] = suppliers.map(supplier => ({
+            id: supplier.id,
+            name: supplier.supplierName,
+          }))
           setOptions(productOptions);
           break;
 
@@ -260,6 +253,32 @@ function AddPageContent() {
         break;
 
       case "Researches":
+        const addProductModel = formData as AddProductModel;
+        const createProductRequest: CreateProductRequest = {
+          productName: addProductModel.productName,
+          suppliersIds: selectedCheckbox,
+        };
+        const productResult = await AddProductAsync(createProductRequest);
+        const [productResponse, productStatusCode] = productResult;
+        if (productStatusCode === 200) {
+          setSuccessMessage(productResponse);
+          setSupplierErrors({});
+          setErrors("");
+          // setFormData({
+          //   Name: "",
+          //   Manufacturer: "",
+          // });
+          // setFormData({});
+          // inputConfig.Suppliers.map((input) => [input.name, ""]);
+        } else if (productStatusCode === 400) {
+          setSuccessMessage("");
+          setSupplierErrors(productResponse);
+          setErrors("");
+        } else if (productStatusCode === 409) {
+          setSuccessMessage("");
+          setSupplierErrors({});
+          setErrors(productResponse);
+        }
         break;
 
       case "Experiments":
@@ -302,18 +321,21 @@ function AddPageContent() {
                       </select>
                     </div>
                   ) : input.isCheckbox ? (
-                    <div className="checkbox-container">
-                      {options.map((option) => (
-                        <label key={option.id}>
-                          <input
-                            type="checkbox"
-                            id={option.id}
-                            onChange={handleInputCheckboxChange}
-                          />
-                          {option.name}
-                        </label>
-                      ))}
-                    </div>
+                      <div>
+                        <h2 className="checkbox-title">{input.placeholder}</h2>
+                        <div className="checkbox-container">
+                          {options.map((option) => (
+                            <label key={option.id}>
+                              <input
+                                type="checkbox"
+                                id={option.id}
+                                onChange={handleInputCheckboxChange}
+                              />
+                              {option.name}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
                   ) : (
                     <div>
                       <input

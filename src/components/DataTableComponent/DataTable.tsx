@@ -3,11 +3,10 @@
 import React, { useState, useEffect } from "react";
 import "./DataTable.css";
 import { DataFieldsEnum } from "../../Enums/DataFieldsEnum";
-import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
 // import { DeleteSuppliersAsync } from "@/services/SupplierServices/DeleteSuppliersAsync";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ProductModel } from "@/Models/UserModels/ProductModel";
+import { ProductModel } from "@/Models/ProductModels/ProductModel";
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 
@@ -38,47 +37,47 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   });
 
   const router = useRouter();
-  
+
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
   const [titleName, setTitleName] = useState("");
   // const router = useRouter();
 
-useEffect(() => {
-  const setTitles = async () => {
-    switch (tableName) {
-      case "Manufacturers":
-        setTitleName("Производители");
-        break;
+  useEffect(() => {
+    const setTitles = async () => {
+      switch (tableName) {
+        case "Manufacturers":
+          setTitleName("Производители");
+          break;
 
-      case "Suppliers":
-        setTitleName("Поставщики");
-        break;
+        case "Suppliers":
+          setTitleName("Поставщики");
+          break;
 
-      case "Products":
-        setTitleName("Продукты");
-        break;
+        case "Products":
+          setTitleName("Продукты");
+          break;
 
-      case "Researches":
-        break;
+        case "Researches":
+          break;
 
-      case "Experiments":
-        break;
+        case "Experiments":
+          break;
 
-      default:
-        break;
-    }
-  };
+        default:
+          break;
+      }
+    };
 
-  setTitles();
+    setTitles();
 
-}, [tableName]);
+  }, [tableName]);
 
   if (!data || data.length === 0) {
     return (
       <div className="no-data-containet">
         <h1 id="title" className="leading-none no-data-table-title">
-            {titleName}
+          {titleName}
         </h1>
         <p className="no-data-message">Нет доступных данных</p>
         <Link className="addLink icon" href={`/addPage?tableName=${tableName}`}>
@@ -125,29 +124,37 @@ useEffect(() => {
     setSortConfig({ key, direction });
   };
 
-const decrementValue = () => {
-  const inputPageNumber = document.getElementById(
-    "inputPageNumber"
-  ) as HTMLInputElement;
-  inputPageNumber.stepDown();
-  numberPage = parseInt(inputPageNumber.value, 10) -1;
+  const decrementValue = () => {
+    const inputPageNumber = document.getElementById(
+      "inputPageNumber"
+    ) as HTMLInputElement;
+    inputPageNumber.stepDown();
+    numberPage = parseInt(inputPageNumber.value, 10) - 1;
 
-  if (handleGet) {
-    handleGet(numberPage);
+    if (handleGet) {
+      handleGet(numberPage);
+    }
+  };
+
+  const incrementValue = () => {
+    const inputPageNumber = document.getElementById(
+      "inputPageNumber"
+    ) as HTMLInputElement;
+    inputPageNumber.stepUp();
+    numberPage = parseInt(inputPageNumber.value, 10) - 1;
+
+    if (handleGet) {
+      handleGet(numberPage);
+    }
+  };
+
+  const onDeleteClick = () => {
+    if (handleDelete) {
+      handleDelete(selectedItems, numberPage);
+      setSelectedItems(new Set());
+      setSelectedCount(0);
+    }
   }
-};
-
-const incrementValue = () => {
-  const inputPageNumber = document.getElementById(
-    "inputPageNumber"
-  ) as HTMLInputElement;
-  inputPageNumber.stepUp();
-  numberPage = parseInt(inputPageNumber.value, 10) -1;
-
-  if (handleGet) {
-    handleGet(numberPage);
-  }
-};
 
   const handleCheckboxChange = (item: T) => {
     const newSelectedItems = new Set(selectedItems);
@@ -189,39 +196,6 @@ const incrementValue = () => {
   //   }
   // };
 
-  const onDeleteClick = () => {
-      switch (tableName) {
-      case "Manufacturers":
-        if (handleDelete){
-          handleDelete(selectedItems, numberPage);
-          setSelectedItems(new Set());
-          setSelectedCount(0);
-        }
-        break;
-      
-        case "Suppliers":
-        if (handleDelete){
-          handleDelete(selectedItems, numberPage);
-          setSelectedItems(new Set());
-          setSelectedCount(0);
-        }
-        break;
-
-      case "Products":
-        DeleteProductAsync(selectedItems as Set<ProductModel>);
-        break;
-
-      case "Researches":
-        break;
-
-      case "Experiments":
-        break;
-
-      default:
-        break;
-    }
-  };
-
   return (
     <div className="data-table flex flex-column">
       <main className="flex flex-column gap-1 grow">
@@ -232,9 +206,8 @@ const incrementValue = () => {
             </h1>
             <div
               id="bulkActions"
-              className={`bulk-actions ${
-                selectedCount > 0 ? "" : "hidden"
-              } items-center`}
+              className={`bulk-actions ${selectedCount > 0 ? "" : "hidden"
+                } items-center`}
             >
               <i className="icon" onClick={onDeleteClick}>
                 <svg
@@ -332,7 +305,7 @@ const incrementValue = () => {
                           <span>
                             {
                               DataFieldsEnum[
-                                column as keyof typeof DataFieldsEnum
+                              column as keyof typeof DataFieldsEnum
                               ]
                             }
                           </span>
@@ -354,6 +327,9 @@ const incrementValue = () => {
                 <th>
                   {tableName === "Suppliers" && <span>Производители</span>}
                 </th>
+                <th>
+                  {tableName === "Suppliers" && <span>Продукты</span>}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -374,14 +350,35 @@ const incrementValue = () => {
                       )
                   )}
                   {tableName === "Suppliers" && (
+                    <>
+                      <td>
+                        <Link
+                          href={`/manufacturers?supplierId=${(item as SupplierModel).id
+                            }`}
+                          className="data-table-link-style"
+                        >
+                          Список производителей
+                        </Link>
+                      </td>
+                      <td>
+                        <Link
+                          href={`/products?supplierId=${(item as SupplierModel).id
+                            }`}
+                          className="data-table-link-style"
+                        >
+                          Список продуктов
+                        </Link>
+                      </td>
+                    </>
+                  )}
+                  {tableName === "Products" && (
                     <td>
                       <Link
-                        href={`/manufacturers?supplierId=${
-                          (item as SupplierModel).id
-                        }`}
+                        href={`/suppliers?productId=${(item as ProductModel).id
+                          }`}
                         className="data-table-link-style"
                       >
-                        Список производителей
+                        Список поставщиков
                       </Link>
                     </td>
                   )}

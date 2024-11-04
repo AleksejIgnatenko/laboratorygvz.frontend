@@ -1,49 +1,97 @@
+"use client";
+
+import { useEffect, useState, Suspense } from "react";
 import DataTable from "@/components/DataTableComponent/DataTable";
-import { ProductModel } from "@/Models/UserModels/ProductModel";
+import { ProductModel } from "@/Models/ProductModels/ProductModel";
+import { useSearchParams } from "next/navigation";
 import "./style.css";
+import { GetProductsForPageAsync } from "@/services/ProductServices/GetProductsForPageAsync";
+import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
+import { GetSupplierProductsForPageAsync } from "@/services/SupplierServices/GetSupplierProductsForPageAsync";
 
 export default function Products() {
-    const data: ProductModel[] = [
-      {
-        id: 1,
-        dateOfReceipt: "00.00.0000",
-        productName: "b",
-        providerId: "1",
-        providerName: "C",
-        batchSize: 10000,
-        sampleSize: 0.1,
-        ttn: 111111,
-        documentQuality: 111111,
-        testReport: "все yt гут",
-      },
-      {
-        id: 2,
-        dateOfReceipt: "01.01.2024",
-        productName: "c",
-        providerId: "2",
-        providerName: "A",
-        batchSize: 5000,
-        sampleSize: 0.5,
-        ttn: 222222,
-        documentQuality: 222222,
-        testReport: "все отлично",
-      },
-      {
-        id: 3,
-        dateOfReceipt: "01.01.2024",
-        productName: "a",
-        providerId: "3",
-        providerName: "B",
-        batchSize: 5000,
-        sampleSize: 0.5,
-        ttn: 222222,
-        documentQuality: 222222,
-        testReport: "все отлично",
-      },
-    ];
-    return (
-        <div className="products-page">
-            <DataTable data={data} tableName="Products" countItemsAll={21}/>
-        </div>
+  const [data, setData] = useState<ProductModel[]>([]);
+  const [countItemsAll, setCount] = useState<number>(0);
+  const [supplierId, setSupplierId] = useState<string | null>(null);
+
+  const handleDelete = async (
+    selectedItems: Set<ProductModel>,
+    numberPage: number
+  ) => {
+    await DeleteProductAsync(selectedItems);
+    const { products, countItemsAll } = await GetProductsForPageAsync(
+      numberPage
     );
+    setData(products);
+    setCount(countItemsAll);
+  };
+
+  const handleGet = async (numberPage: number) => {
+    const { products, countItemsAll } = await GetProductsForPageAsync(
+      numberPage
+    );
+    setData(products);
+    setCount(countItemsAll);
+  };
+
+  // const data: ProductModel[] = [
+  //   {
+  //     id: "1",
+  //     productName: "b",
+  //   },
+  //   {
+  //     id: "2",
+  //     productName: "c",
+
+  //   },
+  //   {
+  //     id: "3",
+  //     productName: "a",
+  //   },
+  // ];
+
+  useEffect(() => {
+    const getProducts = async () => {
+      if (supplierId) {
+        const response = await GetSupplierProductsForPageAsync(
+          supplierId,
+          0
+        );
+        setData(response.products);
+        setCount(response.countItemsAll);
+      } else {
+        const response = await GetProductsForPageAsync(0);
+        setData(response.products);
+        setCount(response.countItemsAll);
+      }
+    };
+
+    getProducts();
+  }, [supplierId]); 
+
+  function Product() {
+    const searchParams = useSearchParams();
+    const paramSupplierId = searchParams.get("supplierId");
+    setSupplierId(paramSupplierId); 
+
+    return (
+      <div>
+        <DataTable
+          data={data}
+          tableName="Product"
+          countItemsAll={countItemsAll}
+          handleDelete={handleDelete}
+          handleGet={handleGet}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="get-suppliers-page">
+        <Product />
+      </div>
+    </Suspense>
+  );
 }

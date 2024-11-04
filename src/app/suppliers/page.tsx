@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 import DataTable from "@/components/DataTableComponent/DataTable";
+import { useSearchParams } from "next/navigation";
 import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 import { DeleteSuppliersAsync } from "@/services/SupplierServices/DeleteSuppliersAsync";
+import { GetProductSuppliersForPageAsync } from "@/services/ProductServices/GetProductSuppliersForPageAsync";
 
 export default function Suppliers() {
   const [data, setData] = useState<SupplierModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
+  const [productId, setProductId] = useState<string | null>(null);
 
   const handleDelete = async (
     selectedItems: Set<SupplierModel>,
@@ -48,23 +51,46 @@ export default function Suppliers() {
 
   useEffect(() => {
     const getSuppliers = async () => {
-      const { suppliers, countItemsAll } = await GetSuppliersForPageAsync(0);
-      setData(suppliers);
-      setCount(countItemsAll);
+      if (productId) {
+        const response = await GetProductSuppliersForPageAsync(
+          productId,
+          0
+        );
+        setData(response.suppliers);
+        setCount(response.countItemsAll);
+      } else {
+        const response = await GetSuppliersForPageAsync(0);
+        setData(response.suppliers);
+        setCount(response.countItemsAll);
+      }
     };
 
     getSuppliers();
-  }, []);
+  }, [productId]); 
+
+  function Supplier() {
+    const searchParams = useSearchParams();
+    const paramProductId = searchParams.get("productId");
+    setProductId(paramProductId); 
+
+    return (
+      <div>
+        <DataTable
+          data={data}
+          tableName="Supplier"
+          countItemsAll={countItemsAll}
+          handleDelete={handleDelete}
+          handleGet={handleGet}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="suppliers-page">
-      <DataTable
-        data={data}
-        tableName="Suppliers"
-        countItemsAll={countItemsAll}
-        handleDelete={handleDelete}
-        handleGet={handleGet}
-      />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="get-suppliers-page">
+        <Supplier />
+      </div>
+    </Suspense>
   );
 }

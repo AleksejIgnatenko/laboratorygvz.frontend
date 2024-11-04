@@ -21,7 +21,6 @@ export const AddManufacturerAsync = async (manufacturer: AddManufacturerModel) =
       return [mappedErrors, 400];
     } else if (response.status === 409) {
       const errors = await response.json();
-      console.log(errors.error);
       return [errors.error, 409];
     }
   } catch (error) {

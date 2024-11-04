@@ -11,7 +11,7 @@ import { GetSupplierManufacturersForPageAsync } from "@/services/SupplierService
 export default function Manufacturers() {
   const [data, setData] = useState<ManufacturerModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
-  const [supplierId, setSupplierId] = useState<string | null>(null); // Allow null
+  const [supplierId, setSupplierId] = useState<string | null>(null);
 
   const handleDelete = async (
     selectedItems: Set<ManufacturerModel>,
@@ -54,10 +54,8 @@ export default function Manufacturers() {
             0
           );
           setData(response.manufacturers);
-          console.log(response.manufacturers);
           setCount(response.countItemsAll);
         } else {
-          // Fetch all manufacturers if supplierId is null
           const response = await GetManufacturersForPageAsync(0);
           setData(response.manufacturers);
           setCount(response.countItemsAll);

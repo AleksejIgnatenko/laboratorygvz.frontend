@@ -1,11 +1,11 @@
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
 
 export const DeleteSuppliersAsync = async (data: Set<SupplierModel>) => {
-  const productArray = Array.from(data);
+  const supplierArray = Array.from(data);
 
-  if (productArray.length > 0) {
+  if (supplierArray.length > 0) {
     try {
-      const ids = productArray.map((product) => product.id);
+      const ids = supplierArray.map((supplier) => supplier.id);
 
       const response = await fetch("http://localhost:5004/api/Supplier", {
         method: "DELETE",
