@@ -333,7 +333,7 @@ function AddPageContent() {
                       <select
                         // name={input.name}
                         id={input.name}
-                        // value={selectedItem} 
+                        // value={selectedItem}
                         onChange={handleSelectChange}
                         required
                       >
@@ -348,21 +348,21 @@ function AddPageContent() {
                       </select>
                     </div>
                   ) : input.isCheckbox ? (
-                      <div>
-                        <h2 className="checkbox-title">{input.placeholder}</h2>
-                        <div className="checkbox-container">
-                          {options.map((option) => (
-                            <label key={option.id}>
-                              <input
-                                type="checkbox"
-                                id={option.id}
-                                onChange={handleInputCheckboxChange}
-                              />
-                              {option.name}
-                            </label>
-                          ))}
-                        </div>
+                    <div>
+                      <h2 className="checkbox-title">{input.placeholder}</h2>
+                      <div className="checkbox-container">
+                        {options.map((option) => (
+                          <label key={option.id}>
+                            <input
+                              type="checkbox"
+                              id={option.id}
+                              onChange={handleInputCheckboxChange}
+                            />
+                            {option.name}
+                          </label>
+                        ))}
                       </div>
+                    </div>
                   ) : (
                     <div>
                       <input
@@ -376,13 +376,15 @@ function AddPageContent() {
                     </div>
                   )}
 
-                  {tableName === "Manufacturers" && manufacturerErrors[input.name] && (
-                    <div>
-                      <span className="error-message">
-                        {manufacturerErrors[input.name]}
-                      </span>
-                    </div>
-                  )}
+                  {tableName === "Manufacturers" &&
+                    manufacturerErrors[input.name] && (
+                      <div>
+                        <span className="error-message">
+                          {manufacturerErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
+
                   {tableName === "Suppliers" && supplierErrors[input.name] && (
                     <div>
                       <span className="error-message">
@@ -390,6 +392,25 @@ function AddPageContent() {
                       </span>
                     </div>
                   )}
+                  {tableName === "Products" &&
+                    productErrors[input.name] &&
+                    input.name !== "id" && (
+                      <div>
+                        <span className="error-message">
+                          {productErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
+
+                  {tableName === "Researches" &&
+                    researchErrors[input.name] &&
+                    input.name !== "id" && (
+                      <div>
+                        <span className="error-message">
+                          {researchErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
                 </div>
               ))}
             </div>

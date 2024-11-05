@@ -24,6 +24,7 @@ import { ResearchValidationErrorModel } from "@/Models/ResearchModels/ResearchVa
 import { ResearchModel } from "@/Models/ResearchModels/ResearchModel";
 import { UpdateResearchModel } from "@/Models/ResearchModels/UpdateResearchModel";
 import { UpdateResearchAsync } from "@/services/ResearchServices.tsx/UpdateResearchAsync";
+import { GetProductsAsync } from "@/services/ProductServices/GetProductsAsync";
 
 interface InputConfig {
   name: string;
@@ -162,15 +163,16 @@ function UpdatePageContent() {
           break;
 
         case "Researches":
-          const researchOptions: Option[] = [
-            { id: "1", name: "Product A" },
-            { id: "2", name: "Product B" },
-            { id: "3", name: "Product C" },
-            { id: "4", name: "Product D" },
-            { id: "5", name: "Product E" },
-          ];
+          const products = await GetProductsAsync();
+          const researchOptions: Option[] = products.map(product => ({
+            id: product.id,
+            name: product.productName,
+          }))
+          if(researchOptions.length > 0) {
+            setSelectedItem(researchOptions[0].id);
+          }
+          
           setOptions(researchOptions);
-          // Call method to fetch products
           break;
 
         case "Experiments":
@@ -260,11 +262,6 @@ const handleInputCheckboxChange = (
       return option; 
     })
   );
-
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = event.target;
-    setSelectedItem(value);
-  };
 
   if (checked) {
     setSelectedCheckbox((prev) => [...prev, id]);
@@ -417,15 +414,15 @@ const handleInputCheckboxChange = (
 
           if (statusCode === 200) {
             setSuccessMessage(response);
-            setProductErrors({});
+            setResearchErrors({});
             setErrors("");
           } else if (statusCode === 400) {
             setSuccessMessage("");
-            setProductErrors(response);
+            setResearchErrors(response);
             setErrors("");
           } else if (statusCode === 409) {
             setSuccessMessage("");
-            setProductErrors({});
+            setResearchErrors({});
             setErrors(response);
           }
         }
@@ -516,6 +513,26 @@ const handleInputCheckboxChange = (
                       <div>
                         <span className="error-message">
                           {supplierErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
+
+                  {tableName === "Products" &&
+                    productErrors[input.name] &&
+                    input.name !== "id" && (
+                      <div>
+                        <span className="error-message">
+                          {productErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
+
+                  {tableName === "Researches" &&
+                    researchErrors[input.name] &&
+                    input.name !== "id" && (
+                      <div>
+                        <span className="error-message">
+                          {researchErrors[input.name]}
                         </span>
                       </div>
                     )}
