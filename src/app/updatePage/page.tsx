@@ -19,6 +19,11 @@ import { ProductModel } from "@/Models/ProductModels/ProductModel";
 import { UpdateProductModel } from "@/Models/ProductModels/UpdateProductModel";
 import { UpdateProductAsync } from "@/services/ProductServices/UpdateProductAsync";
 import { GetProductSuppliersAsync } from "@/services/ProductServices/GetProductSuppliersAsync";
+import { ProductValidationErrorModel } from "@/Models/ProductModels/ProductValidationErrorModel";
+import { ResearchValidationErrorModel } from "@/Models/ResearchModels/ResearchValidationErrorModel";
+import { ResearchModel } from "@/Models/ResearchModels/ResearchModel";
+import { UpdateResearchModel } from "@/Models/ResearchModels/UpdateResearchModel";
+import { UpdateResearchAsync } from "@/services/ResearchServices.tsx/UpdateResearchAsync";
 
 interface InputConfig {
   name: string;
@@ -74,13 +79,17 @@ function UpdatePageContent() {
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errors, setErrors] = useState<string>();
 
+  const [selectedItem, setSelectedItem] = useState<string>("");
   const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([]);
 
   const [manufacturerErrors, setManufacturerErrors] =
     useState<ManufacturerValidationErrorModel>({});
-
   const [supplierErrors, setSupplierErrors] =
     useState<SupplierValidationErrorModel>({});
+  const [productErrors, setProductErrors] =
+    useState<ProductValidationErrorModel>({});
+  const [researchErrors, setResearchErrors] =
+    useState<ResearchValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
@@ -252,6 +261,11 @@ const handleInputCheckboxChange = (
     })
   );
 
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.target;
+    setSelectedItem(value);
+  };
+
   if (checked) {
     setSelectedCheckbox((prev) => [...prev, id]);
   } else {
@@ -364,22 +378,57 @@ const handleInputCheckboxChange = (
 
           if (statusCode === 200) {
             setSuccessMessage(response);
-            setSupplierErrors({});
+            setProductErrors({});
             setErrors("");
           } else if (statusCode === 400) {
             setSuccessMessage("");
-            setSupplierErrors(response);
+            setProductErrors(response);
             setErrors("");
           } else if (statusCode === 409) {
             setSuccessMessage("");
-            setSupplierErrors({});
+            setProductErrors({});
             setErrors(response);
           }
         }
         break;
 
       case "Researches":
-        // Добавьте логику для исследований
+        if (item !== null) {
+          const researchItem = item as ResearchModel;
+          const updateItem: ResearchModel = Object.keys(researchItem).reduce(
+            (acc, key) => {
+              acc[key as keyof ResearchModel] =
+                formData[key] !== undefined && formData[key] !== ""
+                  ? formData[key]
+                  : researchItem[key as keyof ResearchModel];
+              return acc;
+            },
+            { id: researchItem.id, researchName: "",}
+          );
+
+          const updateProductModel: UpdateResearchModel = {
+            id: updateItem.id,
+            researchName: updateItem.researchName,
+            productId: selectedItem,
+          };
+
+          const result = await UpdateResearchAsync(updateProductModel);
+          const [response, statusCode] = result;
+
+          if (statusCode === 200) {
+            setSuccessMessage(response);
+            setProductErrors({});
+            setErrors("");
+          } else if (statusCode === 400) {
+            setSuccessMessage("");
+            setProductErrors(response);
+            setErrors("");
+          } else if (statusCode === 409) {
+            setSuccessMessage("");
+            setProductErrors({});
+            setErrors(response);
+          }
+        }
         break;
 
       case "Experiments":

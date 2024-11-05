@@ -6,7 +6,7 @@ import { ProductModel } from "@/Models/ProductModels/ProductModel";
 import { useSearchParams } from "next/navigation";
 import "./style.css";
 import { GetProductsForPageAsync } from "@/services/ProductServices/GetProductsForPageAsync";
-import { DeleteProductAsync } from "@/services/ProductServices/DeleteProductAsync";
+import { DeleteProductsAsync } from "@/services/ProductServices/DeleteProductAsync";
 import { GetSupplierProductsForPageAsync } from "@/services/SupplierServices/GetSupplierProductsForPageAsync";
 
 export default function Products() {
@@ -18,7 +18,7 @@ export default function Products() {
     selectedItems: Set<ProductModel>,
     numberPage: number
   ) => {
-    await DeleteProductAsync(selectedItems);
+    await DeleteProductsAsync(selectedItems);
     const { products, countItemsAll } = await GetProductsForPageAsync(
       numberPage
     );
@@ -89,7 +89,7 @@ export default function Products() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="get-suppliers-page">
+      <div className="get-products-page">
         <Product />
       </div>
     </Suspense>

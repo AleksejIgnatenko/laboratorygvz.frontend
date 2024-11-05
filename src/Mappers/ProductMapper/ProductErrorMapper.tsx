@@ -4,9 +4,6 @@ export const ProductErrorMapper = (errors: Record<string, string>): Record<strin
     if (errors.ProductName) {
       mappedErrors.productName = errors.ProductName;
     }
-    if (errors.Supplier) {
-      mappedErrors.supplier = errors.Supplier;
-    }
   
     return mappedErrors;
   };

@@ -1,49 +1,81 @@
+"use client";
+
+import { useEffect, useState, Suspense } from "react";
+import { ResearchModel } from "@/Models/ResearchModels/ResearchModel";
 import DataTable from "@/components/DataTableComponent/DataTable";
-import { ProductModel } from "@/Models/ProductModels/ProductModel";
+import { useSearchParams } from "next/navigation";
+import { GetResearchesForPageAsync } from "@/services/ResearchServices.tsx/GetResearchesForPageAsync";
+import { DeleteResearchesAsync } from "@/services/ResearchServices.tsx/DeleteResearchesAsync";
 import "./style.css";
+import { GetProductResearchesForPageAsync } from "@/services/ProductServices/GetProductResearchesForPageAsync";
 
 export default function Researches() {
-    const data: ProductModel[] = [
-      // {
-      //   id: 1,
-      //   dateOfReceipt: "00.00.0000",
-      //   productName: "b",
-      //   providerId: "C",
-      //   batchSize: 10000,
-      //   sampleSize: 0.1,
-      //   ttn: 111111,
-      //   documentQuality: 111111,
-      //   testReport: "все yt гут",
-      //   experements: "1",
-      // },
-      // {
-      //   id: 2,
-      //   dateOfReceipt: "01.01.2024",
-      //   productName: "c",
-      //   providerId: "A",
-      //   batchSize: 5000,
-      //   sampleSize: 0.5,
-      //   ttn: 222222,
-      //   documentQuality: 222222,
-      //   testReport: "все отлично",
-      //   experements: "2",
-      // },
-      // {
-      //   id: 3,
-      //   dateOfReceipt: "01.01.2024",
-      //   productName: "a",
-      //   providerId: "B",
-      //   batchSize: 5000,
-      //   sampleSize: 0.5,
-      //   ttn: 222222,
-      //   documentQuality: 222222,
-      //   testReport: "все отлично",
-      //   experements: "2",
-      // },
-    ];
-    return (
-        <div className="researches-page">
-            <DataTable data={data} tableName="Researches" countItemsAll={1}/>
-        </div>
+  const [data, setData] = useState<ResearchModel[]>([]);
+  const [countItemsAll, setCount] = useState<number>(0);
+  const [productId, setProductId] = useState<string | null>(null);
+
+  const handleDelete = async (
+    selectedItems: Set<ResearchModel>,
+    numberPage: number
+  ) => {
+    await DeleteResearchesAsync(selectedItems);
+    const { researches, countItemsAll } = await GetResearchesForPageAsync(
+      numberPage
     );
+    setData(researches);
+    setCount(countItemsAll);
+  };
+
+  const handleGet = async (numberPage: number) => {
+    const { researches, countItemsAll } = await GetResearchesForPageAsync(
+      numberPage
+    );
+    setData(researches);
+    setCount(countItemsAll);
+  };
+
+  useEffect(() => {
+    const getResearches = async () => {
+      if (productId) {
+        const response = await GetProductResearchesForPageAsync(
+          productId,
+          0
+        );
+        setData(response.researches);
+        setCount(response.countItemsAll);
+      } else {
+        const response = await GetResearchesForPageAsync(0);
+        setData(response.researches);
+        setCount(response.countItemsAll);
+      }
+    };
+
+    getResearches();
+  }, [productId]); 
+
+  function Research() {
+    const searchParams = useSearchParams();
+    const paramSupplierId = searchParams.get("productId");
+    setProductId(paramSupplierId); 
+
+    return (
+      <div>
+        <DataTable
+          data={data}
+          tableName="Researches"
+          countItemsAll={countItemsAll}
+          handleDelete={handleDelete}
+          handleGet={handleGet}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="get-researches-page">
+        <Research />
+      </div>
+    </Suspense>
+  );
 }

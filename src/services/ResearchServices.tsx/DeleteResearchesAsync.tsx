@@ -1,13 +1,13 @@
-import { ProductModel } from "@/Models/ProductModels/ProductModel";
+import { ResearchModel } from "@/Models/ResearchModels/ResearchModel";
 
-export const DeleteProductsAsync = async (data: Set<ProductModel>) => {
-  const productArray = Array.from(data);
+export const DeleteResearchesAsync = async (data: Set<ResearchModel>) => {
+  const researchArray = Array.from(data);
 
-  if (productArray.length > 0) {
+  if (researchArray.length > 0) {
     try {
-      const ids = productArray.map((product) => product.id);
+      const ids = researchArray.map((research) => research.id);
 
-      const response = await fetch("http://localhost:5003/api/Product", {
+      const response = await fetch("http://localhost:5005/api/Research", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

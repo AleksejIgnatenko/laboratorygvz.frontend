@@ -16,10 +16,16 @@ import { GetSuppliersAsync } from "@/services/SupplierServices/GetSuppliersAsync
 import { AddProductModel } from "@/Models/ProductModels/AddProductModel";
 import { CreateProductRequest } from "@/Models/ProductModels/CreateProductRequest";
 import { AddProductAsync } from "@/services/ProductServices/AddProductAsync";
+import { AddResearchModel } from "@/Models/ResearchModels/AddResearchModel";
+import { CreateResearchRequest } from "@/Models/ResearchModels/CreateResearchRequest";
+import { GetProductsAsync } from "@/services/ProductServices/GetProductsAsync";
+import { AddResearchAsync } from "@/services/ResearchServices.tsx/AddResearchAsync";
+import { ProductValidationErrorModel } from "@/Models/ProductModels/ProductValidationErrorModel";
+import { ResearchValidationErrorModel } from "@/Models/ResearchModels/ResearchValidationErrorModel";
 
 interface InputConfig {
   name: string;
-  placeholder: string;
+  placeholder?: string;
   isSelect?: boolean;
   isCheckbox?: boolean;
 }
@@ -45,7 +51,7 @@ const inputConfig: Record<string, InputConfig[]> = {
   ],
   Researches: [
     { name: "researchName", placeholder: "Название исследования" },
-    { name: "ProductId", placeholder: "Название продукта", isSelect: true },
+    { name: "ProductId", isSelect: true },
   ],
   Experiments: [
     { name: "experimentName", placeholder: "Да" },
@@ -63,12 +69,17 @@ function AddPageContent() {
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errors, setErrors] = useState<string>();
 
+  const [selectedItem, setSelectedItem] = useState<string>("");
   const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([]);
 
   const [manufacturerErrors, setManufacturerErrors] =
     useState<ManufacturerValidationErrorModel>({});
   const [supplierErrors, setSupplierErrors] =
     useState<SupplierValidationErrorModel>({});
+  const [productErrors, setProductErrors] =
+    useState<ProductValidationErrorModel>({});
+  const [researchErrors, setResearchErrors] =
+    useState<ResearchValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
   const [formData, setFormData] = useState({});
@@ -98,15 +109,16 @@ function AddPageContent() {
           break;
 
         case "Researches":
-          const researchOptions: Option[] = [
-            { id: "1", name: "Product A" },
-            { id: "2", name: "Product B" },
-            { id: "3", name: "Product C" },
-            { id: "4", name: "Product D" },
-            { id: "5", name: "Product E" },
-          ];
+          const products = await GetProductsAsync();
+          const researchOptions: Option[] = products.map(product => ({
+            id: product.id,
+            name: product.productName,
+          }))
+          if(researchOptions.length > 0) {
+            setSelectedItem(researchOptions[0].id);
+          }
+          
           setOptions(researchOptions);
-          // Call method to fetch products
           break;
 
         case "Experiments":
@@ -136,6 +148,7 @@ function AddPageContent() {
 
         case "Researches":
           setImg("research");
+          setTitleName("Добавление исследования")
           break;
 
         case "Experiments":
@@ -180,6 +193,11 @@ function AddPageContent() {
   ) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.target;
+    setSelectedItem(value);
   };
 
   const handleInputCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,12 +250,6 @@ function AddPageContent() {
           setSuccessMessage(supplierResponse);
           setSupplierErrors({});
           setErrors("");
-          // setFormData({
-          //   Name: "",
-          //   Manufacturer: "",
-          // });
-          // setFormData({});
-          // inputConfig.Suppliers.map((input) => [input.name, ""]);
         } else if (supplierStatusCode === 400) {
           setSuccessMessage("");
           setSupplierErrors(supplierResponse);
@@ -259,26 +271,40 @@ function AddPageContent() {
         const [productResponse, productStatusCode] = productResult;
         if (productStatusCode === 200) {
           setSuccessMessage(productResponse);
-          setSupplierErrors({});
+          setProductErrors({});
           setErrors("");
-          // setFormData({
-          //   Name: "",
-          //   Manufacturer: "",
-          // });
-          // setFormData({});
-          // inputConfig.Suppliers.map((input) => [input.name, ""]);
         } else if (productStatusCode === 400) {
           setSuccessMessage("");
-          setSupplierErrors(productResponse);
+          setProductErrors(productResponse);
           setErrors("");
         } else if (productStatusCode === 409) {
           setSuccessMessage("");
-          setSupplierErrors({});
+          setProductErrors({});
           setErrors(productResponse);
         }
         break;
 
       case "Researches":
+        const addResearchModel = formData as AddResearchModel;
+        const createResearchRequest: CreateResearchRequest = {
+          researchName: addResearchModel.researchName,
+          productId: selectedItem,
+        };
+        const researchResult = await AddResearchAsync(createResearchRequest);
+        const [researchResponse, researchStatusCode] = researchResult;
+        if (researchStatusCode === 200) {
+          setSuccessMessage(researchResponse);
+          setResearchErrors({});
+          setErrors("");
+        } else if (researchStatusCode === 400) {
+          setSuccessMessage("");
+          setResearchErrors(researchResponse);
+          setErrors("");
+        } else if (researchStatusCode === 409) {
+          setSuccessMessage("");
+          setResearchErrors({});
+          setErrors(researchResponse);
+        }
         break;
 
       case "Experiments":
@@ -305,9 +331,10 @@ function AddPageContent() {
                   {input.isSelect ? (
                     <div className="select-container">
                       <select
-                        name={input.name}
+                        // name={input.name}
                         id={input.name}
-                        onChange={handleInputChange}
+                        // value={selectedItem} 
+                        onChange={handleSelectChange}
                         required
                       >
                         <option value="" disabled>

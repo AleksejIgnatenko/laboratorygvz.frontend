@@ -1,11 +1,9 @@
 import { ProductModel } from "@/Models/ProductModels/ProductModel";
 
-export const GetProductsForPageAsync = async (
-  pageNumber: number
-): Promise<{ products: ProductModel[]; countItemsAll: number }> => {
+export const GetProductsAsync = async (): Promise<ProductModel[]> => {
   try {
     const response = await fetch(
-      `http://localhost:5003/api/Product?pageNumber=${pageNumber}`,
+      'http://localhost:5003/api/Product/getProductsAsync',
       {
         method: "GET",
         headers: {
@@ -16,15 +14,13 @@ export const GetProductsForPageAsync = async (
 
     if (response.ok) {
       const responseData = await response.json();
-      const products: ProductModel[] = responseData.products;
-      const countItemsAll: number = responseData.numberProducts;
-
-      return { products, countItemsAll };
+      const products: ProductModel[] = responseData;
+      return products;
     } else {
       console.error("Failed to fetch products:", response.status);
     }
   } catch (error) {
     console.error("Error fetching:", error);
   }
-  return { products: [], countItemsAll: 0 };
+  return [];
 };
