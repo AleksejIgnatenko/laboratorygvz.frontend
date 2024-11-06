@@ -19,6 +19,9 @@ export enum DataFieldsEnum {
   //ProductModel
   productName = "Продукт",
 
+  //ResearchModel
+  researchName = "Название исследования",
+
   //PartyModel
   dateOfReceipt = "Дата получения",
   batchSize = "Размер партии",

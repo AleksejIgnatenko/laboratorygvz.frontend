@@ -29,6 +29,7 @@ import { PartyValidationErrorModel } from "@/Models/PartyModels/PartyValidationE
 import { PartyModel } from "@/Models/PartyModels/PartyModel";
 import { UpdatePartyModel } from "@/Models/PartyModels/UpdatePartyModel";
 import { UpdatePartyAsync } from "@/services/PartyServices/UpdatePartyAsync";
+import { GetProductForResearchId } from "@/services/ResearchServices.tsx/GetProductForResearchId";
 
 interface InputConfig {
   name: string;
@@ -40,6 +41,7 @@ interface InputConfig {
 interface Option {
   id: string;
   name: string;
+  isSelected?: boolean;
   isChecked?: boolean;
 }
 
@@ -61,10 +63,12 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "supplier", placeholder: "Поставщик(и):", isCheckbox: true },
   ],
   Researches: [
+    { name: "id", placeholder: "" },
     { name: "researchName", placeholder: "Название исследования" },
-    { name: "ProductId", placeholder: "Название продукта", isSelect: true },
+    { name: "ProductId", isSelect: true },
   ],
   Parties: [
+    { name: "id", placeholder: "" },
     { name: "batchNumber", placeholder: "Номер партии" },
     { name: "dateOfReceipt", placeholder: "Дата поступления" },
     { name: "productId", isSelect: true },
@@ -73,7 +77,10 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "batchSize", placeholder: "Объем партии" },
     { name: "sampleSize", placeholder: "Объем выборки" },
     { name: "ttn", placeholder: "ТТН" },
-    { name: "documentOnQualityAndSafety", placeholder: "Документ по качеству и безопасности" },
+    {
+      name: "documentOnQualityAndSafety",
+      placeholder: "Документ по качеству и безопасности",
+    },
     { name: "testReport", placeholder: "Протокол испытаний" },
     { name: "dateOfManufacture", placeholder: "Дата изготовления" },
     { name: "expirationDate", placeholder: "Срок годности" },
@@ -113,18 +120,24 @@ function UpdatePageContent() {
     useState<ProductValidationErrorModel>({});
   const [researchErrors, setResearchErrors] =
     useState<ResearchValidationErrorModel>({});
-  const [partyErrors, setPartyErrors] =
-    useState<PartyValidationErrorModel>({});
+  const [partyErrors, setPartyErrors] = useState<PartyValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
 
   const [productPartyOptions, setProductPartyOptions] = useState<Option[]>([]);
-  const [supplierPartyOptions, setSupplierPartyOptions] = useState<Option[]>([]);
-  const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<Option[]>([]);
+  const [supplierPartyOptions, setSupplierPartyOptions] = useState<Option[]>(
+    []
+  );
+  const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<
+    Option[]
+  >([]);
 
-  const [selectedProductPartyItem, setSelectedProductPartyItem] = useState<string>("");
-  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] = useState<string>("");
-  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] = useState<string>("");
+  const [selectedProductPartyItem, setSelectedProductPartyItem] =
+    useState<string>("");
+  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] =
+    useState<string>("");
+  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] =
+    useState<string>("");
 
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [image, setImg] = useState<string>();
@@ -196,34 +209,61 @@ function UpdatePageContent() {
           break;
 
         case "Researches":
-          const products = await GetProductsAsync();
-          const researchOptions: Option[] = products.map(product => ({
-            id: product.id,
-            name: product.productName,
-          }))
-          if (researchOptions.length > 0) {
-            setSelectedItem(researchOptions[0].id);
+          if (item !== null) {
+            const researchItem = item as ResearchModel;
+            const products = await GetProductsAsync();
+            const product = await GetProductForResearchId(researchItem.id);
+
+            if (product) {
+              const productIndex = products.findIndex(
+                (p) => p.id === product.id
+              );
+
+              if (productIndex !== -1) {
+                const removedProduct = products.splice(productIndex, 1)[0];
+                products.unshift(removedProduct);
+              }
+            }
+
+            const researchOptions: Option[] = products.map((product) => ({
+              id: product.id,
+              name: product.productName,
+            }));
+
+            const optionsWithCheckboxState = researchOptions.map((option) => ({
+              id: option.id,
+              name: option.name,
+              isSelected: product && option.id === product.id ? true : false,
+            }));
+
+            setOptions(optionsWithCheckboxState);
           }
+          break;
 
         case "Parties":
           const partiesProductsOptions = await GetProductsAsync();
           const partiesSuppliersOptions = await GetSuppliersAsync();
           const partiesManufacturersOptions = await GetManufacturersAsync();
 
-          const getProductOptions: Option[] = partiesProductsOptions.map(product => ({
-            id: product.id,
-            name: product.productName,
-          }));
+          const getProductOptions: Option[] = partiesProductsOptions.map(
+            (product) => ({
+              id: product.id,
+              name: product.productName,
+            })
+          );
 
-          const getSupplierOptions: Option[] = partiesSuppliersOptions.map(supplier => ({
-            id: supplier.id,
-            name: supplier.supplierName,
-          }));
+          const getSupplierOptions: Option[] = partiesSuppliersOptions.map(
+            (supplier) => ({
+              id: supplier.id,
+              name: supplier.supplierName,
+            })
+          );
 
-          const getManufacturerOptions: Option[] = partiesManufacturersOptions.map(manufacturer => ({
-            id: manufacturer.id,
-            name: manufacturer.manufacturerName,
-          }));
+          const getManufacturerOptions: Option[] =
+            partiesManufacturersOptions.map((manufacturer) => ({
+              id: manufacturer.id,
+              name: manufacturer.manufacturerName,
+            }));
 
           if (getProductOptions.length > 0) {
             setSelectedProductPartyItem(getProductOptions[0].id);
@@ -268,12 +308,12 @@ function UpdatePageContent() {
 
         case "Researches":
           setImg("research");
-          setTitleName("Добавление исследования")
+          setTitleName("Добавление исследования");
           break;
 
         case "Parties":
           setImg("batch-picking");
-          setTitleName("Добавление партии")
+          setTitleName("Добавление партии");
           break;
 
         case "Experiments":
@@ -320,13 +360,16 @@ function UpdatePageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value })); // Обновляем состояние
   };
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>, name: string) => {
+  const handleSelectChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    name: string
+  ) => {
     const { value } = event.target;
-    if (name === 'productId') {
+    if (name === "productId") {
       setSelectedProductPartyItem(value);
-    } else if (name === 'supplierId') {
+    } else if (name === "supplierId") {
       setSelectedSupplierPartyItem(value);
-    } else if (name === 'manufacturerId') {
+    } else if (name === "manufacturerId") {
       setSelectedManufacturerPartyItem(value);
     } else {
       setSelectedItem(value);
@@ -406,7 +449,7 @@ function UpdatePageContent() {
                   : supplierItem[key as keyof SupplierModel];
               return acc;
             },
-            { id: supplierItem.id, supplierName: "", }
+            { id: supplierItem.id, supplierName: "" }
           );
 
           const updateSupplierModel: UpdateSupplierModel = {
@@ -445,7 +488,7 @@ function UpdatePageContent() {
                   : productItem[key as keyof ProductModel];
               return acc;
             },
-            { id: productItem.id, productName: "", }
+            { id: productItem.id, productName: "" }
           );
 
           const updateProductModel: UpdateProductModel = {
@@ -484,7 +527,7 @@ function UpdatePageContent() {
                   : researchItem[key as keyof ResearchModel];
               return acc;
             },
-            { id: researchItem.id, researchName: "", }
+            { id: researchItem.id, researchName: "" }
           );
 
           const updateProductModel: UpdateResearchModel = {
@@ -515,7 +558,9 @@ function UpdatePageContent() {
       case "Parties":
         if (item !== null) {
           const partyItem = item as PartyModel;
-          const updateItem: PartyModel = Object.keys(partyItem).reduce<PartyModel>(
+          const updateItem: PartyModel = Object.keys(
+            partyItem
+          ).reduce<PartyModel>(
             (acc, key) => {
               acc[key as keyof PartyModel] =
                 formData[key] !== undefined && formData[key] !== ""
@@ -541,7 +586,7 @@ function UpdatePageContent() {
               marking: "",
               result: "",
               userName: "",
-              note: ""
+              note: "",
             }
           );
 
@@ -562,7 +607,7 @@ function UpdatePageContent() {
             packaging: updateItem.packaging,
             marking: updateItem.marking,
             result: updateItem.result,
-            note: updateItem.note
+            note: updateItem.note,
           };
 
           const result = await UpdatePartyAsync(updatePartyModel);
@@ -627,9 +672,9 @@ function UpdatePageContent() {
                           } else if (input.name === "manufacturerId") {
                             opt = manufacturerPartyOptions;
                           } else {
-                            opt = options
+                            opt = options;
                           }
-                          return opt.map(option => (
+                          return opt.map((option) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
                             </option>
@@ -661,7 +706,7 @@ function UpdatePageContent() {
                           item ? item[input.name] : input.placeholder
                         }
                         onChange={handleInputChange}
-                      // required
+                        // required
                       />
                     </div>
                   )}

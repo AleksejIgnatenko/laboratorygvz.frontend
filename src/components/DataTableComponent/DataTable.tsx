@@ -59,6 +59,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
           break;
 
         case "Researches":
+          setTitleName("Исследования");
           break;
 
         case "Experiments":

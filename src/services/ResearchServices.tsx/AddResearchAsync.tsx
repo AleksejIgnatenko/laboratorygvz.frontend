@@ -16,7 +16,6 @@ export const AddResearchAsync = async (research: CreateResearchRequest) => {
       return [`${research.researchName} добавлен`, 200];
     } else if (response.status === 400) {
       const errors = await response.json();
-
       const mappedErrors = ResearchErrorMapper(errors.error);
 
       return [mappedErrors, 400];

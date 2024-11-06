@@ -64,6 +64,28 @@ services:
     depends_on: 
       - SqlServerDb
 
+  gvz.laboratory.productservice:
+    container_name: GvzLaboratoryProductService
+    image: gvzlaboratoryproductservice
+    ports:
+      - 5003:8080
+    build:
+      context: ./Backend/Gvz.Laboratory.ProductService
+      dockerfile: Dockerfile
+    depends_on: 
+      - SqlServerDb
+
+  gvz.laboratory.researchservice:
+        container_name: GvzLaboratoryResearchService
+        image: gvzlaboratoryresearchservice
+        ports:
+          - 5005:8080
+        build:
+          context: ./Backend/Gvz.Laboratory.ResearchService
+          dockerfile: Dockerfile
+        depends_on: 
+          - SqlServerDb
+
   zookeeper:
       image: confluentinc/cp-zookeeper:latest
       environment:
