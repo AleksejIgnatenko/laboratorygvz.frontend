@@ -28,7 +28,7 @@ export const UpdateProductAsync = async (product: UpdateProductModel) => {
       return [errors.error, 409];
     }
   } catch (error) {
-    console.error("Error update supplier:", error);
+    console.error("Error update product:", error);
   }
-  return ["Не получилось добавить поставщика", null];
+  return ["Не получилось обновить продукт", null];
 };

@@ -23,6 +23,6 @@ export const DeleteSuppliersAsync = async (data: Set<SupplierModel>) => {
       console.error("Error deleting supplier:", error);
     }
   } else {
-    console.log("No products available.");
+    console.log("No suppliers available.");
   }
 };

@@ -27,7 +27,7 @@ export const UpdateManufacturerAsync = async (manufacturer: ManufacturerModel) =
       return [errors.error, 409];
     }
   } catch (error) {
-    console.error("Error adding supplier:", error);
+    console.error("Error update manufacturer:", error);
   }
-  return ["Не получилось добавить поставщика", null];
+  return ["Не получилось обновить производитлея", null];
 };

@@ -17,10 +17,10 @@ export const DeleteProductsAsync = async (data: Set<ProductModel>) => {
 
       if (!response.ok) {
         alert("При удалении возникла ошибка");
-        console.error("Error deleting suppliers:", response.statusText);
+        console.error("Error deleting products:", response.statusText);
       }
     } catch (error) {
-      console.error("Error deleting supplier:", error);
+      console.error("Error deleting product:", error);
     }
   } else {
     console.log("No products available.");

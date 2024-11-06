@@ -3,7 +3,6 @@ import { UpdateSupplierModel } from "@/Models/SupplierModels/UpdateSupplierModel
 
 export const UpdateSupplierAsync = async (supplier: UpdateSupplierModel) => {
   try {
-    console.log(supplier);
     const response = await fetch(
       `http://localhost:5004/api/Supplier/${supplier.id}`,
       {
@@ -28,7 +27,7 @@ export const UpdateSupplierAsync = async (supplier: UpdateSupplierModel) => {
       return [errors.error, 409];
     }
   } catch (error) {
-    console.error("Error adding supplier:", error);
+    console.error("Error update supplier:", error);
   }
-  return ["Не получилось добавить поставщика", null];
+  return ["Не получилось обновить поставщика", null];
 };

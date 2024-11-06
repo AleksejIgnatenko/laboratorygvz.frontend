@@ -17,7 +17,7 @@ export const GetManufacturersAsync = async (): Promise<ManufacturerModel[]> => {
       const manufacturers: ManufacturerModel[] = responseData;
       return manufacturers;
     } else {
-      console.error("Failed to fetch suppliers:", response.status);
+      console.error("Failed to fetch manufacturers:", response.status);
     }
   } catch (error) {
     console.error("Error fetching:", error);

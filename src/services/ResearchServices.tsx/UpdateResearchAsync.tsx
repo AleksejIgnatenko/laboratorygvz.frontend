@@ -1,8 +1,6 @@
 import { ResearchErrorMapper } from "@/Mappers/ResearchMappers/ResearchErrorMapper";
 import { UpdateResearchModel } from "@/Models/ResearchModels/UpdateResearchModel";
 
-
-
 export const UpdateResearchAsync = async (research: UpdateResearchModel) => {
   try {
     const response = await fetch(
@@ -29,7 +27,7 @@ export const UpdateResearchAsync = async (research: UpdateResearchModel) => {
       return [errors.error, 409];
     }
   } catch (error) {
-    console.error("Error update supplier:", error);
+    console.error("Error update research:", error);
   }
-  return ["Не получилось добавить поставщика", null];
+  return ["Не получилось обновить исследование", null];
 };

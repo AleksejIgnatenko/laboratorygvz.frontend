@@ -22,7 +22,7 @@ export const GetProductResearchesForPageAsync = async (
 
       return { researches, countItemsAll };
     } else {
-      console.error("Failed to fetch suppliers:", response.status);
+      console.error("Failed to fetch products:", response.status);
     }
   } catch (error) {
     console.error("Error fetching:", error);

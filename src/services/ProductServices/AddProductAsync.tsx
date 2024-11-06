@@ -25,7 +25,7 @@ export const AddProductAsync = async (product: CreateProductRequest) => {
       return [errors.error, 409];
     }
   } catch (error) {
-    console.error("Error adding supplier:", error);
+    console.error("Error adding product:", error);
   }
-  return ["Не получилось добавить поставщика", null];
+  return ["Не получилось добавить продукт", null];
 };

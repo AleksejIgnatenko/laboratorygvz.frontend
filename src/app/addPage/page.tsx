@@ -22,6 +22,10 @@ import { GetProductsAsync } from "@/services/ProductServices/GetProductsAsync";
 import { AddResearchAsync } from "@/services/ResearchServices.tsx/AddResearchAsync";
 import { ProductValidationErrorModel } from "@/Models/ProductModels/ProductValidationErrorModel";
 import { ResearchValidationErrorModel } from "@/Models/ResearchModels/ResearchValidationErrorModel";
+import { AddPartyModel } from "@/Models/PartyModels/AddPartyModel";
+import { CreatePartyRequest } from "@/Models/PartyModels/CreatePartyRequest";
+import { PartyValidationErrorModel } from "@/Models/PartyModels/PartyValidationErrorModel";
+import { AddPartyAsync } from "@/services/PartyServices/AddPartyAsync";
 
 interface InputConfig {
   name: string;
@@ -53,6 +57,24 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "researchName", placeholder: "Название исследования" },
     { name: "ProductId", isSelect: true },
   ],
+  Parties: [
+    { name: "batchNumber", placeholder: "Номер партии" },
+    { name: "dateOfReceipt", placeholder: "Дата поступления" },
+    { name: "productId", isSelect: true },
+    { name: "supplierId", isSelect: true },
+    { name: "manufacturerId", isSelect: true },
+    { name: "batchSize", placeholder: "Объем партии" },
+    { name: "sampleSize", placeholder: "Объем выборки" },
+    { name: "ttn", placeholder: "ТТН" },
+    { name: "documentOnQualityAndSafety", placeholder: "Документ по качеству и безопасности" },
+    { name: "testReport", placeholder: "Протокол испытаний" },
+    { name: "dateOfManufacture", placeholder: "Дата изготовления" },
+    { name: "expirationDate", placeholder: "Срок годности" },
+    { name: "packaging", placeholder: "Упаковка" },
+    { name: "marking", placeholder: "Маркировка" },
+    { name: "result", placeholder: "Результат" },
+    { name: "note", placeholder: "Примечание" },
+  ],
   Experiments: [
     { name: "experimentName", placeholder: "Да" },
     { name: "result", placeholder: "Результат" },
@@ -80,8 +102,19 @@ function AddPageContent() {
     useState<ProductValidationErrorModel>({});
   const [researchErrors, setResearchErrors] =
     useState<ResearchValidationErrorModel>({});
+  const [partyErrors, setPartyErrors] =
+    useState<PartyValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
+
+  const [productPartyOptions, setProductPartyOptions] = useState<Option[]>([]);
+  const [supplierPartyOptions, setSupplierPartyOptions] = useState<Option[]>([]);
+  const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<Option[]>([]);
+
+  const [selectedProductPartyItem, setSelectedProductPartyItem] = useState<string>("");
+  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] = useState<string>("");
+  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] = useState<string>("");
+
   const [formData, setFormData] = useState({});
   const [image, setImg] = useState<string>();
   const [titleName, setTitleName] = useState("");
@@ -121,6 +154,41 @@ function AddPageContent() {
           setOptions(researchOptions);
           break;
 
+          case "Parties":
+            const partiesProductsOptions = await GetProductsAsync();
+            const partiesSuppliersOptions = await GetSuppliersAsync();
+            const partiesManufacturersOptions = await GetManufacturersAsync();
+
+            const getProductOptions: Option[] = partiesProductsOptions.map(product => ({
+              id: product.id,
+              name: product.productName,
+            }));
+            
+            const getSupplierOptions: Option[] = partiesSuppliersOptions.map(supplier => ({
+              id: supplier.id,
+              name: supplier.supplierName,
+            }));
+            
+            const getManufacturerOptions: Option[] = partiesManufacturersOptions.map(manufacturer => ({
+              id: manufacturer.id,
+              name: manufacturer.manufacturerName,
+            }));
+
+            if(getProductOptions.length > 0) {
+              setSelectedProductPartyItem(getProductOptions[0].id);
+            }
+            if(getSupplierOptions.length > 0) {
+              setSelectedSupplierPartyItem(getSupplierOptions[0].id);
+            }
+            if(getManufacturerOptions.length > 0) {
+              setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
+            }
+          
+            setProductPartyOptions(getProductOptions);
+            setSupplierPartyOptions(getSupplierOptions);
+            setManufacturerPartyOptions(getManufacturerOptions);
+            break;
+
         case "Experiments":
           break;
 
@@ -150,6 +218,11 @@ function AddPageContent() {
           setImg("research");
           setTitleName("Добавление исследования")
           break;
+
+        case "Parties":
+            setImg("batch-picking");
+            setTitleName("Добавление партии")
+            break;
 
         case "Experiments":
           setImg("experiment");
@@ -195,9 +268,17 @@ function AddPageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>, name: string) => {
     const { value } = event.target;
+    if (name === 'productId') {
+      setSelectedProductPartyItem(value);
+    } else if (name === 'supplierId') {
+      setSelectedSupplierPartyItem(value);
+    } else if (name === 'manufacturerId') {
+      setSelectedManufacturerPartyItem(value);
+    } else {
     setSelectedItem(value);
+    }
   };
 
   const handleInputCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -307,7 +388,42 @@ function AddPageContent() {
         }
         break;
 
-      case "Experiments":
+      case "Parties":
+        const addPartyModel = formData as AddPartyModel;
+        const createPartyRequest: CreatePartyRequest = {
+          batchNumber: addPartyModel.batchNumber,
+          dateOfReceipt: addPartyModel.dateOfReceipt,
+          productId: selectedProductPartyItem,
+          supplierId: selectedSupplierPartyItem,
+          manufacturerId: selectedManufacturerPartyItem,
+          batchSize: addPartyModel.batchSize,
+          sampleSize: addPartyModel.sampleSize,
+          ttn: addPartyModel.ttn,
+          documentOnQualityAndSafety: addPartyModel.documentOnQualityAndSafety,
+          testReport: addPartyModel.testReport,
+          dateOfManufacture: addPartyModel.dateOfManufacture,
+          expirationDate: addPartyModel.expirationDate,
+          packaging: addPartyModel.packaging,
+          marking: addPartyModel.marking,
+          result: addPartyModel.result,
+          note: addPartyModel.note
+        };
+
+        const partyResult = await AddPartyAsync(createPartyRequest);
+        const [partyResponse, partyStatusCode] = partyResult;
+        if (partyStatusCode === 200) {
+          setSuccessMessage(partyResponse);
+          setPartyErrors({});
+          setErrors("");
+        } else if (partyStatusCode === 400) {
+          setSuccessMessage("");
+          setPartyErrors(partyResponse);
+          setErrors("");
+        } else if (partyStatusCode === 409) {
+          setSuccessMessage("");
+          setPartyErrors({});
+          setErrors(partyResponse);
+        }
         break;
 
       default:
@@ -334,17 +450,29 @@ function AddPageContent() {
                         // name={input.name}
                         id={input.name}
                         // value={selectedItem}
-                        onChange={handleSelectChange}
+                        onChange={(e) => handleSelectChange(e, input.name)}
                         required
                       >
                         <option value="" disabled>
                           {input.placeholder}
                         </option>
-                        {options.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name}
-                          </option>
-                        ))}
+                        {(() => {
+                          let opt = [];
+                          if (input.name === "productId") {
+                            opt = productPartyOptions;
+                          } else if (input.name === "supplierId") {
+                            opt = supplierPartyOptions;
+                          } else if (input.name === "manufacturerId") {
+                            opt = manufacturerPartyOptions;
+                          } else {
+                            opt = options
+                          }
+                          return opt.map(option => (
+                            <option key={option.id} value={option.id}>
+                              {option.name}
+                            </option>
+                          ));
+                        })()}
                       </select>
                     </div>
                   ) : input.isCheckbox ? (
@@ -392,6 +520,7 @@ function AddPageContent() {
                       </span>
                     </div>
                   )}
+
                   {tableName === "Products" &&
                     productErrors[input.name] &&
                     input.name !== "id" && (
@@ -408,6 +537,16 @@ function AddPageContent() {
                       <div>
                         <span className="error-message">
                           {researchErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
+
+                  {tableName === "Parties" &&
+                    partyErrors[input.name] &&
+                    input.name !== "id" && (
+                      <div>
+                        <span className="error-message">
+                          {partyErrors[input.name]}
                         </span>
                       </div>
                     )}

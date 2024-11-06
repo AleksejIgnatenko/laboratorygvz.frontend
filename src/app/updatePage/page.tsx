@@ -25,10 +25,14 @@ import { ResearchModel } from "@/Models/ResearchModels/ResearchModel";
 import { UpdateResearchModel } from "@/Models/ResearchModels/UpdateResearchModel";
 import { UpdateResearchAsync } from "@/services/ResearchServices.tsx/UpdateResearchAsync";
 import { GetProductsAsync } from "@/services/ProductServices/GetProductsAsync";
+import { PartyValidationErrorModel } from "@/Models/PartyModels/PartyValidationErrorModel";
+import { PartyModel } from "@/Models/PartyModels/PartyModel";
+import { UpdatePartyModel } from "@/Models/PartyModels/UpdatePartyModel";
+import { UpdatePartyAsync } from "@/services/PartyServices/UpdatePartyAsync";
 
 interface InputConfig {
   name: string;
-  placeholder: string;
+  placeholder?: string;
   isSelect?: boolean;
   isCheckbox?: boolean;
 }
@@ -59,6 +63,24 @@ const inputConfig: Record<string, InputConfig[]> = {
   Researches: [
     { name: "researchName", placeholder: "Название исследования" },
     { name: "ProductId", placeholder: "Название продукта", isSelect: true },
+  ],
+  Parties: [
+    { name: "batchNumber", placeholder: "Номер партии" },
+    { name: "dateOfReceipt", placeholder: "Дата поступления" },
+    { name: "productId", isSelect: true },
+    { name: "supplierId", isSelect: true },
+    { name: "manufacturerId", isSelect: true },
+    { name: "batchSize", placeholder: "Объем партии" },
+    { name: "sampleSize", placeholder: "Объем выборки" },
+    { name: "ttn", placeholder: "ТТН" },
+    { name: "documentOnQualityAndSafety", placeholder: "Документ по качеству и безопасности" },
+    { name: "testReport", placeholder: "Протокол испытаний" },
+    { name: "dateOfManufacture", placeholder: "Дата изготовления" },
+    { name: "expirationDate", placeholder: "Срок годности" },
+    { name: "packaging", placeholder: "Упаковка" },
+    { name: "marking", placeholder: "Маркировка" },
+    { name: "result", placeholder: "Результат" },
+    { name: "note", placeholder: "Примечание" },
   ],
   Experiments: [
     { name: "experimentName", placeholder: "Да" },
@@ -91,8 +113,19 @@ function UpdatePageContent() {
     useState<ProductValidationErrorModel>({});
   const [researchErrors, setResearchErrors] =
     useState<ResearchValidationErrorModel>({});
+  const [partyErrors, setPartyErrors] =
+    useState<PartyValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
+
+  const [productPartyOptions, setProductPartyOptions] = useState<Option[]>([]);
+  const [supplierPartyOptions, setSupplierPartyOptions] = useState<Option[]>([]);
+  const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<Option[]>([]);
+
+  const [selectedProductPartyItem, setSelectedProductPartyItem] = useState<string>("");
+  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] = useState<string>("");
+  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] = useState<string>("");
+
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [image, setImg] = useState<string>();
 
@@ -128,7 +161,7 @@ function UpdatePageContent() {
               (manufacturer) => ({
                 id: manufacturer.id,
                 name: manufacturer.manufacturerName,
-                isChecked: supplierManufacturerIds.includes(manufacturer.id), 
+                isChecked: supplierManufacturerIds.includes(manufacturer.id),
               })
             );
 
@@ -136,8 +169,8 @@ function UpdatePageContent() {
           }
           break;
 
-          case "Products":
-            if (item !== null) {
+        case "Products":
+          if (item !== null) {
             const productItem = item as ProductModel;
 
             const suppliers = await GetSuppliersAsync();
@@ -168,11 +201,43 @@ function UpdatePageContent() {
             id: product.id,
             name: product.productName,
           }))
-          if(researchOptions.length > 0) {
+          if (researchOptions.length > 0) {
             setSelectedItem(researchOptions[0].id);
           }
-          
-          setOptions(researchOptions);
+
+        case "Parties":
+          const partiesProductsOptions = await GetProductsAsync();
+          const partiesSuppliersOptions = await GetSuppliersAsync();
+          const partiesManufacturersOptions = await GetManufacturersAsync();
+
+          const getProductOptions: Option[] = partiesProductsOptions.map(product => ({
+            id: product.id,
+            name: product.productName,
+          }));
+
+          const getSupplierOptions: Option[] = partiesSuppliersOptions.map(supplier => ({
+            id: supplier.id,
+            name: supplier.supplierName,
+          }));
+
+          const getManufacturerOptions: Option[] = partiesManufacturersOptions.map(manufacturer => ({
+            id: manufacturer.id,
+            name: manufacturer.manufacturerName,
+          }));
+
+          if (getProductOptions.length > 0) {
+            setSelectedProductPartyItem(getProductOptions[0].id);
+          }
+          if (getSupplierOptions.length > 0) {
+            setSelectedSupplierPartyItem(getSupplierOptions[0].id);
+          }
+          if (getManufacturerOptions.length > 0) {
+            setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
+          }
+
+          setProductPartyOptions(getProductOptions);
+          setSupplierPartyOptions(getSupplierOptions);
+          setManufacturerPartyOptions(getManufacturerOptions);
           break;
 
         case "Experiments":
@@ -203,6 +268,12 @@ function UpdatePageContent() {
 
         case "Researches":
           setImg("research");
+          setTitleName("Добавление исследования")
+          break;
+
+        case "Parties":
+          setImg("batch-picking");
+          setTitleName("Добавление партии")
           break;
 
         case "Experiments":
@@ -249,28 +320,41 @@ function UpdatePageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value })); // Обновляем состояние
   };
 
-const handleInputCheckboxChange = (
-  event: React.ChangeEvent<HTMLInputElement>
-) => {
-  const { id, checked } = event.target;
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>, name: string) => {
+    const { value } = event.target;
+    if (name === 'productId') {
+      setSelectedProductPartyItem(value);
+    } else if (name === 'supplierId') {
+      setSelectedSupplierPartyItem(value);
+    } else if (name === 'manufacturerId') {
+      setSelectedManufacturerPartyItem(value);
+    } else {
+      setSelectedItem(value);
+    }
+  };
 
-  setOptions((prevOptions) =>
-    prevOptions.map((option) => {
-      if (option.id === id) {
-        return { ...option, isChecked: checked };
-      }
-      return option; 
-    })
-  );
+  const handleInputCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { id, checked } = event.target;
 
-  if (checked) {
-    setSelectedCheckbox((prev) => [...prev, id]);
-  } else {
-    setSelectedCheckbox((prev) =>
-      prev.filter((supplierId) => supplierId !== id)
+    setOptions((prevOptions) =>
+      prevOptions.map((option) => {
+        if (option.id === id) {
+          return { ...option, isChecked: checked };
+        }
+        return option;
+      })
     );
-  }
-};
+
+    if (checked) {
+      setSelectedCheckbox((prev) => [...prev, id]);
+    } else {
+      setSelectedCheckbox((prev) =>
+        prev.filter((supplierId) => supplierId !== id)
+      );
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -322,7 +406,7 @@ const handleInputCheckboxChange = (
                   : supplierItem[key as keyof SupplierModel];
               return acc;
             },
-            { id: supplierItem.id, supplierName: "",}
+            { id: supplierItem.id, supplierName: "", }
           );
 
           const updateSupplierModel: UpdateSupplierModel = {
@@ -361,7 +445,7 @@ const handleInputCheckboxChange = (
                   : productItem[key as keyof ProductModel];
               return acc;
             },
-            { id: productItem.id, productName: "",}
+            { id: productItem.id, productName: "", }
           );
 
           const updateProductModel: UpdateProductModel = {
@@ -400,7 +484,7 @@ const handleInputCheckboxChange = (
                   : researchItem[key as keyof ResearchModel];
               return acc;
             },
-            { id: researchItem.id, researchName: "",}
+            { id: researchItem.id, researchName: "", }
           );
 
           const updateProductModel: UpdateResearchModel = {
@@ -423,6 +507,78 @@ const handleInputCheckboxChange = (
           } else if (statusCode === 409) {
             setSuccessMessage("");
             setResearchErrors({});
+            setErrors(response);
+          }
+        }
+        break;
+
+      case "Parties":
+        if (item !== null) {
+          const partyItem = item as PartyModel;
+          const updateItem: PartyModel = Object.keys(partyItem).reduce<PartyModel>(
+            (acc, key) => {
+              acc[key as keyof PartyModel] =
+                formData[key] !== undefined && formData[key] !== ""
+                  ? formData[key]
+                  : partyItem[key as keyof PartyModel];
+              return acc;
+            },
+            {
+              id: partyItem.id,
+              batchNumber: "",
+              dateOfReceipt: "",
+              productName: "",
+              supplierName: "",
+              manufacturerName: "",
+              batchSize: "",
+              sampleSize: "",
+              ttn: "",
+              documentOnQualityAndSafety: "",
+              testReport: "",
+              dateOfManufacture: "",
+              expirationDate: "",
+              packaging: "",
+              marking: "",
+              result: "",
+              userName: "",
+              note: ""
+            }
+          );
+
+          const updatePartyModel: UpdatePartyModel = {
+            id: updateItem.id,
+            batchNumber: updateItem.batchNumber,
+            dateOfReceipt: updateItem.dateOfReceipt,
+            productId: selectedProductPartyItem,
+            supplierId: selectedSupplierPartyItem,
+            manufacturerId: selectedManufacturerPartyItem,
+            batchSize: updateItem.batchSize,
+            sampleSize: updateItem.sampleSize,
+            ttn: updateItem.ttn,
+            documentOnQualityAndSafety: updateItem.documentOnQualityAndSafety,
+            testReport: updateItem.testReport,
+            dateOfManufacture: updateItem.dateOfManufacture,
+            expirationDate: updateItem.expirationDate,
+            packaging: updateItem.packaging,
+            marking: updateItem.marking,
+            result: updateItem.result,
+            note: updateItem.note
+          };
+
+          const result = await UpdatePartyAsync(updatePartyModel);
+          const [response, statusCode] = result;
+
+          if (statusCode === 200) {
+            setSuccessMessage(response);
+            setPartyErrors({});
+            setErrors("");
+          } else if (statusCode === 400) {
+            setSuccessMessage("");
+            setPartyErrors(response);
+            setErrors("");
+          } else if (statusCode === 409) {
+            setSuccessMessage("");
+            setPartyErrors({});
             setErrors(response);
           }
         }
@@ -453,19 +609,32 @@ const handleInputCheckboxChange = (
                   {input.name === "id" ? null : input.isSelect ? (
                     <div className="select-container">
                       <select
-                        name={input.name}
+                        // name={input.name}
                         id={input.name}
-                        onChange={handleInputChange}
+                        // value={selectedItem}
+                        onChange={(e) => handleSelectChange(e, input.name)}
                         required
                       >
                         <option value="" disabled>
                           {input.placeholder}
                         </option>
-                        {options.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name}
-                          </option>
-                        ))}
+                        {(() => {
+                          let opt = [];
+                          if (input.name === "productId") {
+                            opt = productPartyOptions;
+                          } else if (input.name === "supplierId") {
+                            opt = supplierPartyOptions;
+                          } else if (input.name === "manufacturerId") {
+                            opt = manufacturerPartyOptions;
+                          } else {
+                            opt = options
+                          }
+                          return opt.map(option => (
+                            <option key={option.id} value={option.id}>
+                              {option.name}
+                            </option>
+                          ));
+                        })()}
                       </select>
                     </div>
                   ) : input.isCheckbox ? (
@@ -492,7 +661,7 @@ const handleInputCheckboxChange = (
                           item ? item[input.name] : input.placeholder
                         }
                         onChange={handleInputChange}
-                        // required
+                      // required
                       />
                     </div>
                   )}
@@ -533,6 +702,16 @@ const handleInputCheckboxChange = (
                       <div>
                         <span className="error-message">
                           {researchErrors[input.name]}
+                        </span>
+                      </div>
+                    )}
+
+                  {tableName === "Parties" &&
+                    partyErrors[input.name] &&
+                    input.name !== "id" && (
+                      <div>
+                        <span className="error-message">
+                          {partyErrors[input.name]}
                         </span>
                       </div>
                     )}

@@ -25,7 +25,7 @@ export const AddResearchAsync = async (research: CreateResearchRequest) => {
       return [errors.error, 409];
     }
   } catch (error) {
-    console.error("Error adding supplier:", error);
+    console.error("Error adding research:", error);
   }
-  return ["Не получилось добавить поставщика", null];
+  return ["Не получилось добавить исследование", null];
 };

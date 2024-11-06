@@ -19,7 +19,7 @@ export const GetProductSuppliersAsync = async (
       const suppliers: SupplierModel[] = responseData;
       return suppliers;
     } else {
-      console.error("Failed to fetch suppliers:", response.status);
+      console.error("Failed to fetch products:", response.status);
     }
   } catch (error) {
     console.error("Error fetching:", error);

@@ -17,12 +17,12 @@ export const DeleteManufacturersAsync = async (data: Set<ManufacturerModel>) => 
 
       if (!response.ok) {
         alert("При удалении возникла ошибка");
-        console.error("Error deleting suppliers:", response.statusText);
+        console.error("Error deleting manufacturers:", response.statusText);
       }
     } catch (error) {
-      console.error("Error deleting supplier:", error);
+      console.error("Error deleting manufacturer:", error);
     }
   } else {
-    console.log("No products available.");
+    console.log("No manufacturers available.");
   }
 };

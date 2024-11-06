@@ -21,7 +21,7 @@ export const GetManufacturersForPageAsync = async (
 
       return { manufacturers, countItemsAll };
     } else {
-      console.error("Failed to fetch suppliers:", response.status);
+      console.error("Failed to fetch manufacturers:", response.status);
     }
   } catch (error) {
     console.error("Error fetching:", error);
