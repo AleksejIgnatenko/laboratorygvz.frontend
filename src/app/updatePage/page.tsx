@@ -223,6 +223,7 @@ function UpdatePageContent() {
                 const removedProduct = products.splice(productIndex, 1)[0];
                 products.unshift(removedProduct);
               }
+              setSelectedItem(product.id);
             }
 
             const researchOptions: Option[] = products.map((product) => ({
@@ -527,7 +528,7 @@ function UpdatePageContent() {
                   : researchItem[key as keyof ResearchModel];
               return acc;
             },
-            { id: researchItem.id, researchName: "" }
+            { id: researchItem.id, researchName: "", productName: "" }
           );
 
           const updateProductModel: UpdateResearchModel = {

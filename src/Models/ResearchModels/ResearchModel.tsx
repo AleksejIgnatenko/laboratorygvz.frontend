@@ -2,5 +2,6 @@
 
 export interface ResearchModel {
   id: string;
-  researchName: string; 
+  researchName: string;
+  productName: string;
 }

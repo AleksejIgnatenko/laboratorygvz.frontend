@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { GetResearchesForPageAsync } from "@/services/ResearchServices.tsx/GetResearchesForPageAsync";
 import { DeleteResearchesAsync } from "@/services/ResearchServices.tsx/DeleteResearchesAsync";
 import "./style.css";
-import { GetProductResearchesForPageAsync } from "@/services/ProductServices/GetProductResearchesForPageAsync";
+import { GetProductResearchesForPageAsync } from "@/services/ResearchServices.tsx/GetProductResearchesForPageAsync";
 
 export default function Researches() {
   const [data, setData] = useState<ResearchModel[]>([]);

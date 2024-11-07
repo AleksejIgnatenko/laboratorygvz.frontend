@@ -341,6 +341,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     <th>
                       <span>Поставщики</span>
                     </th>
+                    <th>
+                      <span>Исследования</span>
+                    </th>
                   </>
                 )}
               </tr>
@@ -387,16 +390,28 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     </>
                   )}
                   {tableName === "Products" && (
-                    <td>
-                      <Link
-                        href={`/suppliers?productId=${
-                          (item as ProductModel).id
-                        }`}
-                        className="data-table-link-style"
-                      >
-                        Список поставщиков
-                      </Link>
-                    </td>
+                    <>
+                      <td>
+                        <Link
+                          href={`/suppliers?productId=${
+                            (item as ProductModel).id
+                          }`}
+                          className="data-table-link-style"
+                        >
+                          Список поставщиков
+                        </Link>
+                      </td>
+                      <td>
+                        <Link
+                          href={`/researches?productId=${
+                            (item as ProductModel).id
+                          }`}
+                          className="data-table-link-style"
+                        >
+                          Список исследований
+                        </Link>
+                      </td>
+                    </>
                   )}
                   <td>
                     <img
