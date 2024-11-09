@@ -1,13 +1,18 @@
 import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const GetManufacturersAsync = async (): Promise<ManufacturerModel[]> => {
   try {
+
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch(
-      'http://localhost:5002/api/Manufacturer/getManufacturersAsync',
+      "http://localhost:5002/api/Manufacturer/getManufacturersAsync",
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`,
         },
       }
     );

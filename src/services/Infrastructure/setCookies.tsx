@@ -7,5 +7,4 @@ export const setCookies = (
 ) => {
   const expirationTime = new Date(new Date().getTime() + expirationDuration);
   Cookies.set(nameCookie, valueCookie, { expires: expirationTime });
-  console.log(`Cookie set: ${nameCookie} = ${valueCookie}`);
 };

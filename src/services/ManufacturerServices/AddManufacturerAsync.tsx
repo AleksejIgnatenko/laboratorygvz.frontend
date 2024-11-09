@@ -1,12 +1,17 @@
 import { ManufacturerErrorMapper } from "@/Mappers/ManufacturerMapper/ManufacturerErrorMapper";
 import { AddManufacturerModel } from "@/Models/ManufacturerModels/AddManufacturerModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const AddManufacturerAsync = async (manufacturer: AddManufacturerModel) => {
   try {
+
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch("http://localhost:5002/api/Manufacturer", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "content-type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(manufacturer),
     });
