@@ -30,6 +30,10 @@ import { PartyModel } from "@/Models/PartyModels/PartyModel";
 import { UpdatePartyModel } from "@/Models/PartyModels/UpdatePartyModel";
 import { UpdatePartyAsync } from "@/services/PartyServices/UpdatePartyAsync";
 import { GetProductForResearchId } from "@/services/ResearchServices.tsx/GetProductForResearchId";
+import { RoleEnum } from "@/Enums/RoleEnum";
+import { UserModel } from "@/Models/UserModels/UserModel";
+import { IsAdminAsync } from "@/services/UserServices/IsAdminAsync ";
+import { IsManagerAsync } from "@/services/UserServices/IsManagerAsync ";
 
 interface InputConfig {
   name: string;
@@ -88,6 +92,13 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "marking", placeholder: "Маркировка" },
     { name: "result", placeholder: "Результат" },
     { name: "note", placeholder: "Примечание" },
+  ],
+  Users: [
+    { name: "id", placeholder: "" },
+    { name: "surname", placeholder: "Фамилия" },
+    { name: "userName", placeholder: "Имя" },
+    { name: "patronymic", placeholder: "Отчество" },
+    { name: "role", placeholder: "Роль", isSelect: true },
   ],
   Experiments: [
     { name: "experimentName", placeholder: "Да" },
@@ -281,6 +292,54 @@ function UpdatePageContent() {
           setManufacturerPartyOptions(getManufacturerOptions);
           break;
 
+        case "Users":
+          if (item !== null) {
+            const userItem = item as UserModel;
+
+            let roleOptions: Option[] = [];
+
+            const isManager = await IsManagerAsync();
+            if (isManager) {
+              roleOptions = [
+                { id: "1", name: RoleEnum.User },
+                { id: "2", name: RoleEnum.Worker },
+              ];
+            } else {
+              const isAdmin = await IsAdminAsync();
+              if (isAdmin) {
+                roleOptions = [
+                  { id: "1", name: RoleEnum.User },
+                  { id: "2", name: RoleEnum.Worker },
+                  { id: "3", name: RoleEnum.Manager },
+                ];
+              } else {
+                router.push('/');
+              }
+            }
+
+            const userRole = userItem.role;
+
+            const selectedRole = roleOptions.find(
+              (role) => role.name === userRole
+            );
+
+            const rolesWithCheckboxState = roleOptions.map((role) => ({
+              id: role.id,
+              name: role.name,
+              isSelected:
+                selectedRole && selectedRole.id === role.id ? true : false,
+            }));
+
+            if (selectedRole) {
+              setSelectedItem(selectedRole.id);
+            } else {
+              setSelectedItem("");
+            }
+
+            setOptions(rolesWithCheckboxState);
+          }
+          break;
+
         case "Experiments":
           break;
 
@@ -309,12 +368,17 @@ function UpdatePageContent() {
 
         case "Researches":
           setImg("research");
-          setTitleName("Добавление исследования");
+          setTitleName("Редактирование исследования");
           break;
 
         case "Parties":
           setImg("batch-picking");
-          setTitleName("Добавление партии");
+          setTitleName("Редактирование партии");
+          break;
+
+        case "Users":
+          setImg("experiment");
+          setTitleName("Редактирование пользователя");
           break;
 
         case "Experiments":
@@ -655,9 +719,9 @@ function UpdatePageContent() {
                   {input.name === "id" ? null : input.isSelect ? (
                     <div className="select-container">
                       <select
-                        // name={input.name}
+                        name={input.name}
                         id={input.name}
-                        // value={selectedItem}
+                        value={selectedItem}
                         onChange={(e) => handleSelectChange(e, input.name)}
                         required
                       >

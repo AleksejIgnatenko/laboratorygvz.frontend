@@ -8,6 +8,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ProductModel } from "@/Models/ProductModels/ProductModel";
 import { SupplierModel } from "@/Models/SupplierModels/SupplierModel";
+import { IsManagerAsync } from "@/services/UserServices/IsManagerAsync ";
+import { IsAdminAsync } from "@/services/UserServices/IsAdminAsync ";
+import { UserModel } from "@/Models/UserModels/UserModel";
+import { RoleEnum } from "@/Enums/RoleEnum";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 
 interface DataTableProps<T extends object> {
@@ -41,6 +45,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
   const [titleName, setTitleName] = useState("");
+  const [isManager, setIsManager] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   // const router = useRouter();
 
   useEffect(() => {
@@ -60,6 +66,23 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
 
         case "Researches":
           setTitleName("Исследования");
+          break;
+
+        case "Users":
+          setTitleName("Пользователи");
+          const userIsManager = await IsManagerAsync();
+          if (userIsManager) {
+            setIsManager(userIsManager);
+          } else {
+            const userIsAdmin = await IsAdminAsync();
+            if (userIsAdmin) {
+              setIsAdmin(userIsAdmin);
+            } else {
+              router.push("/");
+            }
+          }
+          console.log(isManager);
+          console.log(isAdmin);
           break;
 
         case "Experiments":
@@ -294,7 +317,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
           <table>
             <thead>
               <tr className="no-hover">
-                <th></th>
+                {tableName !== "Users" && <th></th>}
                 {columns.map(
                   (column) =>
                     column !== "id" && (
@@ -351,14 +374,16 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
             <tbody>
               {sortedData().map((item, index) => (
                 <tr key={index}>
-                  <td>
-                    <input
-                      className="input checkbox"
-                      type="checkbox"
-                      onChange={() => handleCheckboxChange(item)}
-                      checked={selectedItems.has(item)}
-                    />
-                  </td>
+                  {tableName !== "Users" && (
+                    <td>
+                      <input
+                        className="input checkbox"
+                        type="checkbox"
+                        onChange={() => handleCheckboxChange(item)}
+                        checked={selectedItems.has(item)}
+                      />
+                    </td>
+                  )}
                   {columns.map(
                     (column) =>
                       column !== "id" && (
@@ -414,6 +439,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     </>
                   )}
                   <td>
+                  {((item as UserModel).role !== RoleEnum.Admin) && !((item as UserModel).role === RoleEnum.Manager && isManager) && (
                     <img
                       className="edit-img"
                       src="/images/pencil.png"
@@ -425,7 +451,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                         router.push(`/updatePage?${queryString}`);
                       }}
                     />
-                  </td>
+                  )}
+                </td>
                 </tr>
               ))}
             </tbody>

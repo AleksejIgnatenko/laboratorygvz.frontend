@@ -5,21 +5,21 @@ import "boxicons/css/boxicons.min.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IsAdminOrManagerAsync } from "@/services/UserServices/IsAdminOrManagerAsync ";
 
 export default function Sidebar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const router = useRouter();
 
-  const sidebarItems = [
+  const [sidebarItems, setSidebarItems] = useState([
     { link: "/", icon: "bx bx-home-alt-2", name: "Домашняя", tooltip: "Домашняя" },
-    { link: "/users", icon: "bx bx-user", name: "Пользователи", tooltip: "Пользователи" },
     { link: "/researches", icon: "bx bx-book-content", name: "Иследования", tooltip: "Иследования" },
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
     { link: "/products", icon: "bx bx-package", name: "Продукты", tooltip: "Продукты" },
     { link: "/suppliers", icon: "bx bx-car", name: "Поставщики", tooltip: "Поставщики" },
     { link: "/manufacturers", icon: "bx bx-buildings", name: "Производители", tooltip: "Производители" },
-  ];
+  ]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -98,6 +98,25 @@ export default function Sidebar() {
       };
     }
   }, []);
+
+    const checkUserRole = async () => {
+      const isAdminOrManager = await IsAdminOrManagerAsync();
+      if (isAdminOrManager) {
+        setSidebarItems((prevItems) => [
+          ...prevItems,
+          {
+            link: "/users",
+            icon: "bx bx-user",
+            name: "Пользователи",
+            tooltip: "Пользователи",
+          },
+        ]);
+      }
+    };
+
+    useEffect(() => {
+      checkUserRole();
+    }, []);
 
   const toggleColorScheme = () => {
     setIsDarkTheme((prev) => {

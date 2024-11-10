@@ -27,5 +27,5 @@ export const GetUsersForPageAsync = async (
   } catch (error) {
     console.error("Error fetching:", error);
   }
-  return { users: [], countItemsAll: 0 }; // Return an empty array and zero count in case of error
+  return { users: [], countItemsAll: 0 };
 };

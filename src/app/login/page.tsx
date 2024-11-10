@@ -2,23 +2,34 @@
 
 import { useState } from "react";
 import "./style.css";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoginUserModel } from "../../Models/UserModels/LoginUserModel";
+import { LoginUserAsync } from "@/services/UserServices/LoginUserAsync";
 
 export default function Login() {
+  const router = useRouter();
   const [formData, setFormData] = useState<LoginUserModel>({
     email: "",
     password: "",
   });
+
+  const [errors, setErrors] = useState<string>();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleLogin = (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Form submitted: ", formData);
+    const result = await LoginUserAsync(formData);
+    if (result) {
+      setErrors(result);
+    } else {
+      setErrors("");
+      router.push("/");
+    }
   };
 
   return (
@@ -60,6 +71,7 @@ export default function Login() {
                 </button>
               </div>
             </div>
+            <span className="error-message">{errors}</span>
           </form>
           <div className="signin-image">
             <img
