@@ -81,8 +81,6 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
               router.push("/");
             }
           }
-          console.log(isManager);
-          console.log(isAdmin);
           break;
 
         case "Experiments":

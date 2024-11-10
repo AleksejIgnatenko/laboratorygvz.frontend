@@ -34,6 +34,8 @@ import { RoleEnum } from "@/Enums/RoleEnum";
 import { UserModel } from "@/Models/UserModels/UserModel";
 import { IsAdminAsync } from "@/services/UserServices/IsAdminAsync ";
 import { IsManagerAsync } from "@/services/UserServices/IsManagerAsync ";
+import { UpdateUserAsync } from "@/services/UserServices/UpdateUserAsync";
+import { UpdateUserModel } from "@/Models/UserModels/UpdateUserModel";
 
 interface InputConfig {
   name: string;
@@ -689,6 +691,49 @@ function UpdatePageContent() {
           } else if (statusCode === 409) {
             setSuccessMessage("");
             setPartyErrors({});
+            setErrors(response);
+          }
+        }
+        break;
+
+      case "Users":
+        if (item !== null) {
+          const userItem = item as UserModel;
+
+          const updateItem: UserModel = Object.keys(userItem).reduce(
+            (acc, key) => {
+              acc[key as keyof UserModel] =
+                formData[key] !== undefined && formData[key] !== ""
+                  ? formData[key]
+                  : userItem[key as keyof UserModel];
+              return acc;
+            },
+            { id: userItem.id, role: "", surname: "", userName: "", patronymic: "", email: "" }
+          );
+
+          console.log(selectedItem);
+          const updateUserModel: UpdateUserModel = {
+              id: updateItem.id,
+              role: selectedItem,
+              surname: updateItem.surname,
+              userName: updateItem.userName,
+              patronymic: updateItem.patronymic,
+          };
+
+          const result = await UpdateUserAsync(updateUserModel);
+          const [response, statusCode] = result;
+
+          if (statusCode === 200) {
+            setSuccessMessage(response);
+            setManufacturerErrors({});
+            setErrors("");
+          } else if (statusCode === 400) {
+            setSuccessMessage("");
+            setManufacturerErrors(response);
+            setErrors("");
+          } else if (statusCode === 409) {
+            setSuccessMessage("");
+            setManufacturerErrors({});
             setErrors(response);
           }
         }
