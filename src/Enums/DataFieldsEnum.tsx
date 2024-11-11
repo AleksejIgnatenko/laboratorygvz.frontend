@@ -23,11 +23,18 @@ export enum DataFieldsEnum {
   researchName = "Название исследования",
 
   //PartyModel
+  batchNumber = "Номер партии",
   dateOfReceipt = "Дата получения",
   batchSize = "Размер партии",
   sampleSize = "Размер выборки",
   ttn = "ТТН",
-  documentQuality = "Документ по качеству и безопасности",
+  documentOnQualityAndSafety = "Документ по качеству и безопасности",
   testReport = "Протокол испытаний",
-  experements = "Эксперементы",
+  dateOfManufacture = "Дата изготовления",
+  expirationDate = "Срок годности",
+  packaging = "Упаковка",
+  marking = "Маркировка",
+  result = "Заключение",
+  responsible = "Ответственный",
+  note = "Примечание",
 }

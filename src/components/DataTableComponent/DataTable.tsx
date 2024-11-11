@@ -46,7 +46,6 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
   const [titleName, setTitleName] = useState("");
   const [isManager, setIsManager] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   // const router = useRouter();
 
   useEffect(() => {
@@ -68,6 +67,10 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
           setTitleName("Исследования");
           break;
 
+        case "Parties":
+          setTitleName("Партии");
+          break;
+
         case "Users":
           setTitleName("Пользователи");
           const userIsManager = await IsManagerAsync();
@@ -75,9 +78,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
             setIsManager(userIsManager);
           } else {
             const userIsAdmin = await IsAdminAsync();
-            if (userIsAdmin) {
-              setIsAdmin(userIsAdmin);
-            } else {
+            if (!userIsAdmin) {
               router.push("/");
             }
           }

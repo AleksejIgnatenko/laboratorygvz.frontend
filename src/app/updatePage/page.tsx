@@ -652,7 +652,7 @@ function UpdatePageContent() {
               packaging: "",
               marking: "",
               result: "",
-              userName: "",
+              responsible: "",
               note: "",
             }
           );

@@ -18,6 +18,7 @@ export const LoginUserAsync = async (userRequest: LoginUserModel) => {
     if (response.ok) {
       const responseData = await response.json();
       const token = responseData.token;
+      console.log(token);
       if (token) {
         const decodedToken = jwtDecode(token);
         if (

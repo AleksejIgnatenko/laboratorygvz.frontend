@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import "./style.css";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoginUserModel } from "../../Models/UserModels/LoginUserModel";
 import { LoginUserAsync } from "@/services/UserServices/LoginUserAsync";
 
 export default function Login() {
-  const router = useRouter();
+  // const router = useRouter();
   const [formData, setFormData] = useState<LoginUserModel>({
     email: "",
     password: "",
@@ -28,7 +28,8 @@ export default function Login() {
       setErrors(result);
     } else {
       setErrors("");
-      router.push("/");
+      // router.push("/");
+      window.location.href = "/";
     }
   };
 

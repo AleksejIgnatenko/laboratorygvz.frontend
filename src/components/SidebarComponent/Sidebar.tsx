@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IsAdminOrManagerAsync } from "@/services/UserServices/IsAdminOrManagerAsync ";
+import { getCookie } from "@/services/Infrastructure/getCookie";
 
 export default function Sidebar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,7 +24,13 @@ export default function Sidebar() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsLoggedIn(false);
+      const jwtToken = getCookie("jwtToken");
+      if(jwtToken) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+
       
       // Получаем сохранённую тему из localStorage
       const savedTheme = localStorage.getItem("theme");
@@ -63,23 +70,23 @@ export default function Sidebar() {
         }
         // Alt + 2
         if (event.altKey && event.key === "2") {
-          router.push("/users");
+          router.push("/researches");
         }
         // Alt + 3
         if (event.altKey && event.key === "3") {
-          router.push("/researches");
+          router.push("/#");
         }
         // Alt + 4
         if (event.altKey && event.key === "4") {
-          router.push("/#");
+          router.push("/products");
         }
         // Alt + 5
         if (event.altKey && event.key === "5") {
-          router.push("/products");
+          router.push("/suppliers");
         }
         // Alt + 6
         if (event.altKey && event.key === "6") {
-          router.push("/suppliers");
+          router.push("/users");
         }
         // // Alt + T
         // if (event.altKey && (event.key.toLowerCase() === 't') || event.key.toLowerCase() === 'е') {
@@ -150,7 +157,7 @@ export default function Sidebar() {
             type="checkbox"
             className="l"
             checked={!isDarkTheme}
-            onChange={toggleColorScheme} // Обработчик изменения
+            onChange={toggleColorScheme}
           />
         </li>
         {isLoggedIn ? (

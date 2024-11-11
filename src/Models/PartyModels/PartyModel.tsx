@@ -17,7 +17,7 @@ export interface PartyModel {
   packaging: string;
   marking: string;
   result: string;
-  userName: string;
+  responsible: string;
   note: string;
 }
 

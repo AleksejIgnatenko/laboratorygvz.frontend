@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import "./style.css";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { RegistrationUserModelRequest } from "../../Models/UserModels/RegistrationUserModelRequest";
 import { RegistrationUserAsync } from "@/services/UserServices/RegistrationUserAsync";
 import { UserValidationErrorModel } from "../../Models/UserModels/UserValidationErrorModel";
 
 export default function Registration() {
-  const router = useRouter();
+  // const router = useRouter();
   const [formData, setFormData] = useState<RegistrationUserModelRequest>({
     surname: "",
     userName: "",
@@ -33,7 +33,8 @@ export default function Registration() {
       setErrors(result);
     } else {
       setErrors({})
-      router.push('/');
+      // router.push('/');
+      window.location.href = "/";
     }
   };
 

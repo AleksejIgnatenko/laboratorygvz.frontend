@@ -40,9 +40,7 @@ interface Option {
 }
 
 const inputConfig: Record<string, InputConfig[]> = {
-  Manufacturers: [
-    { name: "manufacturerName", placeholder: "Производитель" },
-  ],
+  Manufacturers: [{ name: "manufacturerName", placeholder: "Производитель" }],
 
   Suppliers: [
     { name: "supplierName", placeholder: "Поставщик" },
@@ -51,7 +49,7 @@ const inputConfig: Record<string, InputConfig[]> = {
 
   Products: [
     { name: "productName", placeholder: "Название продукта" },
-    { name: "supplier", placeholder: "Поставщик(и):", isCheckbox: true }
+    { name: "supplier", placeholder: "Поставщик(и):", isCheckbox: true },
   ],
   Researches: [
     { name: "researchName", placeholder: "Название исследования" },
@@ -66,7 +64,10 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "batchSize", placeholder: "Объем партии" },
     { name: "sampleSize", placeholder: "Объем выборки" },
     { name: "ttn", placeholder: "ТТН" },
-    { name: "documentOnQualityAndSafety", placeholder: "Документ по качеству и безопасности" },
+    {
+      name: "documentOnQualityAndSafety",
+      placeholder: "Документ по качеству и безопасности",
+    },
     { name: "testReport", placeholder: "Протокол испытаний" },
     { name: "dateOfManufacture", placeholder: "Дата изготовления" },
     { name: "expirationDate", placeholder: "Срок годности" },
@@ -91,6 +92,10 @@ function AddPageContent() {
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errors, setErrors] = useState<string>();
 
+  const [dateOfReceiptValue, setDateOfReceiptValue] = useState("");
+  const [dateOfManufactureValue, setDateOfManufactureValue] = useState("");
+  const [expirationDateValue, setExpirationDateValue] = useState("");
+
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([]);
 
@@ -102,18 +107,24 @@ function AddPageContent() {
     useState<ProductValidationErrorModel>({});
   const [researchErrors, setResearchErrors] =
     useState<ResearchValidationErrorModel>({});
-  const [partyErrors, setPartyErrors] =
-    useState<PartyValidationErrorModel>({});
+  const [partyErrors, setPartyErrors] = useState<PartyValidationErrorModel>({});
 
   const [options, setOptions] = useState<Option[]>([]);
 
   const [productPartyOptions, setProductPartyOptions] = useState<Option[]>([]);
-  const [supplierPartyOptions, setSupplierPartyOptions] = useState<Option[]>([]);
-  const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<Option[]>([]);
+  const [supplierPartyOptions, setSupplierPartyOptions] = useState<Option[]>(
+    []
+  );
+  const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<
+    Option[]
+  >([]);
 
-  const [selectedProductPartyItem, setSelectedProductPartyItem] = useState<string>("");
-  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] = useState<string>("");
-  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] = useState<string>("");
+  const [selectedProductPartyItem, setSelectedProductPartyItem] =
+    useState<string>("");
+  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] =
+    useState<string>("");
+  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] =
+    useState<string>("");
 
   const [formData, setFormData] = useState({});
   const [image, setImg] = useState<string>();
@@ -125,69 +136,76 @@ function AddPageContent() {
       switch (tableName) {
         case "Suppliers":
           const manufacturers = await GetManufacturersAsync();
-          const supplierOptions: Option[] = manufacturers.map(manufacturer => ({
-            id: manufacturer.id,
-            name: manufacturer.manufacturerName,
-          }));
+          const supplierOptions: Option[] = manufacturers.map(
+            (manufacturer) => ({
+              id: manufacturer.id,
+              name: manufacturer.manufacturerName,
+            })
+          );
           setOptions(supplierOptions);
           break;
 
         case "Products":
           const suppliers = await GetSuppliersAsync();
-          const productOptions: Option[] = suppliers.map(supplier => ({
+          const productOptions: Option[] = suppliers.map((supplier) => ({
             id: supplier.id,
             name: supplier.supplierName,
-          }))
+          }));
           setOptions(productOptions);
           break;
 
         case "Researches":
           const products = await GetProductsAsync();
-          const researchOptions: Option[] = products.map(product => ({
+          const researchOptions: Option[] = products.map((product) => ({
             id: product.id,
             name: product.productName,
-          }))
-          if(researchOptions.length > 0) {
+          }));
+          if (researchOptions.length > 0) {
             setSelectedItem(researchOptions[0].id);
           }
-          
+
           setOptions(researchOptions);
           break;
 
-          case "Parties":
-            const partiesProductsOptions = await GetProductsAsync();
-            const partiesSuppliersOptions = await GetSuppliersAsync();
-            const partiesManufacturersOptions = await GetManufacturersAsync();
+        case "Parties":
+          const partiesProductsOptions = await GetProductsAsync();
+          const partiesSuppliersOptions = await GetSuppliersAsync();
+          const partiesManufacturersOptions = await GetManufacturersAsync();
 
-            const getProductOptions: Option[] = partiesProductsOptions.map(product => ({
+          const getProductOptions: Option[] = partiesProductsOptions.map(
+            (product) => ({
               id: product.id,
               name: product.productName,
-            }));
-            
-            const getSupplierOptions: Option[] = partiesSuppliersOptions.map(supplier => ({
+            })
+          );
+
+          const getSupplierOptions: Option[] = partiesSuppliersOptions.map(
+            (supplier) => ({
               id: supplier.id,
               name: supplier.supplierName,
-            }));
-            
-            const getManufacturerOptions: Option[] = partiesManufacturersOptions.map(manufacturer => ({
+            })
+          );
+
+          const getManufacturerOptions: Option[] =
+            partiesManufacturersOptions.map((manufacturer) => ({
               id: manufacturer.id,
               name: manufacturer.manufacturerName,
             }));
 
-            if(getProductOptions.length > 0) {
-              setSelectedProductPartyItem(getProductOptions[0].id);
-            }
-            if(getSupplierOptions.length > 0) {
-              setSelectedSupplierPartyItem(getSupplierOptions[0].id);
-            }
-            if(getManufacturerOptions.length > 0) {
-              setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
-            }
-          
-            setProductPartyOptions(getProductOptions);
-            setSupplierPartyOptions(getSupplierOptions);
-            setManufacturerPartyOptions(getManufacturerOptions);
-            break;
+          if (getProductOptions.length > 0) {
+            setSelectedProductPartyItem(getProductOptions[0].id);
+          }
+          if (getSupplierOptions.length > 0) {
+            setSelectedSupplierPartyItem(getSupplierOptions[0].id);
+          }
+          if (getManufacturerOptions.length > 0) {
+            setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
+          }
+
+          setProductPartyOptions(getProductOptions);
+          setSupplierPartyOptions(getSupplierOptions);
+          setManufacturerPartyOptions(getManufacturerOptions);
+          break;
 
         case "Experiments":
           break;
@@ -197,7 +215,7 @@ function AddPageContent() {
       }
     };
 
-    const setImagesTitles = async () => {
+    const setImagesTitlesDate = async () => {
       switch (tableName) {
         case "Manufacturers":
           setImg("factory");
@@ -216,13 +234,18 @@ function AddPageContent() {
 
         case "Researches":
           setImg("research");
-          setTitleName("Добавление исследования")
+          setTitleName("Добавление исследования");
           break;
 
         case "Parties":
-            setImg("batch-picking");
-            setTitleName("Добавление партии")
-            break;
+          setImg("batch-picking");
+          setTitleName("Добавление партии");
+          const today = new Date();
+          const formattedDate = today.toISOString().split("T")[0];
+          setDateOfReceiptValue(formattedDate);
+          setDateOfManufactureValue(formattedDate);
+          setExpirationDateValue(formattedDate);
+          break;
 
         case "Experiments":
           setImg("experiment");
@@ -254,7 +277,7 @@ function AddPageContent() {
     // window.addEventListener("keydown", handleKeyDown);
 
     fetchGetOptions();
-    setImagesTitles();
+    setImagesTitlesDate();
 
     // return () => {
     //   window.removeEventListener("keydown", handleKeyDown);
@@ -268,35 +291,59 @@ function AddPageContent() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>, name: string) => {
-    const { value } = event.target;
-    if (name === 'productId') {
-      setSelectedProductPartyItem(value);
-    } else if (name === 'supplierId') {
-      setSelectedSupplierPartyItem(value);
-    } else if (name === 'manufacturerId') {
-      setSelectedManufacturerPartyItem(value);
-    } else {
-    setSelectedItem(value);
+  const handleDateChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const newDate = event.target.value;
+    const inputName = event.target.name;
+
+    // Set state based on the input name
+    if (inputName === "dateOfReceipt") {
+      setDateOfReceiptValue(newDate);
+    } else if (inputName === "dateOfManufacture") {
+      setDateOfManufactureValue(newDate);
+    } else if (inputName === "expirationDate") {
+      setExpirationDateValue(newDate);
     }
   };
 
-  const handleInputCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    name: string
+  ) => {
+    const { value } = event.target;
+    if (name === "productId") {
+      setSelectedProductPartyItem(value);
+    } else if (name === "supplierId") {
+      setSelectedSupplierPartyItem(value);
+    } else if (name === "manufacturerId") {
+      setSelectedManufacturerPartyItem(value);
+    } else {
+      setSelectedItem(value);
+    }
+  };
+
+  const handleInputCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { id, checked } = event.target;
 
     if (checked) {
       setSelectedCheckbox((prev) => [...prev, id]);
     } else {
-      setSelectedCheckbox((prev) => prev.filter((supplierId) => supplierId !== id));
+      setSelectedCheckbox((prev) =>
+        prev.filter((supplierId) => supplierId !== id)
+      );
     }
   };
-
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     switch (tableName) {
       case "Manufacturers":
-        const result = await AddManufacturerAsync(formData as AddManufacturerModel);
+        const result = await AddManufacturerAsync(
+          formData as AddManufacturerModel
+        );
         const [response, statusCode] = result;
         if (statusCode === 200) {
           setSuccessMessage(response);
@@ -392,7 +439,7 @@ function AddPageContent() {
         const addPartyModel = formData as AddPartyModel;
         const createPartyRequest: CreatePartyRequest = {
           batchNumber: addPartyModel.batchNumber,
-          dateOfReceipt: addPartyModel.dateOfReceipt,
+          dateOfReceipt: dateOfReceiptValue,
           productId: selectedProductPartyItem,
           supplierId: selectedSupplierPartyItem,
           manufacturerId: selectedManufacturerPartyItem,
@@ -401,12 +448,12 @@ function AddPageContent() {
           ttn: addPartyModel.ttn,
           documentOnQualityAndSafety: addPartyModel.documentOnQualityAndSafety,
           testReport: addPartyModel.testReport,
-          dateOfManufacture: addPartyModel.dateOfManufacture,
-          expirationDate: addPartyModel.expirationDate,
+          dateOfManufacture: dateOfManufactureValue,
+          expirationDate: expirationDateValue,
           packaging: addPartyModel.packaging,
           marking: addPartyModel.marking,
           result: addPartyModel.result,
-          note: addPartyModel.note
+          note: addPartyModel.note,
         };
 
         const partyResult = await AddPartyAsync(createPartyRequest);
@@ -465,9 +512,9 @@ function AddPageContent() {
                           } else if (input.name === "manufacturerId") {
                             opt = manufacturerPartyOptions;
                           } else {
-                            opt = options
+                            opt = options;
                           }
-                          return opt.map(option => (
+                          return opt.map((option) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
                             </option>
@@ -490,6 +537,42 @@ function AddPageContent() {
                           </label>
                         ))}
                       </div>
+                    </div>
+                  ) : input.name === "dateOfReceipt" ? (
+                    <div>
+                      <input
+                        type="date"
+                        name="dateOfReceipt"
+                        id="dateOfReceipt"
+                        placeholder="Дата поступления"
+                        value={dateOfReceiptValue}
+                        onChange={handleDateChange}
+                        required
+                      />
+                    </div>
+                  ) : input.name === "dateOfManufacture" ? (
+                    <div>
+                      <input
+                        type="date"
+                        name="dateOfManufacture"
+                        id="dateOfManufacture"
+                        placeholder="Дата изготовления"
+                        value={dateOfManufactureValue}
+                        onChange={handleDateChange}
+                        required
+                      />
+                    </div>
+                  ) : input.name === "expirationDate" ? (
+                    <div>
+                      <input
+                        type="date"
+                        name="expirationDate"
+                        id="expirationDate"
+                        placeholder="Срок годности"
+                        value={expirationDateValue}
+                        onChange={handleDateChange}
+                        required
+                      />
                     </div>
                   ) : (
                     <div>
