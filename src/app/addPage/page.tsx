@@ -201,6 +201,12 @@ function AddPageContent() {
           if (getManufacturerOptions.length > 0) {
             setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
           }
+          
+          const today = new Date();
+          const formattedDate = today.toISOString().split("T")[0];
+          setDateOfReceiptValue(formattedDate);
+          setDateOfManufactureValue(formattedDate);
+          setExpirationDateValue(formattedDate);
 
           setProductPartyOptions(getProductOptions);
           setSupplierPartyOptions(getSupplierOptions);
@@ -215,7 +221,7 @@ function AddPageContent() {
       }
     };
 
-    const setImagesTitlesDate = async () => {
+    const setImagesTitles = async () => {
       switch (tableName) {
         case "Manufacturers":
           setImg("factory");
@@ -240,11 +246,6 @@ function AddPageContent() {
         case "Parties":
           setImg("batch-picking");
           setTitleName("Добавление партии");
-          const today = new Date();
-          const formattedDate = today.toISOString().split("T")[0];
-          setDateOfReceiptValue(formattedDate);
-          setDateOfManufactureValue(formattedDate);
-          setExpirationDateValue(formattedDate);
           break;
 
         case "Experiments":
@@ -277,7 +278,7 @@ function AddPageContent() {
     // window.addEventListener("keydown", handleKeyDown);
 
     fetchGetOptions();
-    setImagesTitlesDate();
+    setImagesTitles();
 
     // return () => {
     //   window.removeEventListener("keydown", handleKeyDown);

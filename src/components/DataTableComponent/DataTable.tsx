@@ -12,6 +12,7 @@ import { IsManagerAsync } from "@/services/UserServices/IsManagerAsync ";
 import { IsAdminAsync } from "@/services/UserServices/IsAdminAsync ";
 import { UserModel } from "@/Models/UserModels/UserModel";
 import { RoleEnum } from "@/Enums/RoleEnum";
+import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 
 interface DataTableProps<T extends object> {
@@ -348,6 +349,13 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       </th>
                     )
                 )}
+                {tableName === "Manufacturers" && (
+                  <>
+                    <th>
+                      <span>Партии</span>
+                    </th>
+                  </>
+                )}
                 {tableName === "Suppliers" && (
                   <>
                     <th>
@@ -355,6 +363,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     </th>
                     <th>
                       <span>Продукты</span>
+                    </th>
+                    <th>
+                      <span>Партии</span>
                     </th>
                   </>
                 )}
@@ -389,6 +400,20 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                         <td key={String(column)}>{String(item[column])}</td>
                       )
                   )}
+                  {tableName === "Manufacturers" && (
+                    <>
+                      <td>
+                        <Link
+                          href={`/party?manufacturerId=${
+                            (item as ManufacturerModel).id
+                          }`}
+                          className="data-table-link-style"
+                        >
+                          Список партий
+                        </Link>
+                      </td>
+                    </>
+                  )}
                   {tableName === "Suppliers" && (
                     <>
                       <td>
@@ -409,6 +434,16 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                           className="data-table-link-style"
                         >
                           Список продуктов
+                        </Link>
+                      </td>
+                      <td>
+                        <Link
+                          href={`/party?supplierId=${
+                            (item as SupplierModel).id
+                          }`}
+                          className="data-table-link-style"
+                        >
+                          Список партий
                         </Link>
                       </td>
                     </>
@@ -438,20 +473,24 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     </>
                   )}
                   <td>
-                  {((item as UserModel).role !== RoleEnum.Admin) && !((item as UserModel).role === RoleEnum.Manager && isManager) && (
-                    <img
-                      className="edit-img"
-                      src="/images/pencil.png"
-                      onClick={() => {
-                        const queryString = new URLSearchParams({
-                          tableName: tableName,
-                          item: JSON.stringify(item),
-                        }).toString();
-                        router.push(`/updatePage?${queryString}`);
-                      }}
-                    />
-                  )}
-                </td>
+                    {(item as UserModel).role !== RoleEnum.Admin &&
+                      !(
+                        (item as UserModel).role === RoleEnum.Manager &&
+                        isManager
+                      ) && (
+                        <img
+                          className="edit-img"
+                          src="/images/pencil.png"
+                          onClick={() => {
+                            const queryString = new URLSearchParams({
+                              tableName: tableName,
+                              item: JSON.stringify(item),
+                            }).toString();
+                            router.push(`/updatePage?${queryString}`);
+                          }}
+                        />
+                      )}
+                  </td>
                 </tr>
               ))}
             </tbody>

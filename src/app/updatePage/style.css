@@ -4,7 +4,8 @@
 	line-height: 1.8;
 	/* color: #fff; */
 	/* font-weight: 400; */
-	height: 100vh;
+	min-height: 100vh;
+	height: auto;
 	display: flex;
 	align-items: center;
 
@@ -47,6 +48,11 @@
 .update-image {
 	width: 50%;
 	overflow: hidden;
+}
+
+.update-image {
+	height: 50%;
+	margin: auto;
 }
 
 .update-form {

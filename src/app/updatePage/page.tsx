@@ -122,6 +122,17 @@ function UpdatePageContent() {
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errors, setErrors] = useState<string>();
 
+  const [selectedProductPartyItem, setSelectedProductPartyItem] =
+    useState<string>("");
+  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] =
+    useState<string>("");
+  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] =
+    useState<string>("");
+
+  const [dateOfReceiptValue, setDateOfReceiptValue] = useState("");
+  const [dateOfManufactureValue, setDateOfManufactureValue] = useState("");
+  const [expirationDateValue, setExpirationDateValue] = useState("");
+
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([]);
 
@@ -144,13 +155,6 @@ function UpdatePageContent() {
   const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<
     Option[]
   >([]);
-
-  const [selectedProductPartyItem, setSelectedProductPartyItem] =
-    useState<string>("");
-  const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] =
-    useState<string>("");
-  const [selectedManufacturerPartyItem, setSelectedManufacturerPartyItem] =
-    useState<string>("");
 
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [image, setImg] = useState<string>();
@@ -255,6 +259,8 @@ function UpdatePageContent() {
           break;
 
         case "Parties":
+          if (item !== null) {
+          const partyItem = item as PartyModel;
           const partiesProductsOptions = await GetProductsAsync();
           const partiesSuppliersOptions = await GetSuppliersAsync();
           const partiesManufacturersOptions = await GetManufacturersAsync();
@@ -266,11 +272,19 @@ function UpdatePageContent() {
             })
           );
 
+          const selectedProduct = getProductOptions.find(
+            (product) => product.name === partyItem.productName
+          );
+
           const getSupplierOptions: Option[] = partiesSuppliersOptions.map(
             (supplier) => ({
               id: supplier.id,
               name: supplier.supplierName,
             })
+          );
+
+          const selectedSupplier = getSupplierOptions.find(
+            (supplier) => supplier.name === partyItem.supplierName
           );
 
           const getManufacturerOptions: Option[] =
@@ -279,20 +293,29 @@ function UpdatePageContent() {
               name: manufacturer.manufacturerName,
             }));
 
-          if (getProductOptions.length > 0) {
-            setSelectedProductPartyItem(getProductOptions[0].id);
+          const selectedManufacturer = getManufacturerOptions.find(
+            (manufacturer) => manufacturer.name === partyItem.manufacturerName
+          );
+
+          if (selectedProduct) {
+            setSelectedProductPartyItem(selectedProduct.id);
           }
-          if (getSupplierOptions.length > 0) {
-            setSelectedSupplierPartyItem(getSupplierOptions[0].id);
+          if (selectedSupplier) {
+            setSelectedSupplierPartyItem(selectedSupplier.id);
           }
-          if (getManufacturerOptions.length > 0) {
-            setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
+          if (selectedManufacturer) {
+            setSelectedManufacturerPartyItem(selectedManufacturer.id);
           }
+
+          setDateOfReceiptValue(partyItem.dateOfReceipt);
+          setDateOfManufactureValue(partyItem.dateOfManufacture);
+          setExpirationDateValue(partyItem.expirationDate);
 
           setProductPartyOptions(getProductOptions);
           setSupplierPartyOptions(getSupplierOptions);
           setManufacturerPartyOptions(getManufacturerOptions);
-          break;
+        }
+        break;
 
         case "Users":
           if (item !== null) {
@@ -325,7 +348,7 @@ function UpdatePageContent() {
               (role) => role.name === userRole
             );
 
-            const rolesWithCheckboxState = roleOptions.map((role) => ({
+            const rolesWithSelectedState = roleOptions.map((role) => ({
               id: role.id,
               name: role.name,
               isSelected:
@@ -338,7 +361,7 @@ function UpdatePageContent() {
               setSelectedItem("");
             }
 
-            setOptions(rolesWithCheckboxState);
+            setOptions(rolesWithSelectedState);
           }
           break;
 
@@ -425,6 +448,22 @@ function UpdatePageContent() {
   ) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value })); // Обновляем состояние
+  };
+
+  const handleDateChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const newDate = event.target.value;
+    const inputName = event.target.name;
+
+    // Set state based on the input name
+    if (inputName === "dateOfReceipt") {
+      setDateOfReceiptValue(newDate);
+    } else if (inputName === "dateOfManufacture") {
+      setDateOfManufactureValue(newDate);
+    } else if (inputName === "expirationDate") {
+      setExpirationDateValue(newDate);
+    }
   };
 
   const handleSelectChange = (
@@ -660,7 +699,7 @@ function UpdatePageContent() {
           const updatePartyModel: UpdatePartyModel = {
             id: updateItem.id,
             batchNumber: updateItem.batchNumber,
-            dateOfReceipt: updateItem.dateOfReceipt,
+            dateOfReceipt: dateOfReceiptValue,
             productId: selectedProductPartyItem,
             supplierId: selectedSupplierPartyItem,
             manufacturerId: selectedManufacturerPartyItem,
@@ -669,8 +708,8 @@ function UpdatePageContent() {
             ttn: updateItem.ttn,
             documentOnQualityAndSafety: updateItem.documentOnQualityAndSafety,
             testReport: updateItem.testReport,
-            dateOfManufacture: updateItem.dateOfManufacture,
-            expirationDate: updateItem.expirationDate,
+            dateOfManufacture: dateOfManufactureValue,
+            expirationDate: expirationDateValue,
             packaging: updateItem.packaging,
             marking: updateItem.marking,
             result: updateItem.result,
@@ -711,7 +750,6 @@ function UpdatePageContent() {
             { id: userItem.id, role: "", surname: "", userName: "", patronymic: "", email: "" }
           );
 
-          console.log(selectedItem);
           const updateUserModel: UpdateUserModel = {
               id: updateItem.id,
               role: selectedItem,
@@ -766,7 +804,15 @@ function UpdatePageContent() {
                       <select
                         name={input.name}
                         id={input.name}
-                        value={selectedItem}
+                        value={
+                          input.name === "productId"
+                            ? selectedProductPartyItem
+                            : input.name === "supplierId"
+                            ? selectedSupplierPartyItem
+                            : input.name === "manufacturerId"
+                            ? selectedManufacturerPartyItem
+                            : selectedItem
+                        }
                         onChange={(e) => handleSelectChange(e, input.name)}
                         required
                       >
@@ -805,6 +851,42 @@ function UpdatePageContent() {
                           {option.name}
                         </label>
                       ))}
+                    </div>
+                  ) : input.name === "dateOfReceipt" ? (
+                    <div>
+                      <input
+                        type="date"
+                        name="dateOfReceipt"
+                        id="dateOfReceipt"
+                        placeholder="Дата поступления"
+                        value={dateOfReceiptValue}
+                        onChange={handleDateChange}
+                        required
+                      />
+                    </div>
+                  ) : input.name === "dateOfManufacture" ? (
+                    <div>
+                      <input
+                        type="date"
+                        name="dateOfManufacture"
+                        id="dateOfManufacture"
+                        placeholder="Дата изготовления"
+                        value={dateOfManufactureValue}
+                        onChange={handleDateChange}
+                        required
+                      />
+                    </div>
+                  ) : input.name === "expirationDate" ? (
+                    <div>
+                      <input
+                        type="date"
+                        name="expirationDate"
+                        id="expirationDate"
+                        placeholder="Срок годности"
+                        value={expirationDateValue}
+                        onChange={handleDateChange}
+                        required
+                      />
                     </div>
                   ) : (
                     <div>
