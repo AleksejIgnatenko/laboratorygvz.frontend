@@ -8,6 +8,8 @@ import { useSearchParams } from "next/navigation";
 import { GetPartiesForPageAsync } from "@/services/PartyServices/GetPartiesForPageAsync";
 import { GetManufacturerPartiesForPageAsync } from "@/services/ManufacturerServices/GetManufacturerPartiesForPageAsync";
 import { GetSupplierPartiesForPageAsync } from "@/services/SupplierServices/GetSupplierPartiesForPageAsync";
+import { GetProductPartiesForPageAsync } from "@/services/ProductServices/GetProductPartiesForPageAsync";
+import { GetUserPartiesForPageAsync } from "@/services/UserServices/GetUserPartiesForPageAsync";
 
 export default function Researches() {
   const [data, setData] = useState<PartyModel[]>([]);
@@ -16,6 +18,7 @@ export default function Researches() {
   const [manufacturerId, setManufacturerId] = useState<string | null>(null);
   const [supplierId, setSupplierId] = useState<string | null>(null);
   const [productId, setProductId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const handleDelete = async (
     selectedItems: Set<PartyModel>,
@@ -43,14 +46,17 @@ export default function Researches() {
         setData(response.parties);
         setCount(response.countItemsAll);
       } else if (supplierId) {
-        const response = await GetSupplierPartiesForPageAsync(
-          supplierId,
-          0
-        );
+        const response = await GetSupplierPartiesForPageAsync(supplierId, 0);
         setData(response.parties);
         setCount(response.countItemsAll);
       } else if (productId) {
-        console.log(productId);
+        const response = await GetProductPartiesForPageAsync(productId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
+      } else if (userId) {
+        const response = await GetUserPartiesForPageAsync(userId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
       } else {
         const response = await GetPartiesForPageAsync(0);
         setData(response.parties);
@@ -59,7 +65,7 @@ export default function Researches() {
     };
 
     getParties();
-  }, [manufacturerId, supplierId, productId]);
+  }, [manufacturerId, supplierId, productId, userId]);
 
   function Party() {
     const searchParams = useSearchParams();
@@ -76,6 +82,11 @@ export default function Researches() {
     const paramManufacturerId = searchParams.get("manufacturerId");
     if (paramManufacturerId) {
       setManufacturerId(paramManufacturerId);
+    }
+
+    const paramUserId = searchParams.get("userId");
+    if (paramUserId) {
+      setUserId(paramUserId);
     }
 
     return (

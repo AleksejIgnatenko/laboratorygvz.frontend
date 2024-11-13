@@ -5,7 +5,6 @@ import { jwtDecode } from "jwt-decode";
 export const RegistrationUserAsync = async (
   userRequest: RegistrationUserModelRequest
 ) => {
-
   try {
     const response = await fetch(
       "http://localhost:5000/api/User/registration",
@@ -33,14 +32,18 @@ export const RegistrationUserAsync = async (
           console.warn("Token does not have an expiration time.");
         }
       }
+      return [`${userRequest.email} зарегистрирован`, 200];
     } else if (response.status === 400) {
       const validationErrors = await response.json();
-      return validationErrors.error;
+      return [validationErrors.error, 400];
     } else if (response.status === 409) {
       const errors = await response.json();
-      console.log(errors);
+      return [errors.error, 409];
     }
   } catch (error) {
     console.error("Error fetching:", error);
+    return ["Не удалось зарегистрировать пользователя", null];
   }
+
+  return ["Не удалось выполнить запрос", null];
 };

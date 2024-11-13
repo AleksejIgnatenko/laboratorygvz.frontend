@@ -3,10 +3,11 @@
 import { useState } from "react";
 import "./style.css";
 // import { useRouter } from "next/navigation";
-import Link from "next/link";
+
 import { RegistrationUserModelRequest } from "../../Models/UserModels/RegistrationUserModelRequest";
 import { RegistrationUserAsync } from "@/services/UserServices/RegistrationUserAsync";
 import { UserValidationErrorModel } from "../../Models/UserModels/UserValidationErrorModel";
+import Link from "next/link";
 
 export default function Registration() {
   // const router = useRouter();
@@ -19,7 +20,9 @@ export default function Registration() {
     repeatPassword: "",
   });
 
-  const [errors, setErrors] = useState<UserValidationErrorModel>({});
+  const [errors, setErrors] = useState<string>();
+  const [userErrors, setUserErrors] =
+    useState<UserValidationErrorModel>({});
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -29,12 +32,16 @@ export default function Registration() {
   const handleRegistration = async (event: React.FormEvent) => {
     event.preventDefault();
     const result = await RegistrationUserAsync(formData);
-    if (result) {
-      setErrors(result);
-    } else {
-      setErrors({})
+    const [response, statusCode] = result;
+    if (statusCode === 200) {
       // router.push('/');
       window.location.href = "/";
+    } else if (statusCode === 400) {
+      setErrors("");
+      setUserErrors(response);
+    } else if (statusCode === 409) {
+      setErrors(response);
+      setUserErrors({});
     }
   };
 
@@ -54,7 +61,7 @@ export default function Registration() {
                   value={formData.surname}
                   onChange={handleInputChange}
                 />
-                <span className="error-message">{errors.Surname}</span>
+                <span className="error-message">{userErrors.Surname}</span>
               </div>
               <div className="form-group">
                 <input
@@ -65,7 +72,7 @@ export default function Registration() {
                   value={formData.userName}
                   onChange={handleInputChange}
                 />
-                <span className="error-message">{errors.UserName}</span>
+                <span className="error-message">{userErrors.UserName}</span>
               </div>
               <div className="form-group">
                 <input
@@ -76,7 +83,7 @@ export default function Registration() {
                   value={formData.patronymic}
                   onChange={handleInputChange}
                 />
-                <span className="error-message">{errors.Patronymic}</span>
+                <span className="error-message">{userErrors.Patronymic}</span>
               </div>
               <div className="form-group">
                 <input
@@ -87,7 +94,7 @@ export default function Registration() {
                   value={formData.email}
                   onChange={handleInputChange}
                 />
-                <span className="error-message">{errors.Email}</span>
+                <span className="error-message">{userErrors.Email}</span>
               </div>
               <div className="form-group">
                 <label>
@@ -101,7 +108,7 @@ export default function Registration() {
                   value={formData.password}
                   onChange={handleInputChange}
                 />
-                <span className="error-message">{errors.Password}</span>
+                <span className="error-message">{userErrors.Password}</span>
               </div>
               <div className="form-group">
                 <label>
@@ -115,7 +122,9 @@ export default function Registration() {
                   value={formData.repeatPassword}
                   onChange={handleInputChange}
                 />
-                <span className="error-message">{errors.RepeatPassword}</span>
+                <span className="error-message">
+                  {userErrors.RepeatPassword}
+                </span>
               </div>
               <div className="form-group form-button">
                 <button
@@ -129,6 +138,7 @@ export default function Registration() {
                 </button>
               </div>
             </div>
+            <span className="error-message">{errors}</span>
           </form>
           <div className="signup-image">
             <img

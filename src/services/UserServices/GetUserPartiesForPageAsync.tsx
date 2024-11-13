@@ -1,20 +1,20 @@
 import { getCookie } from "../Infrastructure/getCookie";
 import { PartyModel } from "@/Models/PartyModels/PartyModel";
 
-export const GetSupplierPartiesForPageAsync = async (
-  supplierId: string,
+export const GetUserPartiesForPageAsync = async (
+  userId: string,
   pageNumber: number
 ): Promise<{ parties: PartyModel[]; countItemsAll: number }> => {
   try {
     const jwtToken = getCookie("jwtToken");
 
     const response = await fetch(
-      `http://localhost:5004/api/Party/getSupplierPartiesForPage?supplierId=${supplierId}&pageNumber=${pageNumber}`,
+      `http://localhost:5000/api/Party/getUserPartiesForPage?userId=${userId}&pageNumber=${pageNumber}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${jwtToken}`,
+          Authorization: `Bearer ${jwtToken}`,
         },
       }
     );
