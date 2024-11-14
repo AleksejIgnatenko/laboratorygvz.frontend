@@ -50,7 +50,7 @@ export default function Registration() {
       <div className="registration-container">
         <div className="signup-content">
           <form className="signup-form">
-            <h2 className="form-title">Registration</h2>
+            <h2 className="form-title">Регистрация</h2>
             <div className="register-form" id="register-form">
               <div className="form-group">
                 <input
@@ -134,7 +134,7 @@ export default function Registration() {
                   className="form-submit"
                   onClick={handleRegistration}
                 >
-                  Register
+                  Зарегистрироваться
                 </button>
               </div>
             </div>
@@ -147,7 +147,7 @@ export default function Registration() {
               alt="Sign up image"
             />
             <Link href="/login" className="signin-link">
-              I already have an account
+              У меня уже есть аккаунт
             </Link>
           </div>
         </div>

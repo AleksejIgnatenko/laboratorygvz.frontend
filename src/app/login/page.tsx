@@ -38,7 +38,7 @@ export default function Login() {
       <div className="login-container">
         <div className="signin-content">
           <form className="signin-form">
-            <h2 className="form-title">Login</h2>
+            <h2 className="form-title">Вход</h2>
             <div className="login-form" id="login-form">
               <div className="form-group">
                 <input
@@ -68,7 +68,7 @@ export default function Login() {
                   className="form-submit"
                   onClick={handleLogin}
                 >
-                  Sign in
+                  Войти
                 </button>
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function Login() {
               alt="Login image"
             />
             <Link href="/registration" className="signup-link">
-              I already have an account
+              У меня нет аккаунта
             </Link>
           </div>
         </div>
