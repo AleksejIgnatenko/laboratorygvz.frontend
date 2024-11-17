@@ -7,9 +7,11 @@ import { UserValidationErrorModel } from "@/Models/UserModels/UserValidationErro
 import { useRouter } from "next/navigation";
 import { UpdateUserDetailsAsync } from "@/services/UserServices/UpdateUserDetailsAsync";
 import { GetUserAsync } from "@/services/UserServices/GetUserAsync";
+import { UserModel } from "@/Models/UserModels/UserModel";
 
 export default function Profile() {
   const [formData, setFormData] = useState<UpdateUserDetailsModel>({
+    id: "",
     surname: "",
     userName: "",
     patronymic: "",
@@ -21,13 +23,17 @@ export default function Profile() {
   const [userErrors, setUserErrors] = useState<UserValidationErrorModel>({});
   const [successMessage, setSuccessMessage] = useState<string>();
 
-    useEffect(() => {
-      const getUser = async () => {
-        const user = await GetUserAsync();
-      };
+  const [userData, setUserData] = useState<UserModel | null>();
+  const [isEditing, setIsEditing] = useState(false);
 
-      getUser();
-    }, []); 
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await GetUserAsync();
+      setUserData(user);
+    };
+
+    getUser();
+  }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -36,8 +42,19 @@ export default function Profile() {
 
   const handleUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
-    const result = await UpdateUserDetailsAsync(formData);
+
+    const updatedUserData: UpdateUserDetailsModel = {
+      id: userData?.id || "",
+      surname: formData.surname || userData?.surname || "",
+      userName: formData.userName || userData?.userName || "",
+      patronymic: formData.patronymic || userData?.patronymic || "",
+    };
+
+    setUserData(updatedUserData as UserModel);
+
+    const result = await UpdateUserDetailsAsync(updatedUserData);
     const [response, statusCode] = result;
+    console.log(response);
     if (statusCode === 200) {
       setSuccessMessage(response);
       setUserErrors({});
@@ -57,6 +74,10 @@ export default function Profile() {
     router.back();
   };
 
+    const handleToggleEditClick = () => {
+      setIsEditing((prev) => !prev); 
+    };
+
   return (
     <div className="page-profile">
       <div className="profile-container">
@@ -65,49 +86,112 @@ export default function Profile() {
             <h2 className="form-title">Профиль</h2>
             <div className="user-profile-form" id="user-profile-form">
               <div className="form-group">
-                <input
-                  type="text"
-                  name="surname"
-                  id="surname"
-                  placeholder="Фамилия"
-                  value={formData.surname}
-                  onChange={handleInputChange}
-                />
-                <span className="error-message">{userErrors.Surname}</span>
+                {isEditing ? (
+                  <div>
+                    <input
+                      type="text"
+                      name="surname"
+                      id="surname"
+                      placeholder={userData?.surname}
+                      value={formData.surname || userData?.surname}
+                      onChange={handleInputChange}
+                    />
+                    <span className="error-message">{userErrors.Surname}</span>
+                  </div>
+                ) : (
+                  <div>
+                    <h2>Фамилия: {userData?.surname}</h2>
+                  </div>
+                )}
               </div>
               <div className="form-group">
-                <input
-                  type="text"
-                  name="userName"
-                  id="userName"
-                  placeholder="Имя"
-                  value={formData.userName}
-                  onChange={handleInputChange}
-                />
-                <span className="error-message">{userErrors.UserName}</span>
+                {isEditing ? (
+                  <div>
+                    <input
+                      type="text"
+                      name="userName"
+                      id="userName"
+                      placeholder={userData?.userName}
+                      value={formData.userName || userData?.userName}
+                      onChange={handleInputChange}
+                    />
+                    <span className="error-message">{userErrors.UserName}</span>
+                  </div>
+                ) : (
+                  <div>
+                    <h2>Имя: {userData?.userName}</h2>
+                  </div>
+                )}
               </div>
               <div className="form-group">
-                <input
-                  type="text"
-                  name="patronymic"
-                  id="patronymic"
-                  placeholder="Отчество"
-                  value={formData.userName}
-                  onChange={handleInputChange}
-                />
-                <span className="error-message">{userErrors.Patronymic}</span>
+                {isEditing ? (
+                  <div>
+                    <input
+                      type="text"
+                      name="patronymic"
+                      id="patronymic"
+                      placeholder={userData?.patronymic}
+                      value={formData.patronymic || userData?.patronymic}
+                      onChange={handleInputChange}
+                    />
+                    <span className="error-message">
+                      {userErrors.Patronymic}
+                    </span>
+                  </div>
+                ) : (
+                  <div>
+                    <h2>Отчество: {userData?.patronymic}</h2>
+                  </div>
+                )}
               </div>
-              <div className="form-group form-button">
-                <button
-                  type="submit"
-                  name="signup"
-                  id="signup"
-                  className="form-submit"
-                  onClick={handleUpdate}
+
+              {isEditing ? (
+                <div className="button-container">
+                  <div
+                    className="form-group form-button"
+                    style={{ marginTop: "10px" }}
+                  >
+                    <button
+                      type="submit"
+                      name="signup"
+                      id="signup"
+                      className="form-submit"
+                      onClick={handleUpdate}
+                    >
+                      Сохранить
+                    </button>
+                  </div>
+                  <div
+                    className="form-group form-button"
+                    style={{ marginTop: "15px" }}
+                  >
+                    <button
+                      type="submit"
+                      name="signup"
+                      id="signup"
+                      className="form-submit"
+                      onClick={handleToggleEditClick}
+                    >
+                      Отмена
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="form-group form-button"
+                  style={{ marginTop: "10px" }}
                 >
-                  Сохранить
-                </button>
-              </div>
+                  <button
+                    type="submit"
+                    name="signup"
+                    id="signup"
+                    className="form-submit"
+                    onClick={handleToggleEditClick}
+                  >
+                    Редактировать
+                  </button>
+                </div>
+              )}
             </div>
             <span className="success-message">{successMessage}</span>
             <span className="error-message">{errors}</span>

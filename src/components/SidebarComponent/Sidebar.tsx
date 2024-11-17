@@ -165,7 +165,9 @@ export default function Sidebar() {
             <div className="profile-details">
               <i className="bx bx-id-card"></i>
               <div className="name_job">
-                <div className="name">Account</div>
+                <div className="name">
+                  <Link href="/profile">Профиль</Link>
+                </div>
               </div>
             </div>
             <i className="bx bx-user" id="log_in"></i>

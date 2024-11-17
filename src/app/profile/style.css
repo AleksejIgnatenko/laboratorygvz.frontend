@@ -51,6 +51,13 @@
 	overflow: hidden;
 }
 
+.success-message {
+	/* margin-left: 15px; */
+	margin-top: 15px;
+	color: #34eb3d;
+	font-size: 16px;
+}
+
 .error-message {
 	/* margin-left: 15px; */
 	margin-top: 15px;
@@ -140,12 +147,9 @@
 	width: 100%;
 	padding: 10px 10px 10px 20px;
 	border: none;
-	/* #999 */
     margin-bottom: 20px;
 	box-sizing: border-box;
-	/* background-color: #1d1b31; */
 	font-size: 20px;
-	/* color: #fff; */
 }
 
 .page-profile input {
@@ -231,4 +235,8 @@
 [data-theme='light']
 .back-button:hover {
 	color: #666;
+}
+
+.button-container {
+	margin-top: 20px;
 }

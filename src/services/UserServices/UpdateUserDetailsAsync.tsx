@@ -11,7 +11,7 @@ export const UpdateUserDetailsAsync = async (user: UpdateUserDetailsModel) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
+          "Authorization": `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(user),
       }

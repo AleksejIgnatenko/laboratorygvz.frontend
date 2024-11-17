@@ -1,7 +1,7 @@
+import { UserModel } from "@/Models/UserModels/UserModel";
 import { getCookie } from "../Infrastructure/getCookie";
-import { PartyModel } from "@/Models/PartyModels/PartyModel";
 
-export const GetUserAsync = async (): Promise<PartyModel | null> => {
+export const GetUserAsync = async (): Promise<UserModel | null> => {
   try {
     const jwtToken = getCookie("jwtToken");
 
@@ -18,8 +18,7 @@ export const GetUserAsync = async (): Promise<PartyModel | null> => {
 
     if (response.ok) {
       const responseData = await response.json();
-      const user: PartyModel = responseData.user;
-
+      const user: UserModel = responseData;
       return user;
     } else {
       console.error("Failed to fetch user:", response.status);
