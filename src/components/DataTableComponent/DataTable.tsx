@@ -13,6 +13,7 @@ import { IsAdminAsync } from "@/services/UserServices/IsAdminAsync ";
 import { UserModel } from "@/Models/UserModels/UserModel";
 import { RoleEnum } from "@/Enums/RoleEnum";
 import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
+import { PartyModel } from "@/Models/PartyModels/PartyModel";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 
 interface DataTableProps<T extends object> {
@@ -486,6 +487,20 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                           className="data-table-link-style"
                         >
                           Список партий
+                        </Link>
+                      </td>
+                    </>
+                  )}
+                  {tableName === "Parties" && (
+                    <>
+                      <td>
+                        <Link
+                          href={`/partyResearch?productId=${
+                            (item as PartyModel).productId
+                          }`}
+                          className="data-table-link-style"
+                        >
+                          Исследования партии
                         </Link>
                       </td>
                     </>
