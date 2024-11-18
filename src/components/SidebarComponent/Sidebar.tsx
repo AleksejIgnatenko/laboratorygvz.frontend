@@ -15,8 +15,8 @@ export default function Sidebar() {
 
   const [sidebarItems, setSidebarItems] = useState([
     { link: "/", icon: "bx bx-home-alt-2", name: "Домашняя", tooltip: "Домашняя" },
-    { link: "/researches", icon: "bx bx-book-content", name: "Иследования", tooltip: "Иследования" },
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
+    { link: "/researches", icon: "bx bx-book-content", name: "Иследования", tooltip: "Иследования" },
     { link: "/products", icon: "bx bx-package", name: "Продукты", tooltip: "Продукты" },
     { link: "/suppliers", icon: "bx bx-car", name: "Поставщики", tooltip: "Поставщики" },
     { link: "/manufacturers", icon: "bx bx-buildings", name: "Производители", tooltip: "Производители" },
@@ -30,7 +30,6 @@ export default function Sidebar() {
       } else {
         setIsLoggedIn(false);
       }
-
       
       // Получаем сохранённую тему из localStorage
       const savedTheme = localStorage.getItem("theme");
@@ -113,7 +112,7 @@ export default function Sidebar() {
           ...prevItems,
           {
             link: "/users",
-            icon: "bx bx-user",
+            icon: "bx bx-group",
             name: "Пользователи",
             tooltip: "Пользователи",
           },
@@ -139,7 +138,7 @@ export default function Sidebar() {
     <div className="sidebar" tabIndex={0}>
       <div className="logo-details">
         <i className="bx bxl-codepen icon"></i>
-        <div className="logo_name">SideMenu</div>
+        <div className="logo_name">Меню</div>
         <i className="bx bx-menu" id="btn"></i>
       </div>
       <ul className="nav-list">
@@ -170,7 +169,7 @@ export default function Sidebar() {
                 </div>
               </div>
             </div>
-            <i className="bx bx-user" id="log_in"></i>
+            <i className="bx bx-user-circle" id="log_in"></i>
           </li>
         ) : (
           <li className="profile">
@@ -178,8 +177,8 @@ export default function Sidebar() {
               <i className="bx bx-export"></i>
               <div className="name_job">
                 <div className="name">
-                  <Link href="/login">Login</Link> or{" "}
-                  <Link href="/registration">Registration</Link>
+                  <Link href="/login">Вход</Link> или{" "}
+                  <Link href="/registration">Регистрация</Link>
                 </div>
               </div>
             </div>
