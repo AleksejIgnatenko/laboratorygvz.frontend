@@ -15,26 +15,26 @@ export default function ResearchResult() {
   const [partyId, setPartyId] = useState<string | null>(null);
   const [researchId, setResearchId] = useState<string | null>(null);
 
-  const researchResults: ResearchResultModel[] = [
-    {
-      id: "1",
-      researchName: "Исследование 1",
-      batchNumber: "Batch001",
-      result: "Результат 1"
-    },
-    {
-      id: "2",
-      researchName: "Исследование 2",
-      batchNumber: "Batch002",
-      result: ""
-    },
-    {
-      id: "3",
-      researchName: "Исследование 3",
-      batchNumber: "Batch003",
-      result: "Результат 3"
-    }
-  ];
+  // const researchResults: ResearchResultModel[] = [
+  //   {
+  //     id: "1",
+  //     researchName: "Исследование 1",
+  //     batchNumber: "Batch001",
+  //     result: "Результат 1"
+  //   },
+  //   {
+  //     id: "2",
+  //     researchName: "Исследование 2",
+  //     batchNumber: "Batch002",
+  //     result: ""
+  //   },
+  //   {
+  //     id: "3",
+  //     researchName: "Исследование 3",
+  //     batchNumber: "Batch003",
+  //     result: "Результат 3"
+  //   }
+  // ];
 
     const handleDelete = async (
       selectedItems: Set<ResearchResultModel>,
@@ -107,7 +107,7 @@ export default function ResearchResult() {
     return (
       <div>
         <DataTable
-          data={researchResults}
+          data={data}
           tableName="ResearchResults"
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
