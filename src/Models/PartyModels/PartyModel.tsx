@@ -4,7 +4,6 @@ export interface PartyModel {
   id: string;
   batchNumber: string;
   dateOfReceipt: string;
-  productId: string;
   productName: string;
   supplierName: string;
   manufacturerName: string;

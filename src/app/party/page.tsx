@@ -104,7 +104,7 @@ export default function Researches() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="get-party-page">
+      <div className="get-parties-page">
         <Party />
       </div>
     </Suspense>

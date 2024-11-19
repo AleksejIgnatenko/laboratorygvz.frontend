@@ -76,7 +76,7 @@ export default function Home() {
                 различных областях, включая биологию, медицину, материаловедение
                 и инженерные науки.
               </div>
-              <button className="seeMore">SEE MORE ↗</button>
+              <button className="seeMore">УЗНАТЬ БОЛЬШЕ ↗</button>
             </div>
             <div className="detail">
               <div className="title">Микроскоп</div>
@@ -134,7 +134,7 @@ export default function Home() {
                 реакций с жидкими веществами. Пробирки изготовлены из стекла или
                 пластика и могут иметь различную емкость и диаметр.
               </div>
-              <button className="seeMore">SEE MORE ↗</button>
+              <button className="seeMore">УЗНАТЬ БОЛЬШЕ ↗</button>
             </div>
             <div className="detail">
               <div className="title">Пробирка</div>
@@ -194,7 +194,7 @@ export default function Home() {
                 научных и медицинских исследованиях, где требуется
                 контролируемая температура.
               </div>
-              <button className="seeMore">SEE MORE ↗</button>
+              <button className="seeMore">УЗНАТЬ БОЛЬШЕ ↗</button>
             </div>
             <div className="detail">
               <div className="title">Хладостат</div>
@@ -256,7 +256,7 @@ export default function Home() {
                 необходима строгая температурная стабильность для проведения
                 экспериментов и хранения образцов.
               </div>
-              <button className="seeMore">SEE MORE ↗</button>
+              <button className="seeMore">УЗНАТЬ БОЛЬШЕ ↗</button>
             </div>
             <div className="detail">
               <div className="title">Термостат</div>
@@ -312,7 +312,7 @@ export default function Home() {
         <div className="arrows">
           <button id="prev">&lt;</button>
           <button id="next">&gt;</button>
-          <button id="back">See All ↗</button>
+          <button id="back">Смотреть все ↗</button>
         </div>
       </div>
     </div>

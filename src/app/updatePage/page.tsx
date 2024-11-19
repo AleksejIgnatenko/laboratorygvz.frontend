@@ -36,6 +36,7 @@ import { IsAdminAsync } from "@/services/UserServices/IsAdminAsync ";
 import { IsManagerAsync } from "@/services/UserServices/IsManagerAsync ";
 import { UpdateUserAsync } from "@/services/UserServices/UpdateUserAsync";
 import { UpdateUserModel } from "@/Models/UserModels/UpdateUserModel";
+import { ResearchResultModel } from "@/Models/ResearchResultModel/ResearchResultModel";
 
 interface InputConfig {
   name: string;
@@ -72,6 +73,9 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "id", placeholder: "" },
     { name: "researchName", placeholder: "Название исследования" },
     { name: "ProductId", isSelect: true },
+  ],
+  ResearchResults: [
+    { name: "id" },
   ],
   Parties: [
     { name: "id", placeholder: "" },
@@ -258,64 +262,85 @@ function UpdatePageContent() {
           }
           break;
 
+          case "ResearchResults":
+            if (item !== null) {
+              const researchResultItem = item as ResearchResultModel;
+          
+              // Удаляем элемент с именем "result" из ResearchResults
+              inputConfig.ResearchResults = inputConfig.ResearchResults.filter(input => input.name !== "result");
+          
+              // Логируем результат для проверки
+              console.log("Remaining elements after removal:", inputConfig.ResearchResults);
+          
+              // Создаем новый объект resultInput
+              const resultInput: InputConfig = {
+                name: "result",
+                placeholder: researchResultItem.result ? researchResultItem.result : researchResultItem.researchName,
+              };
+          
+              // Добавляем новый объект resultInput в массив
+              inputConfig.ResearchResults.push(resultInput);
+            }
+            break;
+
         case "Parties":
           if (item !== null) {
-          const partyItem = item as PartyModel;
-          const partiesProductsOptions = await GetProductsAsync();
-          const partiesSuppliersOptions = await GetSuppliersAsync();
-          const partiesManufacturersOptions = await GetManufacturersAsync();
+            const partyItem = item as PartyModel;
+            const partiesProductsOptions = await GetProductsAsync();
+            const partiesSuppliersOptions = await GetSuppliersAsync();
+            const partiesManufacturersOptions = await GetManufacturersAsync();
 
-          const getProductOptions: Option[] = partiesProductsOptions.map(
-            (product) => ({
-              id: product.id,
-              name: product.productName,
-            })
-          );
+            const getProductOptions: Option[] = partiesProductsOptions.map(
+              (product) => ({
+                id: product.id,
+                name: product.productName,
+              })
+            );
 
-          const selectedProduct = getProductOptions.find(
-            (product) => product.name === partyItem.productName
-          );
+            const selectedProduct = getProductOptions.find(
+              (product) => product.name === partyItem.productName
+            );
 
-          const getSupplierOptions: Option[] = partiesSuppliersOptions.map(
-            (supplier) => ({
-              id: supplier.id,
-              name: supplier.supplierName,
-            })
-          );
+            const getSupplierOptions: Option[] = partiesSuppliersOptions.map(
+              (supplier) => ({
+                id: supplier.id,
+                name: supplier.supplierName,
+              })
+            );
 
-          const selectedSupplier = getSupplierOptions.find(
-            (supplier) => supplier.name === partyItem.supplierName
-          );
+            const selectedSupplier = getSupplierOptions.find(
+              (supplier) => supplier.name === partyItem.supplierName
+            );
 
-          const getManufacturerOptions: Option[] =
-            partiesManufacturersOptions.map((manufacturer) => ({
-              id: manufacturer.id,
-              name: manufacturer.manufacturerName,
-            }));
+            const getManufacturerOptions: Option[] =
+              partiesManufacturersOptions.map((manufacturer) => ({
+                id: manufacturer.id,
+                name: manufacturer.manufacturerName,
+              }));
 
-          const selectedManufacturer = getManufacturerOptions.find(
-            (manufacturer) => manufacturer.name === partyItem.manufacturerName
-          );
+            const selectedManufacturer = getManufacturerOptions.find(
+              (manufacturer) => manufacturer.name === partyItem.manufacturerName
+            );
 
-          if (selectedProduct) {
-            setSelectedProductPartyItem(selectedProduct.id);
+            if (selectedProduct) {
+              setSelectedProductPartyItem(selectedProduct.id);
+            }
+            if (selectedSupplier) {
+              setSelectedSupplierPartyItem(selectedSupplier.id);
+            }
+            if (selectedManufacturer) {
+              setSelectedManufacturerPartyItem(selectedManufacturer.id);
+            }
+
+            setDateOfReceiptValue(partyItem.dateOfReceipt);
+            setDateOfManufactureValue(partyItem.dateOfManufacture);
+            setExpirationDateValue(partyItem.expirationDate);
+
+            setProductPartyOptions(getProductOptions);
+            setSupplierPartyOptions(getSupplierOptions);
+            setManufacturerPartyOptions(getManufacturerOptions);
           }
-          if (selectedSupplier) {
-            setSelectedSupplierPartyItem(selectedSupplier.id);
-          }
-          if (selectedManufacturer) {
-            setSelectedManufacturerPartyItem(selectedManufacturer.id);
-          }
-
-          setDateOfReceiptValue(partyItem.dateOfReceipt);
-          setDateOfManufactureValue(partyItem.dateOfManufacture);
-          setExpirationDateValue(partyItem.expirationDate);
-
-          setProductPartyOptions(getProductOptions);
-          setSupplierPartyOptions(getSupplierOptions);
-          setManufacturerPartyOptions(getManufacturerOptions);
-        }
-        break;
+          break;
 
         case "Users":
           if (item !== null) {
@@ -394,6 +419,17 @@ function UpdatePageContent() {
         case "Researches":
           setImg("research");
           setTitleName("Редактирование исследования");
+          break;
+
+        case "ResearchResults":
+          if (item !== null) {
+            const researchResultItem = item as ResearchResultModel;
+            setTitleName(`Результат исследования №${researchResultItem.batchNumber}`);
+          } else {
+            setTitleName(`Результат исследования №`);
+          }
+          setImg("research");
+
           break;
 
         case "Parties":
@@ -636,13 +672,13 @@ function UpdatePageContent() {
             { id: researchItem.id, researchName: "", productName: "" }
           );
 
-          const updateProductModel: UpdateResearchModel = {
+          const updateResearchModel: UpdateResearchModel = {
             id: updateItem.id,
             researchName: updateItem.researchName,
             productId: selectedItem,
           };
 
-          const result = await UpdateResearchAsync(updateProductModel);
+          const result = await UpdateResearchAsync(updateResearchModel);
           const [response, statusCode] = result;
 
           if (statusCode === 200) {
@@ -658,6 +694,46 @@ function UpdatePageContent() {
             setResearchErrors({});
             setErrors(response);
           }
+        }
+        break;
+
+      case "ResearchResults":
+        if (item !== null) {
+          const researchResultsItem = item as ResearchResultModel;
+          const updateItem: ResearchResultModel = Object.keys(researchResultsItem).reduce(
+            (acc, key) => {
+              acc[key as keyof ResearchResultModel] =
+                formData[key] !== undefined && formData[key] !== ""
+                  ? formData[key]
+                  : researchResultsItem[key as keyof ResearchResultModel];
+              return acc;
+            },
+            { id: researchResultsItem.id, researchName: researchResultsItem.researchName, batchNumber: researchResultsItem.batchNumber, result: "" }
+          );
+
+          const updateResearchResultModel: ResearchResultModel = {
+            id: updateItem.id,
+            researchName: updateItem.researchName,
+            batchNumber: updateItem.batchNumber,
+            result: updateItem.result
+          };
+
+          // const result = await UpdateResearchAsync(updateProductModel);
+          // const [response, statusCode] = result;
+
+          // if (statusCode === 200) {
+          //   setSuccessMessage(response);
+          //   setResearchErrors({});
+          //   setErrors("");
+          // } else if (statusCode === 400) {
+          //   setSuccessMessage("");
+          //   setResearchErrors(response);
+          //   setErrors("");
+          // } else if (statusCode === 409) {
+          //   setSuccessMessage("");
+          //   setResearchErrors({});
+          //   setErrors(response);
+          // }
         }
         break;
 
@@ -751,11 +827,11 @@ function UpdatePageContent() {
           );
 
           const updateUserModel: UpdateUserModel = {
-              id: updateItem.id,
-              role: selectedItem,
-              surname: updateItem.surname,
-              userName: updateItem.userName,
-              patronymic: updateItem.patronymic,
+            id: updateItem.id,
+            role: selectedItem,
+            surname: updateItem.surname,
+            userName: updateItem.userName,
+            patronymic: updateItem.patronymic,
           };
 
           const result = await UpdateUserAsync(updateUserModel);
@@ -808,10 +884,10 @@ function UpdatePageContent() {
                           input.name === "productId"
                             ? selectedProductPartyItem
                             : input.name === "supplierId"
-                            ? selectedSupplierPartyItem
-                            : input.name === "manufacturerId"
-                            ? selectedManufacturerPartyItem
-                            : selectedItem
+                              ? selectedSupplierPartyItem
+                              : input.name === "manufacturerId"
+                                ? selectedManufacturerPartyItem
+                                : selectedItem
                         }
                         onChange={(e) => handleSelectChange(e, input.name)}
                         required
@@ -888,6 +964,17 @@ function UpdatePageContent() {
                         required
                       />
                     </div>
+                    ) : input.name === "result" ? (
+                      <div>
+                      <input
+                        type="text"
+                        name={input.name}
+                        id={input.name}
+                        placeholder={ input.placeholder }
+                        onChange={handleInputChange}
+                      // required
+                      />
+                    </div>
                   ) : (
                     <div>
                       <input
@@ -895,10 +982,12 @@ function UpdatePageContent() {
                         name={input.name}
                         id={input.name}
                         placeholder={
-                          item ? item[input.name] : input.placeholder
+                          item && item[input.name] !== undefined
+                            ? item[input.name]
+                            : input.placeholder
                         }
                         onChange={handleInputChange}
-                        // required
+                      // required
                       />
                     </div>
                   )}
@@ -962,7 +1051,7 @@ function UpdatePageContent() {
                 id="signup"
                 className="form-submit"
               >
-                Обновить
+                Сохранить
               </button>
             </div>
             <span className="success-message">{successMessage}</span>

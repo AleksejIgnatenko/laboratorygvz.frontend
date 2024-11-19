@@ -14,6 +14,7 @@ import { UserModel } from "@/Models/UserModels/UserModel";
 import { RoleEnum } from "@/Enums/RoleEnum";
 import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 import { PartyModel } from "@/Models/PartyModels/PartyModel";
+import { ResearchModel } from "@/Models/ResearchModels/ResearchModel";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 
 interface DataTableProps<T extends object> {
@@ -25,6 +26,10 @@ interface DataTableProps<T extends object> {
     numberPage: number
   ) => void;
   handleGet?: (
+    numberPage: number
+  ) => void;
+  handleGetById?: (
+    id: string,
     numberPage: number
   ) => void;
 }
@@ -67,6 +72,10 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
 
         case "Researches":
           setTitleName("Исследования");
+          break;
+
+        case "ResearchResults":
+          setTitleName("Результаты исследований");
           break;
 
         case "Parties":
@@ -231,9 +240,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
             </h1>
             <div
               id="bulkActions"
-              className={`bulk-actions ${
-                selectedCount > 0 ? "" : "hidden"
-              } items-center`}
+              className={`bulk-actions ${selectedCount > 0 ? "" : "hidden"
+                } items-center`}
             >
               <i className="icon" onClick={onDeleteClick}>
                 <svg
@@ -295,7 +303,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
               </svg>
             </button>
 
-            {tableName !== "Users" && (
+            {tableName !== "Users" && tableName !== "ResearchResults" && (
               <Link
                 className="addLink icon"
                 href={`/addPage?tableName=${tableName}`}
@@ -331,7 +339,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                           <span>
                             {
                               DataFieldsEnum[
-                                column as keyof typeof DataFieldsEnum
+                              column as keyof typeof DataFieldsEnum
                               ]
                             }
                           </span>
@@ -383,6 +391,27 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     </th>
                   </>
                 )}
+                {tableName === "Researches" && (
+                  <>
+                    <th>
+                      <span>Результаты исследований</span>
+                    </th>
+                  </>
+                )}
+                {tableName === "Parties" && (
+                  <>
+                    <th>
+                      <span>Результаты исследований</span>
+                    </th>
+                  </>
+                )}
+                {tableName === "Parties" && (
+                  <>
+                    <th>
+                      <span>Исследования</span>
+                    </th>
+                  </>
+                )}
                 {tableName === "Users" && (
                   <>
                     <th>
@@ -415,9 +444,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     <>
                       <td>
                         <Link
-                          href={`/party?manufacturerId=${
-                            (item as ManufacturerModel).id
-                          }`}
+                          href={`/party?manufacturerId=${(item as ManufacturerModel).id
+                            }`}
                           className="data-table-link-style"
                         >
                           Список партий
@@ -429,9 +457,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     <>
                       <td>
                         <Link
-                          href={`/manufacturers?supplierId=${
-                            (item as SupplierModel).id
-                          }`}
+                          href={`/manufacturers?supplierId=${(item as SupplierModel).id
+                            }`}
                           className="data-table-link-style"
                         >
                           Список производителей
@@ -439,9 +466,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       </td>
                       <td>
                         <Link
-                          href={`/products?supplierId=${
-                            (item as SupplierModel).id
-                          }`}
+                          href={`/products?supplierId=${(item as SupplierModel).id
+                            }`}
                           className="data-table-link-style"
                         >
                           Список продуктов
@@ -449,9 +475,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       </td>
                       <td>
                         <Link
-                          href={`/party?supplierId=${
-                            (item as SupplierModel).id
-                          }`}
+                          href={`/party?supplierId=${(item as SupplierModel).id
+                            }`}
                           className="data-table-link-style"
                         >
                           Список партий
@@ -463,9 +488,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     <>
                       <td>
                         <Link
-                          href={`/suppliers?productId=${
-                            (item as ProductModel).id
-                          }`}
+                          href={`/suppliers?productId=${(item as ProductModel).id
+                            }`}
                           className="data-table-link-style"
                         >
                           Список поставщиков
@@ -473,9 +497,8 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       </td>
                       <td>
                         <Link
-                          href={`/researches?productId=${
-                            (item as ProductModel).id
-                          }`}
+                          href={`/researches?productId=${(item as ProductModel).id
+                            }`}
                           className="data-table-link-style"
                         >
                           Список исследований
@@ -491,13 +514,25 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                       </td>
                     </>
                   )}
+                  {tableName === "Researches" && (
+                    <>
+                      <td>
+                        <Link
+                          href={`/researchResult?researchId=${(item as ResearchModel).id
+                            }`}
+                          className="data-table-link-style"
+                        >
+                          Исследования партии
+                        </Link>
+                      </td>
+                    </>
+                  )}
                   {tableName === "Parties" && (
                     <>
                       <td>
                         <Link
-                          href={`/partyResearch?productId=${
-                            (item as PartyModel).productId
-                          }`}
+                          href={`/researchResult?partyId=${(item as PartyModel).id
+                            }`}
                           className="data-table-link-style"
                         >
                           Исследования партии

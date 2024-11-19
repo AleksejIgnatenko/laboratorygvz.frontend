@@ -17,7 +17,8 @@ export default function Sidebar() {
     { link: "/", icon: "bx bx-home-alt-2", name: "Домашняя", tooltip: "Домашняя" },
     { link: "#", icon: "bx bx-test-tube", name: "Experiments", tooltip: "Experiments" },
     { link: "/researches", icon: "bx bx-book-content", name: "Иследования", tooltip: "Иследования" },
-    { link: "/products", icon: "bx bx-package", name: "Продукты", tooltip: "Продукты" },
+    { link: "/party", icon: "bx bx-package", name: "Партии", tooltip: "Партии" },
+    { link: "/products", icon: "bx bx-box", name: "Продукты", tooltip: "Продукты" },
     { link: "/suppliers", icon: "bx bx-car", name: "Поставщики", tooltip: "Поставщики" },
     { link: "/manufacturers", icon: "bx bx-buildings", name: "Производители", tooltip: "Производители" },
   ]);
