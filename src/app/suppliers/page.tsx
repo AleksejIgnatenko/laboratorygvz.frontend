@@ -33,6 +33,17 @@ export default function Suppliers() {
     setCount(countItemsAll);
   };
 
+  const handleGetProductSuppliers = async (numberPage: number) => {
+    if (productId) {
+      const {suppliers, countItemsAll} = await GetProductSuppliersForPageAsync(
+        productId,
+        numberPage
+      );
+      setData(suppliers);
+      setCount(countItemsAll);
+    }
+  };
+
   // const supplierss: SupplierModel[] = [
   //   {
   //     id: "1",
@@ -66,12 +77,12 @@ export default function Suppliers() {
     };
 
     getSuppliers();
-  }, [productId]); 
+  }, [productId]);
 
   function Supplier() {
     const searchParams = useSearchParams();
     const paramProductId = searchParams.get("productId");
-    setProductId(paramProductId); 
+    setProductId(paramProductId);
 
     return (
       <div>
@@ -80,7 +91,7 @@ export default function Suppliers() {
           tableName="Suppliers"
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
-          handleGet={handleGet}
+          handleGet={productId ? handleGetProductSuppliers : handleGet}
         />
       </div>
     );

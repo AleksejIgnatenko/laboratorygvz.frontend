@@ -34,6 +34,17 @@ export default function Researches() {
     setCount(countItemsAll);
   };
 
+  const handleGetProductResearches = async (numberPage: number) => {
+    if (productId) {
+      const { researches, countItemsAll } = await GetProductResearchesForPageAsync(
+        productId,
+        numberPage
+      );
+      setData(researches);
+      setCount(countItemsAll);
+    }
+  };
+
   useEffect(() => {
     const getResearches = async () => {
       if (productId) {
@@ -65,7 +76,7 @@ export default function Researches() {
           tableName="Researches"
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
-          handleGet={handleGet}
+          handleGet={productId ? handleGetProductResearches : handleGet}
         />
       </div>
     );

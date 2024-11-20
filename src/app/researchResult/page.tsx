@@ -90,7 +90,7 @@ export default function ResearchResult() {
     };
 
     ResearchResult();
-  }, [partyId]);
+  }, [partyId, researchId]);
 
   function ResearchResult() {
     const searchParams = useSearchParams();
@@ -112,7 +112,7 @@ export default function ResearchResult() {
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
           handleGetById={
-            paramPartyId
+            partyId
               ? handleGetByPartyId
               : paramResearchId
                 ? handleGetByResearchId

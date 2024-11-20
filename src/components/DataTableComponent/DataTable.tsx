@@ -274,6 +274,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
           </div>
 
           <div className="flex gap-1 items-center action-buttons">
+            <img className="img-style" src="/images/excel.png"></img>
             <input
               className="search-input"
               type="search"
@@ -405,13 +406,6 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     </th>
                   </>
                 )}
-                {tableName === "Parties" && (
-                  <>
-                    <th>
-                      <span>Исследования</span>
-                    </th>
-                  </>
-                )}
                 {tableName === "Users" && (
                   <>
                     <th>
@@ -522,7 +516,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                             }`}
                           className="data-table-link-style"
                         >
-                          Исследования партии
+                          Результаты исследования
                         </Link>
                       </td>
                     </>
@@ -553,13 +547,11 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                     </>
                   )}
                   <td>
-                    {(item as UserModel).role !== RoleEnum.Admin &&
-                      !(
-                        (item as UserModel).role === RoleEnum.Manager &&
-                        isManager
-                      ) && (
+                    {tableName === "Users" && (
+                      (item as UserModel).role !== RoleEnum.Admin &&
+                      !((item as UserModel).role === RoleEnum.Manager && isManager) && (
                         <img
-                          className="edit-img"
+                          className="img-style"
                           src="/images/pencil.png"
                           onClick={() => {
                             const queryString = new URLSearchParams({
@@ -569,7 +561,47 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
                             router.push(`/updatePage?${queryString}`);
                           }}
                         />
-                      )}
+                      )
+                    )}
+                    {tableName === "Parties" && (
+                      <>
+                        <img
+                          className="img-style"
+                          src="/images/pencil.png"
+                          onClick={() => {
+                            const queryString = new URLSearchParams({
+                              tableName: tableName,
+                              item: JSON.stringify(item),
+                            }).toString();
+                            router.push(`/updatePage?${queryString}`);
+                          }}
+                        />
+                        <img
+                          className="img-style"
+                          src="/images/word.png"
+                          onClick={() => {
+                            const queryString = new URLSearchParams({
+                              tableName: tableName,
+                              item: JSON.stringify(item),
+                            }).toString();
+                            router.push(`/updatePage?${queryString}`);
+                          }}
+                        />
+                      </>
+                    )}
+                    {tableName !== "Users" && tableName !== "Parties" && (
+                      <img
+                        className="img-style"
+                        src="/images/pencil.png"
+                        onClick={() => {
+                          const queryString = new URLSearchParams({
+                            tableName: tableName,
+                            item: JSON.stringify(item),
+                          }).toString();
+                          router.push(`/updatePage?${queryString}`);
+                        }}
+                      />
+                    )}
                   </td>
                 </tr>
               ))}

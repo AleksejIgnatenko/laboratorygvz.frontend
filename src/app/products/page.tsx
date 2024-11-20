@@ -34,7 +34,18 @@ export default function Products() {
     setCount(countItemsAll);
   };
 
-  // const data: ProductModel[] = [
+  const handleGetSupplierProducts = async (numberPage: number) => {
+    if (supplierId) {
+      const { products, countItemsAll } = await GetSupplierProductsForPageAsync(
+        supplierId,
+        numberPage
+      );
+      setData(products);
+      setCount(countItemsAll);
+    }
+  };
+
+  // const products: ProductModel[] = [
   //   {
   //     id: "1",
   //     productName: "b",
@@ -81,7 +92,7 @@ export default function Products() {
           tableName="Products"
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
-          handleGet={handleGet}
+          handleGet={supplierId ? handleGetSupplierProducts : handleGet}
         />
       </div>
     );

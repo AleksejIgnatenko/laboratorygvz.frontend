@@ -33,6 +33,32 @@ export default function Manufacturers() {
     setCount(countItemsAll);
   };
 
+  const handleGetSupplierManufacturers = async (numberPage: number) => {
+    if (supplierId) {
+      const { manufacturers, countItemsAll } = await GetSupplierManufacturersForPageAsync(
+        supplierId,
+        numberPage
+      );
+      setData(manufacturers);
+      setCount(countItemsAll);
+    }
+  };
+
+  // const manufacturers: ManufacturerModel[] = [
+  //   {
+  //     id: "1",
+  //     manufacturerName: "Manufacturer A"
+  //   },
+  //   {
+  //     id: "2",
+  //     manufacturerName: "Manufacturer B"
+  //   },
+  //   {
+  //     id: "3",
+  //     manufacturerName: "Manufacturer C"
+  //   }
+  // ];
+
   // useEffect(() => {
   //   const getManufacturers = async () => {
   //     const response = supplierId
@@ -46,29 +72,29 @@ export default function Manufacturers() {
   //   getManufacturers();
   // }, [supplierId]); // Include supplierId as a dependency
 
-    useEffect(() => {
-      const getManufacturers = async () => {
-        if (supplierId) {
-          const response = await GetSupplierManufacturersForPageAsync(
-            supplierId,
-            0
-          );
-          setData(response.manufacturers);
-          setCount(response.countItemsAll);
-        } else {
-          const response = await GetManufacturersForPageAsync(0);
-          setData(response.manufacturers);
-          setCount(response.countItemsAll);
-        }
-      };
+  useEffect(() => {
+    const getManufacturers = async () => {
+      if (supplierId) {
+        const response = await GetSupplierManufacturersForPageAsync(
+          supplierId,
+          0
+        );
+        setData(response.manufacturers);
+        setCount(response.countItemsAll);
+      } else {
+        const response = await GetManufacturersForPageAsync(0);
+        setData(response.manufacturers);
+        setCount(response.countItemsAll);
+      }
+    };
 
-      getManufacturers();
-    }, [supplierId]); 
+    getManufacturers();
+  }, [supplierId]);
 
   function Manufacturer() {
     const searchParams = useSearchParams();
     const paramSupplierId = searchParams.get("supplierId");
-    setSupplierId(paramSupplierId); 
+    setSupplierId(paramSupplierId);
 
     return (
       <div>
@@ -77,7 +103,7 @@ export default function Manufacturers() {
           tableName="Manufacturers"
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
-          handleGet={handleGet}
+          handleGet={supplierId ? handleGetSupplierManufacturers : handleGet}
         />
       </div>
     );

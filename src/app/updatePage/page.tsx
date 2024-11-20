@@ -718,6 +718,8 @@ function UpdatePageContent() {
             result: updateItem.result
           };
 
+          console.log(updateResearchResultModel);
+
           // const result = await UpdateResearchAsync(updateProductModel);
           // const [response, statusCode] = result;
 

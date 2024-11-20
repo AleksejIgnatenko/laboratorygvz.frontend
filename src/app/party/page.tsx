@@ -36,6 +36,69 @@ export default function Researches() {
     setCount(countItemsAll);
   };
 
+  // const parties: PartyModel[] = [
+  //   {
+  //     id: "1",
+  //     batchNumber: "BN001",
+  //     dateOfReceipt: "01.11.2024",
+  //     productName: "Product A",
+  //     supplierName: "Supplier A",
+  //     manufacturerName: "Manufacturer A",
+  //     batchSize: "100",
+  //     sampleSize: "10",
+  //     ttn: "TTN001",
+  //     documentOnQualityAndSafety: "Doc001",
+  //     testReport: "Report001",
+  //     dateOfManufacture: "01.10.2024",
+  //     expirationDate: "01.10.2025",
+  //     packaging: "Box",
+  //     marking: "Mark001",
+  //     result: "Passed",
+  //     responsible: "John Doe",
+  //     note: "First batch"
+  //   },
+  //   {
+  //     id: "2",
+  //     batchNumber: "BN002",
+  //     dateOfReceipt: "05.11.2024",
+  //     productName: "Product B",
+  //     supplierName: "Supplier B",
+  //     manufacturerName: "Manufacturer B",
+  //     batchSize: "200",
+  //     sampleSize: "20",
+  //     ttn: "TTN002",
+  //     documentOnQualityAndSafety: "Doc002",
+  //     testReport: "Report002",
+  //     dateOfManufacture: "05.10.2024",
+  //     expirationDate: "05.10.2025",
+  //     packaging: "Bag",
+  //     marking: "Mark002",
+  //     result: "Passed",
+  //     responsible: "Jane Smith",
+  //     note: "Second batch"
+  //   },
+  //   {
+  //     id: "3",
+  //     batchNumber: "BN003",
+  //     dateOfReceipt: "10.10.2025",
+  //     productName: "Product C",
+  //     supplierName: "Supplier C",
+  //     manufacturerName: "Manufacturer C",
+  //     batchSize: "150",
+  //     sampleSize: "15",
+  //     ttn: "TTN003",
+  //     documentOnQualityAndSafety: "Doc003",
+  //     testReport: "Report003",
+  //     dateOfManufacture: "10.10.2025",
+  //     expirationDate: "10.10.2025",
+  //     packaging: "Container",
+  //     marking: "Mark003",
+  //     result: "Pending",
+  //     responsible: "Alice Johnson",
+  //     note: "Third batch"
+  //   }
+  // ];
+
   useEffect(() => {
     const getParties = async () => {
       if (manufacturerId) {
