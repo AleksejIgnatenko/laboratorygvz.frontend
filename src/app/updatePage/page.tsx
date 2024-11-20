@@ -37,6 +37,7 @@ import { IsManagerAsync } from "@/services/UserServices/IsManagerAsync ";
 import { UpdateUserAsync } from "@/services/UserServices/UpdateUserAsync";
 import { UpdateUserModel } from "@/Models/UserModels/UpdateUserModel";
 import { ResearchResultModel } from "@/Models/ResearchResultModel/ResearchResultModel";
+import { UpdateResearchResultAsync } from "@/services/ResearchResultServices/UpdateResearchResultAsync";
 
 interface InputConfig {
   name: string;
@@ -424,7 +425,7 @@ function UpdatePageContent() {
         case "ResearchResults":
           if (item !== null) {
             const researchResultItem = item as ResearchResultModel;
-            setTitleName(`Результат исследования №${researchResultItem.batchNumber}`);
+            setTitleName(`Результат исследования партии №${researchResultItem.batchNumber}`);
           } else {
             setTitleName(`Результат исследования №`);
           }
@@ -718,24 +719,22 @@ function UpdatePageContent() {
             result: updateItem.result
           };
 
-          console.log(updateResearchResultModel);
+          const result = await UpdateResearchResultAsync(updateResearchResultModel);
+          const [response, statusCode] = result;
 
-          // const result = await UpdateResearchAsync(updateProductModel);
-          // const [response, statusCode] = result;
-
-          // if (statusCode === 200) {
-          //   setSuccessMessage(response);
-          //   setResearchErrors({});
-          //   setErrors("");
-          // } else if (statusCode === 400) {
-          //   setSuccessMessage("");
-          //   setResearchErrors(response);
-          //   setErrors("");
-          // } else if (statusCode === 409) {
-          //   setSuccessMessage("");
-          //   setResearchErrors({});
-          //   setErrors(response);
-          // }
+          if (statusCode === 200) {
+            setSuccessMessage(response);
+            setResearchErrors({});
+            setErrors("");
+          } else if (statusCode === 400) {
+            setSuccessMessage("");
+            setResearchErrors(response);
+            setErrors("");
+          } else if (statusCode === 409) {
+            setSuccessMessage("");
+            setResearchErrors({});
+            setErrors(response);
+          }
         }
         break;
 
@@ -774,6 +773,13 @@ function UpdatePageContent() {
             }
           );
 
+          let isFieldValidType = true;
+
+        if (typeof partyItem.batchNumber !== "number") {
+          alert('Неверные данные в поле "Номер партии"');
+          isFieldValidType = false;
+        }
+        if (isFieldValidType) {
           const updatePartyModel: UpdatePartyModel = {
             id: updateItem.id,
             batchNumber: updateItem.batchNumber,
@@ -811,6 +817,7 @@ function UpdatePageContent() {
             setErrors(response);
           }
         }
+      }
         break;
 
       case "Users":
@@ -886,10 +893,10 @@ function UpdatePageContent() {
                           input.name === "productId"
                             ? selectedProductPartyItem
                             : input.name === "supplierId"
-                              ? selectedSupplierPartyItem
-                              : input.name === "manufacturerId"
-                                ? selectedManufacturerPartyItem
-                                : selectedItem
+                            ? selectedSupplierPartyItem
+                            : input.name === "manufacturerId"
+                            ? selectedManufacturerPartyItem
+                            : selectedItem
                         }
                         onChange={(e) => handleSelectChange(e, input.name)}
                         required
@@ -951,7 +958,7 @@ function UpdatePageContent() {
                         placeholder="Дата изготовления"
                         value={dateOfManufactureValue}
                         onChange={handleDateChange}
-                        required
+                        //required
                       />
                     </div>
                   ) : input.name === "expirationDate" ? (
@@ -963,18 +970,18 @@ function UpdatePageContent() {
                         placeholder="Срок годности"
                         value={expirationDateValue}
                         onChange={handleDateChange}
-                        required
+                        //required
                       />
                     </div>
-                    ) : input.name === "result" ? (
-                      <div>
+                  ) : input.name === "result" ? (
+                    <div>
                       <input
                         type="text"
                         name={input.name}
                         id={input.name}
-                        placeholder={ input.placeholder }
+                        placeholder={input.placeholder}
                         onChange={handleInputChange}
-                      // required
+                        // required
                       />
                     </div>
                   ) : (
@@ -989,7 +996,7 @@ function UpdatePageContent() {
                             : input.placeholder
                         }
                         onChange={handleInputChange}
-                      // required
+                        // required
                       />
                     </div>
                   )}
@@ -1055,6 +1062,9 @@ function UpdatePageContent() {
               >
                 Сохранить
               </button>
+              {tableName === "Parties" && (
+                <h3 style={{ color: 'yellow', fontWeight: 'bold' }} >При изменении продукта все  результаты исследований будут удалены!</h3>
+              )}
             </div>
             <span className="success-message">{successMessage}</span>
             <span className="error-message">{errors}</span>

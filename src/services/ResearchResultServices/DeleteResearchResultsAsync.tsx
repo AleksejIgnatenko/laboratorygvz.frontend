@@ -2,12 +2,11 @@ import { ResearchResultModel } from "@/Models/ResearchResultModel/ResearchResult
 
 export const DeleteResearchResultsAsync = async (data: Set<ResearchResultModel>) => {
   const researchResultsArray = Array.from(data);
-
   if (researchResultsArray.length > 0) {
     try {
       const ids = researchResultsArray.map((researchResult) => researchResult.id);
 
-      const response = await fetch("http://localhost:5005/api/ResearchResuls", {
+      const response = await fetch("http://localhost:5005/api/ResearchResults", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

@@ -6,7 +6,7 @@ export const GetResearchResultByResearchIdForPageAsync = async (
 ): Promise<{ researchResults: ResearchResultModel[]; countItemsAll: number }> => {
   try {
     const response = await fetch(
-      `http://localhost:5005/api/ResearchResult/researchResultByResearchIdForPage?researchId=${researchId}&pageNumber=${pageNumber}`,
+      `http://localhost:5005/api/ResearchResults/researchResultsByResearchIdForPage?researchId=${researchId}&pageNumber=${pageNumber}`,
       {
         method: "GET",
         headers: {

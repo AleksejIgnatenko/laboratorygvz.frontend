@@ -201,7 +201,7 @@ function AddPageContent() {
           if (getManufacturerOptions.length > 0) {
             setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
           }
-          
+
           const today = new Date();
           const formattedDate = today.toISOString().split("T")[0];
           setDateOfReceiptValue(formattedDate);
@@ -438,39 +438,48 @@ function AddPageContent() {
 
       case "Parties":
         const addPartyModel = formData as AddPartyModel;
-        const createPartyRequest: CreatePartyRequest = {
-          batchNumber: addPartyModel.batchNumber,
-          dateOfReceipt: dateOfReceiptValue,
-          productId: selectedProductPartyItem,
-          supplierId: selectedSupplierPartyItem,
-          manufacturerId: selectedManufacturerPartyItem,
-          batchSize: addPartyModel.batchSize,
-          sampleSize: addPartyModel.sampleSize,
-          ttn: addPartyModel.ttn,
-          documentOnQualityAndSafety: addPartyModel.documentOnQualityAndSafety,
-          testReport: addPartyModel.testReport,
-          dateOfManufacture: dateOfManufactureValue,
-          expirationDate: expirationDateValue,
-          packaging: addPartyModel.packaging,
-          marking: addPartyModel.marking,
-          result: addPartyModel.result,
-          note: addPartyModel.note,
-        };
 
-        const partyResult = await AddPartyAsync(createPartyRequest);
-        const [partyResponse, partyStatusCode] = partyResult;
-        if (partyStatusCode === 200) {
-          setSuccessMessage(partyResponse);
-          setPartyErrors({});
-          setErrors("");
-        } else if (partyStatusCode === 400) {
-          setSuccessMessage("");
-          setPartyErrors(partyResponse);
-          setErrors("");
-        } else if (partyStatusCode === 409) {
-          setSuccessMessage("");
-          setPartyErrors({});
-          setErrors(partyResponse);
+        let isFieldValidType = true;
+
+        if (typeof addPartyModel.batchNumber !== "number") {
+          alert('Неверные данные в поле "Номер партии"');
+          isFieldValidType = false;
+        }
+        if (isFieldValidType) {
+          const createPartyRequest: CreatePartyRequest = {
+            batchNumber: addPartyModel.batchNumber,
+            dateOfReceipt: dateOfReceiptValue,
+            productId: selectedProductPartyItem,
+            supplierId: selectedSupplierPartyItem,
+            manufacturerId: selectedManufacturerPartyItem,
+            batchSize: addPartyModel.batchSize,
+            sampleSize: addPartyModel.sampleSize,
+            ttn: addPartyModel.ttn,
+            documentOnQualityAndSafety: addPartyModel.documentOnQualityAndSafety,
+            testReport: addPartyModel.testReport,
+            dateOfManufacture: dateOfManufactureValue,
+            expirationDate: expirationDateValue,
+            packaging: addPartyModel.packaging,
+            marking: addPartyModel.marking,
+            result: addPartyModel.result,
+            note: addPartyModel.note,
+          };
+
+          const partyResult = await AddPartyAsync(createPartyRequest);
+          const [partyResponse, partyStatusCode] = partyResult;
+          if (partyStatusCode === 200) {
+            setSuccessMessage(partyResponse);
+            setPartyErrors({});
+            setErrors("");
+          } else if (partyStatusCode === 400) {
+            setSuccessMessage("");
+            setPartyErrors(partyResponse);
+            setErrors("");
+          } else if (partyStatusCode === 409) {
+            setSuccessMessage("");
+            setPartyErrors({});
+            setErrors(partyResponse);
+          }
         }
         break;
 
@@ -560,7 +569,7 @@ function AddPageContent() {
                         placeholder="Дата изготовления"
                         value={dateOfManufactureValue}
                         onChange={handleDateChange}
-                        required
+                        // required
                       />
                     </div>
                   ) : input.name === "expirationDate" ? (
@@ -572,7 +581,7 @@ function AddPageContent() {
                         placeholder="Срок годности"
                         value={expirationDateValue}
                         onChange={handleDateChange}
-                        required
+                        // required
                       />
                     </div>
                   ) : (
