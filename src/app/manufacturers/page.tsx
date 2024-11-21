@@ -10,8 +10,10 @@ import { GetSupplierManufacturersForPageAsync } from "@/services/SupplierService
 
 export default function Manufacturers() {
   const [data, setData] = useState<ManufacturerModel[]>([]);
+  const [filteredData, setFilterdData] = useState<ManufacturerModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
   const [supplierId, setSupplierId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDelete = async (
     selectedItems: Set<ManufacturerModel>,
@@ -42,6 +44,14 @@ export default function Manufacturers() {
       setData(manufacturers);
       setCount(countItemsAll);
     }
+  };
+
+  const handleSearch = (searchQuery: string) => {
+    setSearchQuery(searchQuery)
+    const newFilteredData = data.filter(item =>
+      item.manufacturerName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilterdData(newFilteredData);
   };
 
   // const manufacturers: ManufacturerModel[] = [
@@ -84,6 +94,7 @@ export default function Manufacturers() {
       } else {
         const response = await GetManufacturersForPageAsync(0);
         setData(response.manufacturers);
+        //setData(manufacturers)
         setCount(response.countItemsAll);
       }
     };
@@ -99,11 +110,13 @@ export default function Manufacturers() {
     return (
       <div>
         <DataTable
-          data={data}
+          data={filteredData.length > 0 ? filteredData : data}
           tableName="Manufacturers"
           countItemsAll={countItemsAll}
+          searchText={searchQuery}
           handleDelete={handleDelete}
           handleGet={supplierId ? handleGetSupplierManufacturers : handleGet}
+          handleSearch={handleSearch}
         />
       </div>
     );

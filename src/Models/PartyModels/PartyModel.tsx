@@ -21,6 +21,21 @@ export interface PartyModel {
   note: string;
 }
 
+export function CanBeConvertedToNumberWithoutLeadingZero(value: string): boolean {
+  const regex = /^(?!0)[0-9]*$/;
+  return regex.test(value);
+}
+
+export function CanBeConvertedToNumberWithAnyDigits(value: string): boolean {
+  const regex = /^[0-9]*$/;
+  return regex.test(value);
+}
+
+export function CanBeConvertedToFloat(value: string): boolean {
+  const num = parseFloat(value);
+  return !isNaN(num);
+}
+
 // export interface PartyModel {
 //   id: string;
 //   batchNumber: number;

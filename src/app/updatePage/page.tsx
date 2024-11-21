@@ -26,7 +26,7 @@ import { UpdateResearchModel } from "@/Models/ResearchModels/UpdateResearchModel
 import { UpdateResearchAsync } from "@/services/ResearchServices.tsx/UpdateResearchAsync";
 import { GetProductsAsync } from "@/services/ProductServices/GetProductsAsync";
 import { PartyValidationErrorModel } from "@/Models/PartyModels/PartyValidationErrorModel";
-import { PartyModel } from "@/Models/PartyModels/PartyModel";
+import { PartyModel, CanBeConvertedToNumberWithAnyDigits, CanBeConvertedToNumberWithoutLeadingZero, CanBeConvertedToFloat } from "@/Models/PartyModels/PartyModel";
 import { UpdatePartyModel } from "@/Models/PartyModels/UpdatePartyModel";
 import { UpdatePartyAsync } from "@/services/PartyServices/UpdatePartyAsync";
 import { GetProductForResearchId } from "@/services/ResearchServices.tsx/GetProductForResearchId";
@@ -774,11 +774,45 @@ function UpdatePageContent() {
           );
 
           let isFieldValidType = true;
-
-        if (typeof partyItem.batchNumber !== "number") {
-          alert('Неверные данные в поле "Номер партии"');
-          isFieldValidType = false;
-        }
+          const partyTypeFieldErrors: PartyValidationErrorModel = { ...partyErrors };
+  
+          if (!CanBeConvertedToNumberWithoutLeadingZero(updateItem.batchNumber.toString())) {
+            partyTypeFieldErrors.batchNumber = 'Неверные формат данных! должны быть только цифры и не может начинаться с 0.';
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.batchNumber = '';
+            setPartyErrors(partyTypeFieldErrors);
+          }
+  
+          if (!CanBeConvertedToFloat(updateItem.batchSize.toString())) {
+            partyTypeFieldErrors.batchSize = 'Неверные формат данных! должны быть только цифры.';
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.batchSize = '';
+            setPartyErrors(partyTypeFieldErrors);
+          }
+  
+  
+          if (!CanBeConvertedToFloat(updateItem.sampleSize.toString())) {
+            partyTypeFieldErrors.sampleSize = 'Неверные формат данных! должны быть только цифры.';
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.sampleSize = '';
+            setPartyErrors(partyTypeFieldErrors);
+          }
+  
+          if (!CanBeConvertedToNumberWithAnyDigits(updateItem.ttn.toString())) {
+            partyTypeFieldErrors.ttn = 'Неверные формат данных! должны быть только цифры.';
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.ttn = '';
+            setPartyErrors(partyTypeFieldErrors);
+          }
+          
         if (isFieldValidType) {
           const updatePartyModel: UpdatePartyModel = {
             id: updateItem.id,

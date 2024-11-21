@@ -21,6 +21,7 @@ interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
   countItemsAll: number;
+  searchText: string
   handleDelete?: (
     selectedItems: Set<T>,
     numberPage: number
@@ -32,6 +33,9 @@ interface DataTableProps<T extends object> {
     id: string,
     numberPage: number
   ) => void;
+  handleSearch?: (
+    searchQuery: string,
+  ) => void;
 }
 
 type Order = 'asc' | 'desc';
@@ -41,7 +45,7 @@ interface SortConfig<T> {
   direction: Order | undefined;
 }
 
-const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDelete, handleGet }: DataTableProps<T>) => {
+const DataTable = <T extends object>({ data, tableName, countItemsAll, searchText, handleDelete, handleGet, handleSearch }: DataTableProps<T>) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
     key: undefined,
     direction: undefined,
@@ -52,6 +56,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<T>>(new Set());
   const [titleName, setTitleName] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [isManager, setIsManager] = useState(false);
   // const router = useRouter();
 
@@ -60,6 +65,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
       switch (tableName) {
         case "Manufacturers":
           setTitleName("Производители");
+          setSearchQuery(searchText);
           break;
 
         case "Suppliers":
@@ -206,6 +212,22 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
     setSelectedCount(0);
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+  };
+
+  const handleSearchByTableChange = () => {
+    const inputElement = document.getElementById('search-input') as HTMLInputElement;
+    if (inputElement) {
+      const query = inputElement.value;
+      if (handleSearch) {
+        handleSearch(query);
+      }
+    }
+  };
+
+
   // const handleDelete = async () => {
   //   switch (tableName) {
   //     case "Suppliers":
@@ -276,11 +298,14 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, handleDel
           <div className="flex gap-1 items-center action-buttons">
             <img className="img-style" src="/images/excel.png"></img>
             <input
+              id="search-input"
               className="search-input"
               type="search"
               placeholder="Поиск..."
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
-            <button className="button icon link">
+            <button className="button icon link" onClick={handleSearchByTableChange}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
