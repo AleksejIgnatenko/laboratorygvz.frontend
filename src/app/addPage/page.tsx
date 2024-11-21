@@ -22,11 +22,20 @@ import { GetProductsAsync } from "@/services/ProductServices/GetProductsAsync";
 import { AddResearchAsync } from "@/services/ResearchServices.tsx/AddResearchAsync";
 import { ProductValidationErrorModel } from "@/Models/ProductModels/ProductValidationErrorModel";
 import { ResearchValidationErrorModel } from "@/Models/ResearchModels/ResearchValidationErrorModel";
-import { CanBeConvertedToNumberWithAnyDigits, CanBeConvertedToNumberWithoutLeadingZero, CanBeConvertedToFloat } from "@/Models/PartyModels/PartyModel";
+import {
+  CanBeConvertedToNumberWithAnyDigits,
+  CanBeConvertedToNumberWithoutLeadingZero,
+  CanBeConvertedToFloat,
+} from "@/Models/PartyModels/PartyModel";
 import { AddPartyModel } from "@/Models/PartyModels/AddPartyModel";
 import { CreatePartyRequest } from "@/Models/PartyModels/CreatePartyRequest";
 import { PartyValidationErrorModel } from "@/Models/PartyModels/PartyValidationErrorModel";
 import { AddPartyAsync } from "@/services/PartyServices/AddPartyAsync";
+import { GetProductsForOptionsAsync } from "@/services/ProductServices/GetProductsForOptionsAsync";
+import { GetSuppliersForOptionsAsync } from "@/services/SupplierServices/GetSuppliersForOptionsAsync";
+import { SupplierModelOption } from "@/Models/SupplierModels/SupplierModelOption";
+import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
+import { ProductModelOption } from "@/Models/ProductModels/ProductModelOption";
 
 interface InputConfig {
   name: string;
@@ -120,6 +129,16 @@ function AddPageContent() {
     Option[]
   >([]);
 
+  const [productOptions, setProductOptions] = useState<ProductModelOption[]>(
+    []
+  );
+  const [supplierOptions, setSupplierOptions] = useState<SupplierModelOption[]>(
+    []
+  );
+  const [manufacturerOptions, setManufacturerOptions] = useState<
+    ManufacturerModel[]
+  >([]);
+
   const [selectedProductPartyItem, setSelectedProductPartyItem] =
     useState<string>("");
   const [selectedSupplierPartyItem, setSelectedSupplierPartyItem] =
@@ -169,49 +188,76 @@ function AddPageContent() {
           break;
 
         case "Parties":
-          const partiesProductsOptions = await GetProductsAsync();
-          const partiesSuppliersOptions = await GetSuppliersAsync();
-          const partiesManufacturersOptions = await GetManufacturersAsync();
+          const partiesProductsOptions = await GetProductsForOptionsAsync();
+          if (partiesProductsOptions.length > 0) {
+            const selectedProduct = partiesProductsOptions[0];
 
-          const getProductOptions: Option[] = partiesProductsOptions.map(
-            (product) => ({
-              id: product.id,
-              name: product.productName,
-            })
-          );
+            const productOptions: Option[] = partiesProductsOptions.map(
+              (product) => ({
+                id: product.id,
+                name: product.productName,
+              })
+            );
 
-          const getSupplierOptions: Option[] = partiesSuppliersOptions.map(
-            (supplier) => ({
-              id: supplier.id,
-              name: supplier.supplierName,
-            })
-          );
+            if (productOptions.length > 0) {
+              const selectedProductOption = productOptions[0].id;
+              setSelectedProductPartyItem(selectedProductOption);
+              setProductOptions(partiesProductsOptions);
+              setProductPartyOptions(productOptions);
 
-          const getManufacturerOptions: Option[] =
-            partiesManufacturersOptions.map((manufacturer) => ({
-              id: manufacturer.id,
-              name: manufacturer.manufacturerName,
-            }));
+              const partiesSuppliersOptions =
+                await GetSuppliersForOptionsAsync();
 
-          if (getProductOptions.length > 0) {
-            setSelectedProductPartyItem(getProductOptions[0].id);
+              if (partiesSuppliersOptions.length > 0) {
+                const productSuppliers = partiesSuppliersOptions.filter(
+                  (supplier) =>
+                    selectedProduct.suppliersIds.includes(supplier.id)
+                );
+                const selectedSupplier = productSuppliers[0];
+
+                const getSupplierOptions: Option[] = productSuppliers.map(
+                  (supplier) => ({
+                    id: supplier.id,
+                    name: supplier.supplierName,
+                  })
+                );
+
+                const selectedSupplierOption = getSupplierOptions[0].id;
+                setSelectedSupplierPartyItem(selectedSupplierOption);
+                setSupplierOptions(partiesSuppliersOptions);
+                setSupplierPartyOptions(getSupplierOptions);
+
+                const partiesManufacturersOptions =
+                  await GetManufacturersAsync();
+
+                if (partiesManufacturersOptions.length > 0) {
+                  const supplierManufacturers =
+                    partiesManufacturersOptions.filter((manufacturer) =>
+                      selectedSupplier.manufacturersIds.includes(
+                        manufacturer.id
+                      )
+                    );
+
+                  const getManufacturerOptions: Option[] =
+                    supplierManufacturers.map((manufacturer) => ({
+                      id: manufacturer.id,
+                      name: manufacturer.manufacturerName,
+                    }));
+
+                  const selectedManufacturerOption =
+                    getManufacturerOptions[0].id;
+                  setSelectedManufacturerPartyItem(selectedManufacturerOption);
+                  setManufacturerOptions(partiesManufacturersOptions);
+                  setManufacturerPartyOptions(getManufacturerOptions);
+                }
+              }
+            }
           }
-          if (getSupplierOptions.length > 0) {
-            setSelectedSupplierPartyItem(getSupplierOptions[0].id);
-          }
-          if (getManufacturerOptions.length > 0) {
-            setSelectedManufacturerPartyItem(getManufacturerOptions[0].id);
-          }
-
           const today = new Date();
           const formattedDate = today.toISOString().split("T")[0];
           setDateOfReceiptValue(formattedDate);
           setDateOfManufactureValue(formattedDate);
           setExpirationDateValue(formattedDate);
-
-          setProductPartyOptions(getProductOptions);
-          setSupplierPartyOptions(getSupplierOptions);
-          setManufacturerPartyOptions(getManufacturerOptions);
           break;
 
         case "Experiments":
@@ -316,8 +362,64 @@ function AddPageContent() {
     const { value } = event.target;
     if (name === "productId") {
       setSelectedProductPartyItem(value);
+      const selectedProduct = productOptions.find((p) => p.id === value);
+
+      if (selectedProduct) {
+        const productSuppliers = supplierOptions.filter((supplier) =>
+          selectedProduct.suppliersIds.includes(supplier.id)
+        );
+        const selectedSupplier = productSuppliers[0];
+
+        const getSupplierOptions: Option[] = productSuppliers.map(
+          (supplier) => ({
+            id: supplier.id,
+            name: supplier.supplierName,
+          })
+        );
+
+        const selectedSupplierOption = getSupplierOptions[0].id;
+        setSelectedSupplierPartyItem(selectedSupplierOption);
+        setSupplierPartyOptions(getSupplierOptions);
+
+        if (selectedSupplier) {
+          const supplierManufacturers = manufacturerOptions.filter(
+            (manufacturer) =>
+              selectedSupplier.manufacturersIds.includes(manufacturer.id)
+          );
+
+          const getManufacturerOptions: Option[] = supplierManufacturers.map(
+            (manufacturer) => ({
+              id: manufacturer.id,
+              name: manufacturer.manufacturerName,
+            })
+          );
+
+          const selectedManufacturerOption = getManufacturerOptions[0].id;
+          setSelectedManufacturerPartyItem(selectedManufacturerOption);
+          setManufacturerPartyOptions(getManufacturerOptions);
+        }
+      }
     } else if (name === "supplierId") {
       setSelectedSupplierPartyItem(value);
+      const selectedSupplier = supplierOptions.find((s) => s.id === value);
+
+      if (selectedSupplier) {
+        const supplierManufacturers = manufacturerOptions.filter(
+          (manufacturer) =>
+            selectedSupplier.manufacturersIds.includes(manufacturer.id)
+        );
+
+        const getManufacturerOptions: Option[] = supplierManufacturers.map(
+          (manufacturer) => ({
+            id: manufacturer.id,
+            name: manufacturer.manufacturerName,
+          })
+        );
+
+        const selectedManufacturerOption = getManufacturerOptions[0].id;
+        setSelectedManufacturerPartyItem(selectedManufacturerOption);
+        setManufacturerPartyOptions(getManufacturerOptions);
+      }
     } else if (name === "manufacturerId") {
       setSelectedManufacturerPartyItem(value);
     } else {
@@ -441,45 +543,55 @@ function AddPageContent() {
         const addPartyModel = formData as AddPartyModel;
 
         let isFieldValidType = true;
-        const partyTypeFieldErrors: PartyValidationErrorModel = { ...partyErrors };
+        const partyTypeFieldErrors: PartyValidationErrorModel = {
+          ...partyErrors,
+        };
 
-        if (!CanBeConvertedToNumberWithoutLeadingZero(addPartyModel.batchNumber.toString())) {
-          partyTypeFieldErrors.batchNumber = 'Неверные формат данных! должны быть только цифры и не может начинаться с 0.';
+        if (
+          !CanBeConvertedToNumberWithoutLeadingZero(
+            addPartyModel.batchNumber.toString()
+          )
+        ) {
+          partyTypeFieldErrors.batchNumber =
+            "Неверные формат данных! должны быть только цифры и не может начинаться с 0.";
           setPartyErrors(partyTypeFieldErrors);
           isFieldValidType = false;
         } else {
-          partyTypeFieldErrors.batchNumber = '';
+          partyTypeFieldErrors.batchNumber = "";
           setPartyErrors(partyTypeFieldErrors);
         }
 
         if (!CanBeConvertedToFloat(addPartyModel.batchSize.toString())) {
-          partyTypeFieldErrors.batchSize = 'Неверные формат данных! должны быть только цифры.';
+          partyTypeFieldErrors.batchSize =
+            "Неверные формат данных! должны быть только цифры.";
           setPartyErrors(partyTypeFieldErrors);
           isFieldValidType = false;
         } else {
-          partyTypeFieldErrors.batchSize = '';
+          partyTypeFieldErrors.batchSize = "";
           setPartyErrors(partyTypeFieldErrors);
         }
-
 
         if (!CanBeConvertedToFloat(addPartyModel.sampleSize.toString())) {
-          partyTypeFieldErrors.sampleSize = 'Неверные формат данных! должны быть только цифры.';
+          partyTypeFieldErrors.sampleSize =
+            "Неверные формат данных! должны быть только цифры.";
           setPartyErrors(partyTypeFieldErrors);
           isFieldValidType = false;
         } else {
-          partyTypeFieldErrors.sampleSize = '';
+          partyTypeFieldErrors.sampleSize = "";
           setPartyErrors(partyTypeFieldErrors);
         }
 
-        if (!CanBeConvertedToNumberWithAnyDigits(addPartyModel.ttn.toString())) {
-          partyTypeFieldErrors.ttn = 'Неверные формат данных! должны быть только цифры.';
+        if (
+          !CanBeConvertedToNumberWithAnyDigits(addPartyModel.ttn.toString())
+        ) {
+          partyTypeFieldErrors.ttn =
+            "Неверные формат данных! должны быть только цифры.";
           setPartyErrors(partyTypeFieldErrors);
           isFieldValidType = false;
         } else {
-          partyTypeFieldErrors.ttn = '';
+          partyTypeFieldErrors.ttn = "";
           setPartyErrors(partyTypeFieldErrors);
         }
-
 
         if (isFieldValidType) {
           const createPartyRequest: CreatePartyRequest = {
@@ -491,7 +603,8 @@ function AddPageContent() {
             batchSize: addPartyModel.batchSize,
             sampleSize: addPartyModel.sampleSize,
             ttn: addPartyModel.ttn,
-            documentOnQualityAndSafety: addPartyModel.documentOnQualityAndSafety,
+            documentOnQualityAndSafety:
+              addPartyModel.documentOnQualityAndSafety,
             testReport: addPartyModel.testReport,
             dateOfManufacture: dateOfManufactureValue,
             expirationDate: expirationDateValue,

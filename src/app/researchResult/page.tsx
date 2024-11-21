@@ -110,13 +110,14 @@ export default function ResearchResult() {
           data={data}
           tableName="ResearchResults"
           countItemsAll={countItemsAll}
+          searchText=""
           handleDelete={handleDelete}
           handleGetById={
             partyId
               ? handleGetByPartyId
               : paramResearchId
-                ? handleGetByResearchId
-                : undefined
+              ? handleGetByResearchId
+              : undefined
           }
         />
       </div>

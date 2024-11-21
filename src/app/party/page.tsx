@@ -157,6 +157,7 @@ export default function Researches() {
         <DataTable
           data={data}
           tableName="Parties"
+          searchText=""
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
           handleGet={handleGet}

@@ -51,6 +51,7 @@ export default function Users() {
     <div className="users-page">
       <DataTable
         data={data}
+        searchText=""
         tableName="Users"
         countItemsAll={countItemsAll}
       />

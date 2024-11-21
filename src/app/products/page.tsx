@@ -90,6 +90,7 @@ export default function Products() {
         <DataTable
           data={data}
           tableName="Products"
+          searchText=""
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
           handleGet={supplierId ? handleGetSupplierProducts : handleGet}

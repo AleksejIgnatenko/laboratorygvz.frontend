@@ -75,6 +75,7 @@ export default function Researches() {
           data={data}
           tableName="Researches"
           countItemsAll={countItemsAll}
+          searchText=""
           handleDelete={handleDelete}
           handleGet={productId ? handleGetProductResearches : handleGet}
         />

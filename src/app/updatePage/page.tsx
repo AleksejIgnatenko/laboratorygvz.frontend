@@ -26,7 +26,12 @@ import { UpdateResearchModel } from "@/Models/ResearchModels/UpdateResearchModel
 import { UpdateResearchAsync } from "@/services/ResearchServices.tsx/UpdateResearchAsync";
 import { GetProductsAsync } from "@/services/ProductServices/GetProductsAsync";
 import { PartyValidationErrorModel } from "@/Models/PartyModels/PartyValidationErrorModel";
-import { PartyModel, CanBeConvertedToNumberWithAnyDigits, CanBeConvertedToNumberWithoutLeadingZero, CanBeConvertedToFloat } from "@/Models/PartyModels/PartyModel";
+import {
+  PartyModel,
+  CanBeConvertedToNumberWithAnyDigits,
+  CanBeConvertedToNumberWithoutLeadingZero,
+  CanBeConvertedToFloat,
+} from "@/Models/PartyModels/PartyModel";
 import { UpdatePartyModel } from "@/Models/PartyModels/UpdatePartyModel";
 import { UpdatePartyAsync } from "@/services/PartyServices/UpdatePartyAsync";
 import { GetProductForResearchId } from "@/services/ResearchServices.tsx/GetProductForResearchId";
@@ -38,6 +43,10 @@ import { UpdateUserAsync } from "@/services/UserServices/UpdateUserAsync";
 import { UpdateUserModel } from "@/Models/UserModels/UpdateUserModel";
 import { ResearchResultModel } from "@/Models/ResearchResultModel/ResearchResultModel";
 import { UpdateResearchResultAsync } from "@/services/ResearchResultServices/UpdateResearchResultAsync";
+import { ProductModelOption } from "@/Models/ProductModels/ProductModelOption";
+import { SupplierModelOption } from "@/Models/SupplierModels/SupplierModelOption";
+import { GetProductsForOptionsAsync } from "@/services/ProductServices/GetProductsForOptionsAsync";
+import { GetSuppliersForOptionsAsync } from "@/services/SupplierServices/GetSuppliersForOptionsAsync";
 
 interface InputConfig {
   name: string;
@@ -75,9 +84,7 @@ const inputConfig: Record<string, InputConfig[]> = {
     { name: "researchName", placeholder: "Название исследования" },
     { name: "ProductId", isSelect: true },
   ],
-  ResearchResults: [
-    { name: "id" },
-  ],
+  ResearchResults: [{ name: "id" }],
   Parties: [
     { name: "id", placeholder: "" },
     { name: "batchNumber", placeholder: "Номер партии" },
@@ -159,6 +166,16 @@ function UpdatePageContent() {
   );
   const [manufacturerPartyOptions, setManufacturerPartyOptions] = useState<
     Option[]
+  >([]);
+
+  const [productOptions, setProductOptions] = useState<ProductModelOption[]>(
+    []
+  );
+  const [supplierOptions, setSupplierOptions] = useState<SupplierModelOption[]>(
+    []
+  );
+  const [manufacturerOptions, setManufacturerOptions] = useState<
+    ManufacturerModel[]
   >([]);
 
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
@@ -263,83 +280,118 @@ function UpdatePageContent() {
           }
           break;
 
-          case "ResearchResults":
-            if (item !== null) {
-              const researchResultItem = item as ResearchResultModel;
-          
-              // Удаляем элемент с именем "result" из ResearchResults
-              inputConfig.ResearchResults = inputConfig.ResearchResults.filter(input => input.name !== "result");
-          
-              // Логируем результат для проверки
-              console.log("Remaining elements after removal:", inputConfig.ResearchResults);
-          
-              // Создаем новый объект resultInput
-              const resultInput: InputConfig = {
-                name: "result",
-                placeholder: researchResultItem.result ? researchResultItem.result : researchResultItem.researchName,
-              };
-          
-              // Добавляем новый объект resultInput в массив
-              inputConfig.ResearchResults.push(resultInput);
-            }
-            break;
+        case "ResearchResults":
+          if (item !== null) {
+            const researchResultItem = item as ResearchResultModel;
+
+            // Удаляем элемент с именем "result" из ResearchResults
+            inputConfig.ResearchResults = inputConfig.ResearchResults.filter(
+              (input) => input.name !== "result"
+            );
+
+            // Создаем новый объект resultInput
+            const resultInput: InputConfig = {
+              name: "result",
+              placeholder: researchResultItem.result
+                ? researchResultItem.result
+                : researchResultItem.researchName,
+            };
+
+            // Добавляем новый объект resultInput в массив
+            inputConfig.ResearchResults.push(resultInput);
+          }
+          break;
 
         case "Parties":
           if (item !== null) {
             const partyItem = item as PartyModel;
-            const partiesProductsOptions = await GetProductsAsync();
-            const partiesSuppliersOptions = await GetSuppliersAsync();
-            const partiesManufacturersOptions = await GetManufacturersAsync();
+            const partiesProductsOptions = await GetProductsForOptionsAsync();
+            if (partiesProductsOptions.length > 0) {
+              const selectedProduct = partiesProductsOptions.find(
+                (p) => p.productName === partyItem.productName
+              );
 
-            const getProductOptions: Option[] = partiesProductsOptions.map(
-              (product) => ({
-                id: product.id,
-                name: product.productName,
-              })
-            );
+              if (selectedProduct) {
+                const productOptions: Option[] = partiesProductsOptions.map(
+                  (product) => ({
+                    id: product.id,
+                    name: product.productName,
+                  })
+                );
 
-            const selectedProduct = getProductOptions.find(
-              (product) => product.name === partyItem.productName
-            );
+                if (productOptions.length > 0) {
+                  const selectedProductOption = selectedProduct.id;
+                  setSelectedProductPartyItem(selectedProductOption);
+                  setProductOptions(partiesProductsOptions);
+                  setProductPartyOptions(productOptions);
 
-            const getSupplierOptions: Option[] = partiesSuppliersOptions.map(
-              (supplier) => ({
-                id: supplier.id,
-                name: supplier.supplierName,
-              })
-            );
+                  const partiesSuppliersOptions =
+                    await GetSuppliersForOptionsAsync();
 
-            const selectedSupplier = getSupplierOptions.find(
-              (supplier) => supplier.name === partyItem.supplierName
-            );
+                  if (partiesSuppliersOptions.length > 0) {
+                    const selectedSupplier = partiesSuppliersOptions.find(
+                      (s) => s.supplierName === partyItem.supplierName
+                    );
 
-            const getManufacturerOptions: Option[] =
-              partiesManufacturersOptions.map((manufacturer) => ({
-                id: manufacturer.id,
-                name: manufacturer.manufacturerName,
-              }));
+                    if (selectedSupplier) {
+                      const productSuppliers = partiesSuppliersOptions.filter(
+                        (supplier) =>
+                          selectedProduct.suppliersIds.includes(supplier.id)
+                      );
 
-            const selectedManufacturer = getManufacturerOptions.find(
-              (manufacturer) => manufacturer.name === partyItem.manufacturerName
-            );
+                      const getSupplierOptions: Option[] = productSuppliers.map(
+                        (supplier) => ({
+                          id: supplier.id,
+                          name: supplier.supplierName,
+                        })
+                      );
 
-            if (selectedProduct) {
-              setSelectedProductPartyItem(selectedProduct.id);
+                      const selectedSupplierOption = selectedSupplier.id;
+                      setSelectedSupplierPartyItem(selectedSupplierOption);
+                      setSupplierOptions(partiesSuppliersOptions);
+                      setSupplierPartyOptions(getSupplierOptions);
+
+                      const partiesManufacturersOptions =
+                        await GetManufacturersAsync();
+
+                      if (partiesManufacturersOptions.length > 0) {
+                        const selectedManufacturer =
+                          partiesManufacturersOptions.find(
+                            (m) => m.manufacturerName === partyItem.manufacturerName
+                          );
+                        if (selectedManufacturer) {
+                          const supplierManufacturers =
+                            partiesManufacturersOptions.filter((manufacturer) =>
+                              selectedSupplier.manufacturersIds.includes(
+                                manufacturer.id
+                              )
+                            );
+
+                          const getManufacturerOptions: Option[] =
+                            supplierManufacturers.map((manufacturer) => ({
+                              id: manufacturer.id,
+                              name: manufacturer.manufacturerName,
+                            }));
+
+                          const selectedManufacturerOption =
+                            selectedManufacturer.id;
+                          setSelectedManufacturerPartyItem(
+                            selectedManufacturerOption
+                          );
+                          setManufacturerOptions(partiesManufacturersOptions);
+                          setManufacturerPartyOptions(getManufacturerOptions);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-            if (selectedSupplier) {
-              setSelectedSupplierPartyItem(selectedSupplier.id);
-            }
-            if (selectedManufacturer) {
-              setSelectedManufacturerPartyItem(selectedManufacturer.id);
-            }
-
-            setDateOfReceiptValue(partyItem.dateOfReceipt);
-            setDateOfManufactureValue(partyItem.dateOfManufacture);
-            setExpirationDateValue(partyItem.expirationDate);
-
-            setProductPartyOptions(getProductOptions);
-            setSupplierPartyOptions(getSupplierOptions);
-            setManufacturerPartyOptions(getManufacturerOptions);
+            const today = new Date();
+            const formattedDate = today.toISOString().split("T")[0];
+            setDateOfReceiptValue(formattedDate);
+            setDateOfManufactureValue(formattedDate);
+            setExpirationDateValue(formattedDate);
           }
           break;
 
@@ -364,7 +416,7 @@ function UpdatePageContent() {
                   { id: "3", name: RoleEnum.Manager },
                 ];
               } else {
-                router.push('/');
+                router.push("/");
               }
             }
 
@@ -425,7 +477,9 @@ function UpdatePageContent() {
         case "ResearchResults":
           if (item !== null) {
             const researchResultItem = item as ResearchResultModel;
-            setTitleName(`Результат исследования партии №${researchResultItem.batchNumber}`);
+            setTitleName(
+              `Результат исследования партии №${researchResultItem.batchNumber}`
+            );
           } else {
             setTitleName(`Результат исследования №`);
           }
@@ -510,8 +564,64 @@ function UpdatePageContent() {
     const { value } = event.target;
     if (name === "productId") {
       setSelectedProductPartyItem(value);
+      const selectedProduct = productOptions.find((p) => p.id === value);
+
+      if (selectedProduct) {
+        const productSuppliers = supplierOptions.filter((supplier) =>
+          selectedProduct.suppliersIds.includes(supplier.id)
+        );
+        const selectedSupplier = productSuppliers[0];
+
+        const getSupplierOptions: Option[] = productSuppliers.map(
+          (supplier) => ({
+            id: supplier.id,
+            name: supplier.supplierName,
+          })
+        );
+
+        const selectedSupplierOption = getSupplierOptions[0].id;
+        setSelectedSupplierPartyItem(selectedSupplierOption);
+        setSupplierPartyOptions(getSupplierOptions);
+
+        if (selectedSupplier) {
+          const supplierManufacturers = manufacturerOptions.filter(
+            (manufacturer) =>
+              selectedSupplier.manufacturersIds.includes(manufacturer.id)
+          );
+
+          const getManufacturerOptions: Option[] = supplierManufacturers.map(
+            (manufacturer) => ({
+              id: manufacturer.id,
+              name: manufacturer.manufacturerName,
+            })
+          );
+
+          const selectedManufacturerOption = getManufacturerOptions[0].id;
+          setSelectedManufacturerPartyItem(selectedManufacturerOption);
+          setManufacturerPartyOptions(getManufacturerOptions);
+        }
+      }
     } else if (name === "supplierId") {
       setSelectedSupplierPartyItem(value);
+      const selectedSupplier = supplierOptions.find((s) => s.id === value);
+
+      if (selectedSupplier) {
+        const supplierManufacturers = manufacturerOptions.filter(
+          (manufacturer) =>
+            selectedSupplier.manufacturersIds.includes(manufacturer.id)
+        );
+
+        const getManufacturerOptions: Option[] = supplierManufacturers.map(
+          (manufacturer) => ({
+            id: manufacturer.id,
+            name: manufacturer.manufacturerName,
+          })
+        );
+
+        const selectedManufacturerOption = getManufacturerOptions[0].id;
+        setSelectedManufacturerPartyItem(selectedManufacturerOption);
+        setManufacturerPartyOptions(getManufacturerOptions);
+      }
     } else if (name === "manufacturerId") {
       setSelectedManufacturerPartyItem(value);
     } else {
@@ -701,7 +811,9 @@ function UpdatePageContent() {
       case "ResearchResults":
         if (item !== null) {
           const researchResultsItem = item as ResearchResultModel;
-          const updateItem: ResearchResultModel = Object.keys(researchResultsItem).reduce(
+          const updateItem: ResearchResultModel = Object.keys(
+            researchResultsItem
+          ).reduce(
             (acc, key) => {
               acc[key as keyof ResearchResultModel] =
                 formData[key] !== undefined && formData[key] !== ""
@@ -709,17 +821,24 @@ function UpdatePageContent() {
                   : researchResultsItem[key as keyof ResearchResultModel];
               return acc;
             },
-            { id: researchResultsItem.id, researchName: researchResultsItem.researchName, batchNumber: researchResultsItem.batchNumber, result: "" }
+            {
+              id: researchResultsItem.id,
+              researchName: researchResultsItem.researchName,
+              batchNumber: researchResultsItem.batchNumber,
+              result: "",
+            }
           );
 
           const updateResearchResultModel: ResearchResultModel = {
             id: updateItem.id,
             researchName: updateItem.researchName,
             batchNumber: updateItem.batchNumber,
-            result: updateItem.result
+            result: updateItem.result,
           };
 
-          const result = await UpdateResearchResultAsync(updateResearchResultModel);
+          const result = await UpdateResearchResultAsync(
+            updateResearchResultModel
+          );
           const [response, statusCode] = result;
 
           if (statusCode === 200) {
@@ -774,84 +893,93 @@ function UpdatePageContent() {
           );
 
           let isFieldValidType = true;
-          const partyTypeFieldErrors: PartyValidationErrorModel = { ...partyErrors };
-  
-          if (!CanBeConvertedToNumberWithoutLeadingZero(updateItem.batchNumber.toString())) {
-            partyTypeFieldErrors.batchNumber = 'Неверные формат данных! должны быть только цифры и не может начинаться с 0.';
-            setPartyErrors(partyTypeFieldErrors);
-            isFieldValidType = false;
-          } else {
-            partyTypeFieldErrors.batchNumber = '';
-            setPartyErrors(partyTypeFieldErrors);
-          }
-  
-          if (!CanBeConvertedToFloat(updateItem.batchSize.toString())) {
-            partyTypeFieldErrors.batchSize = 'Неверные формат данных! должны быть только цифры.';
-            setPartyErrors(partyTypeFieldErrors);
-            isFieldValidType = false;
-          } else {
-            partyTypeFieldErrors.batchSize = '';
-            setPartyErrors(partyTypeFieldErrors);
-          }
-  
-  
-          if (!CanBeConvertedToFloat(updateItem.sampleSize.toString())) {
-            partyTypeFieldErrors.sampleSize = 'Неверные формат данных! должны быть только цифры.';
-            setPartyErrors(partyTypeFieldErrors);
-            isFieldValidType = false;
-          } else {
-            partyTypeFieldErrors.sampleSize = '';
-            setPartyErrors(partyTypeFieldErrors);
-          }
-  
-          if (!CanBeConvertedToNumberWithAnyDigits(updateItem.ttn.toString())) {
-            partyTypeFieldErrors.ttn = 'Неверные формат данных! должны быть только цифры.';
-            setPartyErrors(partyTypeFieldErrors);
-            isFieldValidType = false;
-          } else {
-            partyTypeFieldErrors.ttn = '';
-            setPartyErrors(partyTypeFieldErrors);
-          }
-          
-        if (isFieldValidType) {
-          const updatePartyModel: UpdatePartyModel = {
-            id: updateItem.id,
-            batchNumber: updateItem.batchNumber,
-            dateOfReceipt: dateOfReceiptValue,
-            productId: selectedProductPartyItem,
-            supplierId: selectedSupplierPartyItem,
-            manufacturerId: selectedManufacturerPartyItem,
-            batchSize: updateItem.batchSize,
-            sampleSize: updateItem.sampleSize,
-            ttn: updateItem.ttn,
-            documentOnQualityAndSafety: updateItem.documentOnQualityAndSafety,
-            testReport: updateItem.testReport,
-            dateOfManufacture: dateOfManufactureValue,
-            expirationDate: expirationDateValue,
-            packaging: updateItem.packaging,
-            marking: updateItem.marking,
-            result: updateItem.result,
-            note: updateItem.note,
+          const partyTypeFieldErrors: PartyValidationErrorModel = {
+            ...partyErrors,
           };
 
-          const result = await UpdatePartyAsync(updatePartyModel);
-          const [response, statusCode] = result;
+          if (
+            !CanBeConvertedToNumberWithoutLeadingZero(
+              updateItem.batchNumber.toString()
+            )
+          ) {
+            partyTypeFieldErrors.batchNumber =
+              "Неверные формат данных! должны быть только цифры и не может начинаться с 0.";
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.batchNumber = "";
+            setPartyErrors(partyTypeFieldErrors);
+          }
 
-          if (statusCode === 200) {
-            setSuccessMessage(response);
-            setPartyErrors({});
-            setErrors("");
-          } else if (statusCode === 400) {
-            setSuccessMessage("");
-            setPartyErrors(response);
-            setErrors("");
-          } else if (statusCode === 409) {
-            setSuccessMessage("");
-            setPartyErrors({});
-            setErrors(response);
+          if (!CanBeConvertedToFloat(updateItem.batchSize.toString())) {
+            partyTypeFieldErrors.batchSize =
+              "Неверные формат данных! должны быть только цифры.";
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.batchSize = "";
+            setPartyErrors(partyTypeFieldErrors);
+          }
+
+          if (!CanBeConvertedToFloat(updateItem.sampleSize.toString())) {
+            partyTypeFieldErrors.sampleSize =
+              "Неверные формат данных! должны быть только цифры.";
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.sampleSize = "";
+            setPartyErrors(partyTypeFieldErrors);
+          }
+
+          if (!CanBeConvertedToNumberWithAnyDigits(updateItem.ttn.toString())) {
+            partyTypeFieldErrors.ttn =
+              "Неверные формат данных! должны быть только цифры.";
+            setPartyErrors(partyTypeFieldErrors);
+            isFieldValidType = false;
+          } else {
+            partyTypeFieldErrors.ttn = "";
+            setPartyErrors(partyTypeFieldErrors);
+          }
+
+          if (isFieldValidType) {
+            const updatePartyModel: UpdatePartyModel = {
+              id: updateItem.id,
+              batchNumber: updateItem.batchNumber,
+              dateOfReceipt: dateOfReceiptValue,
+              productId: selectedProductPartyItem,
+              supplierId: selectedSupplierPartyItem,
+              manufacturerId: selectedManufacturerPartyItem,
+              batchSize: updateItem.batchSize,
+              sampleSize: updateItem.sampleSize,
+              ttn: updateItem.ttn,
+              documentOnQualityAndSafety: updateItem.documentOnQualityAndSafety,
+              testReport: updateItem.testReport,
+              dateOfManufacture: dateOfManufactureValue,
+              expirationDate: expirationDateValue,
+              packaging: updateItem.packaging,
+              marking: updateItem.marking,
+              result: updateItem.result,
+              note: updateItem.note,
+            };
+
+            const result = await UpdatePartyAsync(updatePartyModel);
+            const [response, statusCode] = result;
+
+            if (statusCode === 200) {
+              setSuccessMessage(response);
+              setPartyErrors({});
+              setErrors("");
+            } else if (statusCode === 400) {
+              setSuccessMessage("");
+              setPartyErrors(response);
+              setErrors("");
+            } else if (statusCode === 409) {
+              setSuccessMessage("");
+              setPartyErrors({});
+              setErrors(response);
+            }
           }
         }
-      }
         break;
 
       case "Users":
@@ -866,7 +994,14 @@ function UpdatePageContent() {
                   : userItem[key as keyof UserModel];
               return acc;
             },
-            { id: userItem.id, role: "", surname: "", userName: "", patronymic: "", email: "" }
+            {
+              id: userItem.id,
+              role: "",
+              surname: "",
+              userName: "",
+              patronymic: "",
+              email: "",
+            }
           );
 
           const updateUserModel: UpdateUserModel = {
@@ -1097,7 +1232,10 @@ function UpdatePageContent() {
                 Сохранить
               </button>
               {tableName === "Parties" && (
-                <h3 style={{ color: 'yellow', fontWeight: 'bold' }} >При изменении продукта все  результаты исследований будут удалены!</h3>
+                <h3 style={{ color: "yellow", fontWeight: "bold" }}>
+                  При изменении продукта все результаты исследований будут
+                  удалены!
+                </h3>
               )}
             </div>
             <span className="success-message">{successMessage}</span>

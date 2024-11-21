@@ -90,6 +90,7 @@ export default function Suppliers() {
           data={data}
           tableName="Suppliers"
           countItemsAll={countItemsAll}
+          searchText=""
           handleDelete={handleDelete}
           handleGet={productId ? handleGetProductSuppliers : handleGet}
         />
