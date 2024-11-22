@@ -12,6 +12,8 @@ export default function Users() {
   const [countItemsAll, setCount] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const numberPage = 0;
+
   const handleGet = async (numberPage: number) => {
     const { users, countItemsAll } = await GetUsersForPageAsync(numberPage);
       setData(users);
@@ -81,7 +83,8 @@ export default function Users() {
         searchText={searchQuery}
         tableName="Users"
         countItemsAll={countItemsAll}
-        handleGet={handleGet}
+        numberPage={numberPage}
+        //handleGet={handleGet}
         handleSearch={handleSearch}
       />
     </div>

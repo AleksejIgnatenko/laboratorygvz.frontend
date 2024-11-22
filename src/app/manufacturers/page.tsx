@@ -8,13 +8,16 @@ import { DeleteManufacturersAsync } from "@/services/ManufacturerServices/Delete
 import { useSearchParams } from "next/navigation";
 import { GetSupplierManufacturersForPageAsync } from "@/services/SupplierServices/GetSupplierManufacturersForPageAsync";
 import { ExportManufacturerToExcelAsync } from "@/services/ManufacturerServices/ExportManufacturerToExcelAsync";
+import { SearchManufacturersAsync } from "@/services/ManufacturerServices/SearchManufacturersAsync";
 
 export default function Manufacturers() {
   const [data, setData] = useState<ManufacturerModel[]>([]);
   const [filteredData, setFilterdData] = useState<ManufacturerModel[]>([]);
-  const [countItemsAll, setCount] = useState<number>(0);
+  const [countItemsAll, setCountItemsAll] = useState<number>(0);
+  const [countItemsSearch, setCountItemsSearch] = useState<number>(0);
   const [supplierId, setSupplierId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [numberPage, setNumberPage] = useState(0);
 
   const handleDelete = async (
     selectedItems: Set<ManufacturerModel>,
@@ -25,7 +28,7 @@ export default function Manufacturers() {
       numberPage
     );
     setData(manufacturers);
-    setCount(countItemsAll);
+    setCountItemsAll(countItemsAll);
   };
 
   const handleGet = async (numberPage: number) => {
@@ -33,7 +36,7 @@ export default function Manufacturers() {
       numberPage
     );
     setData(manufacturers);
-    setCount(countItemsAll);
+    setCountItemsAll(countItemsAll);
   };
 
   const handleGetSupplierManufacturers = async (numberPage: number) => {
@@ -43,43 +46,76 @@ export default function Manufacturers() {
         numberPage
       );
       setData(manufacturers);
-      setCount(countItemsAll);
+      setCountItemsAll(countItemsAll);
     }
   };
 
-  const handleSearch = (searchQuery: string) => {
-    setSearchQuery(searchQuery)
-    const newFilteredData = data.filter(item =>
-      item.manufacturerName.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleSearch = async (searchQuery: string, numberPage: number) => {
+    setSearchQuery(searchQuery);
+
+    const { manufacturers, countItemsAll} = await SearchManufacturersAsync(
+      searchQuery,
+      numberPage
     );
-    if (newFilteredData.length > 0) {
-      setFilterdData(newFilteredData);
+
+    if (manufacturers.length > 0) {
+      setFilterdData(manufacturers);
+      setCountItemsSearch(countItemsAll);
     } else {
       setFilterdData([]);
+      setCountItemsSearch(0);
       setTimeout(() => {
-        alert('В результате поиска совпадения не были найдены.');
+        alert("В результате поиска совпадения не были найдены.");
       }, 500);
     }
   };
 
-  const handleExportToExcel = async() => {
+  const handleExportToExcel = async () => {
     await ExportManufacturerToExcelAsync();
-  }
+  };
 
-  const manufacturers: ManufacturerModel[] = [
-    {
-      id: "1",
-      manufacturerName: "Manufacturer A"
-    },
-    {
-      id: "2",
-      manufacturerName: "Manufacturer B"
-    },
-    {
-      id: "3",
-      manufacturerName: "Manufacturer C"
-    }
-  ];
+  const decrementValue = () => {
+    setNumberPage((prevPage) => {
+      const newPage = Math.max(prevPage - 1, 0); // Уменьшаем номер страницы, но не меньше 0
+      console.log(newPage);
+
+      if (supplierId) {
+        handleGetSupplierManufacturers(newPage); // Отправляем новый номер страницы + 1 на сервер
+      } else {
+        handleGet(newPage);
+      }
+      return newPage; // Обновляем состояние
+    });
+  };
+
+  const incrementValue = () => {
+    setNumberPage((prevPage) => {
+      const newPage = prevPage + 1; // Увеличиваем номер страницы
+      console.log(newPage);
+
+      if (supplierId) {
+        handleGetSupplierManufacturers(newPage); // Отправляем новый номер страницы + 1 на сервер
+      } else {
+        handleGet(newPage);
+      }
+      return newPage; // Обновляем состояние
+    });
+  };
+
+  // const manufacturers: ManufacturerModel[] = [
+  //   {
+  //     id: "1",
+  //     manufacturerName: "Manufacturer A"
+  //   },
+  //   {
+  //     id: "2",
+  //     manufacturerName: "Manufacturer B"
+  //   },
+  //   {
+  //     id: "3",
+  //     manufacturerName: "Manufacturer C"
+  //   }
+  // ];
 
   // useEffect(() => {
   //   const getManufacturers = async () => {
@@ -102,12 +138,12 @@ export default function Manufacturers() {
           0
         );
         setData(response.manufacturers);
-        setCount(response.countItemsAll);
+        setCountItemsAll(response.countItemsAll);
       } else {
         const response = await GetManufacturersForPageAsync(0);
-        //setData(response.manufacturers);
-        setData(manufacturers)
-        setCount(response.countItemsAll);
+        setData(response.manufacturers);
+        //setData(manufacturers)
+        setCountItemsAll(response.countItemsAll);
       }
     };
 
@@ -124,12 +160,14 @@ export default function Manufacturers() {
         <DataTable
           data={filteredData.length > 0 ? filteredData : data}
           tableName="Manufacturers"
-          countItemsAll={countItemsAll}
+          countItemsAll={countItemsSearch > 0 ? countItemsSearch : countItemsAll}
           searchText={searchQuery}
+          numberPage={numberPage}
           handleDelete={handleDelete}
-          handleGet={supplierId ? handleGetSupplierManufacturers : handleGet}
           handleSearch={handleSearch}
           handleExportToExcel={handleExportToExcel}
+          handleDecrementValue={decrementValue}
+          handleIncrementValue={incrementValue}
         />
       </div>
     );

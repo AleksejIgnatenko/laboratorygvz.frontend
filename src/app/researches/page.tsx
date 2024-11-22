@@ -16,6 +16,8 @@ export default function Researches() {
   const [productId, setProductId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const numberPage = 0;
+
   const handleDelete = async (
     selectedItems: Set<ResearchModel>,
     numberPage: number
@@ -113,8 +115,9 @@ export default function Researches() {
           tableName="Researches"
           countItemsAll={countItemsAll}
           searchText={searchQuery}
+          numberPage={numberPage}
           handleDelete={handleDelete}
-          handleGet={productId ? handleGetProductResearches : handleGet}
+          //handleGet={productId ? handleGetProductResearches : handleGet}
           handleSearch={handleSearch}
         />
       </div>

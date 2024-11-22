@@ -4,7 +4,7 @@ export const ExportManufacturerToExcelAsync = async () => {
   try {
     const jwtToken = getCookie("jwtToken");
 
-    const response = await fetch("https://localhost:7099/api/Manufacturer/ExportManufacturersToExcel", {
+    const response = await fetch("http://localhost:5002/api/Manufacturer/ExportToExcel", {
       method: "GET", 
       headers: {
         "Authorization": `Bearer ${jwtToken}`,

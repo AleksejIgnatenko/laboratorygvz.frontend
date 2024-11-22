@@ -15,6 +15,8 @@ export default function Suppliers() {
   const [productId, setProductId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const numberPage = 0;
+
   const handleDelete = async (
     selectedItems: Set<SupplierModel>,
     numberPage: number
@@ -108,8 +110,9 @@ export default function Suppliers() {
           tableName="Suppliers"
           countItemsAll={countItemsAll}
           searchText={searchQuery}
+          numberPage={numberPage}
           handleDelete={handleDelete}
-          handleGet={productId ? handleGetProductSuppliers : handleGet}
+          //handleGet={productId ? handleGetProductSuppliers : handleGet}
           handleSearch={handleSearch}
         />
       </div>

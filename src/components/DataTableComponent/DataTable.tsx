@@ -21,18 +21,14 @@ interface DataTableProps<T extends object> {
   data: T[];
   tableName: string;
   countItemsAll: number;
-  searchText: string
-  handleDelete?: (
-    selectedItems: Set<T>,
-    numberPage: number
-  ) => void;
-  handleGet?: (
-    numberPage: number
-  ) => void;
-  handleSearch?: (
-    searchQuery: string,
-  ) => void;
-  handleExportToExcel?: () => void;
+  searchText: string;
+  numberPage: number;
+  maxPageNumber?: number; //сделать обязательным
+  handleDelete?: (selectedItems: Set<T>, numberPage: number) => void;
+  handleSearch?: (searchQuery: string, numberPage: number) => void;
+  handleExportToExcel?: () => void; //сделать обязательным
+  handleDecrementValue?: () => void; //сделать обязательным
+  handleIncrementValue?: () => void; //сделать обязательным
 }
 
 type Order = 'asc' | 'desc';
@@ -42,7 +38,7 @@ interface SortConfig<T> {
   direction: Order | undefined;
 }
 
-const DataTable = <T extends object>({ data, tableName, countItemsAll, searchText, handleDelete, handleGet, handleSearch, handleExportToExcel }: DataTableProps<T>) => {
+const DataTable = <T extends object>({ data, tableName, countItemsAll, searchText, numberPage, maxPageNumber, handleDelete, handleSearch, handleExportToExcel, handleDecrementValue, handleIncrementValue }: DataTableProps<T>) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
     key: undefined,
     direction: undefined,
@@ -139,8 +135,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
   }
 
   const itemsPerPage = 20;
-  let numberPage = 0;
-  const maxPageNumber = Math.ceil(countItemsAll / itemsPerPage);
+  // let numberPage = 0;
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 
   const sortedData = () => {
@@ -168,27 +163,15 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
   };
 
   const decrementValue = () => {
-    const inputPageNumber = document.getElementById(
-      "inputPageNumber"
-    ) as HTMLInputElement;
-    inputPageNumber.stepDown();
-    numberPage = parseInt(inputPageNumber.value, 10) - 1;
-
-    if (handleGet) {
-      handleGet(numberPage);
+    if(handleDecrementValue) {
+    handleDecrementValue();
     }
   };
 
   const incrementValue = () => {
-    const inputPageNumber = document.getElementById(
-      "inputPageNumber"
-    ) as HTMLInputElement;
-    inputPageNumber.stepUp();
-    numberPage = parseInt(inputPageNumber.value, 10) - 1;
-
-    if (handleGet) {
-      handleGet(numberPage);
-    }
+   if(handleIncrementValue) {
+    handleIncrementValue();
+   }
   };
 
   const onDeleteClick = () => {
@@ -225,7 +208,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
     if (inputElement) {
       const query = inputElement.value;
       if (handleSearch) {
-        handleSearch(query);
+        handleSearch(query,numberPage);
       }
     }
   };
@@ -271,8 +254,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
             </h1>
             <div
               id="bulkActions"
-              className={`bulk-actions ${selectedCount > 0 ? "" : "hidden"
-                } items-center`}
+              className={`bulk-actions ${
+                selectedCount > 0 ? "" : "hidden"
+              } items-center`}
             >
               <i className="icon" onClick={onDeleteClick}>
                 <svg
@@ -314,12 +298,15 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
             <input
               id="search-input"
               className="search-input"
-              type="search" 
+              type="search"
               placeholder="Поиск..."
               value={searchQuery}
               onChange={handleSearchChange}
             />
-            <button className="button icon link" onClick={handleSearchByTableChange}>
+            <button
+              className="button icon link"
+              onClick={handleSearchByTableChange}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -379,7 +366,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                           <span>
                             {
                               DataFieldsEnum[
-                              column as keyof typeof DataFieldsEnum
+                                column as keyof typeof DataFieldsEnum
                               ]
                             }
                           </span>
@@ -477,8 +464,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                     <>
                       <td>
                         <Link
-                          href={`/party?manufacturerId=${(item as ManufacturerModel).id
-                            }`}
+                          href={`/party?manufacturerId=${
+                            (item as ManufacturerModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список партий
@@ -490,8 +478,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                     <>
                       <td>
                         <Link
-                          href={`/manufacturers?supplierId=${(item as SupplierModel).id
-                            }`}
+                          href={`/manufacturers?supplierId=${
+                            (item as SupplierModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список производителей
@@ -499,8 +488,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                       </td>
                       <td>
                         <Link
-                          href={`/products?supplierId=${(item as SupplierModel).id
-                            }`}
+                          href={`/products?supplierId=${
+                            (item as SupplierModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список продуктов
@@ -508,8 +498,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                       </td>
                       <td>
                         <Link
-                          href={`/party?supplierId=${(item as SupplierModel).id
-                            }`}
+                          href={`/party?supplierId=${
+                            (item as SupplierModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список партий
@@ -521,8 +512,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                     <>
                       <td>
                         <Link
-                          href={`/suppliers?productId=${(item as ProductModel).id
-                            }`}
+                          href={`/suppliers?productId=${
+                            (item as ProductModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список поставщиков
@@ -530,8 +522,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                       </td>
                       <td>
                         <Link
-                          href={`/researches?productId=${(item as ProductModel).id
-                            }`}
+                          href={`/researches?productId=${
+                            (item as ProductModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Список исследований
@@ -551,8 +544,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                     <>
                       <td>
                         <Link
-                          href={`/researchResult?researchId=${(item as ResearchModel).id
-                            }`}
+                          href={`/researchResult?researchId=${
+                            (item as ResearchModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Результаты исследования
@@ -564,8 +558,9 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                     <>
                       <td>
                         <Link
-                          href={`/researchResult?partyId=${(item as PartyModel).id
-                            }`}
+                          href={`/researchResult?partyId=${
+                            (item as PartyModel).id
+                          }`}
                           className="data-table-link-style"
                         >
                           Исследования партии
@@ -586,9 +581,12 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                     </>
                   )}
                   <td>
-                    {tableName === "Users" && (
+                    {tableName === "Users" &&
                       (item as UserModel).role !== RoleEnum.Admin &&
-                      !((item as UserModel).role === RoleEnum.Manager && isManager) && (
+                      !(
+                        (item as UserModel).role === RoleEnum.Manager &&
+                        isManager
+                      ) && (
                         <img
                           className="img-style"
                           src="/images/pencil.png"
@@ -600,8 +598,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                             router.push(`/updatePage?${queryString}`);
                           }}
                         />
-                      )
-                    )}
+                      )}
                     {tableName === "Parties" && (
                       <>
                         <img
@@ -661,7 +658,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                   id="inputPageNumber"
                   min={1}
                   max={maxPageNumber}
-                  defaultValue={1}
+                  value={numberPage + 1}
                 />
                 <small className="muted">/</small>
                 <small className="muted">{maxPageNumber}</small>

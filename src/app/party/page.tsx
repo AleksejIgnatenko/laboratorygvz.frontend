@@ -21,6 +21,8 @@ export default function Researches() {
   const [userId, setUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const numberPage = 0;
+
   const handleDelete = async (
     selectedItems: Set<PartyModel>,
     numberPage: number
@@ -39,10 +41,8 @@ export default function Researches() {
 
   const handleGetPartiesByManufacturerId = async (numberPage: number) => {
     if (manufacturerId) {
-      const { parties, countItemsAll} = await GetManufacturerPartiesForPageAsync(
-        manufacturerId,
-        0
-      );
+      const { parties, countItemsAll } =
+        await GetManufacturerPartiesForPageAsync(manufacturerId, numberPage);
       setData(parties);
       setCount(countItemsAll);
     }
@@ -50,9 +50,9 @@ export default function Researches() {
 
   const handleGetPartiesBySupplierId = async (numberPage: number) => {
     if (supplierId) {
-      const { parties, countItemsAll} = await GetSupplierPartiesForPageAsync(
+      const { parties, countItemsAll } = await GetSupplierPartiesForPageAsync(
         supplierId,
-        0
+        numberPage
       );
       setData(parties);
       setCount(countItemsAll);
@@ -61,9 +61,9 @@ export default function Researches() {
 
   const handleGetPartiesByProductId = async (numberPage: number) => {
     if (productId) {
-      const { parties, countItemsAll} = await GetProductPartiesForPageAsync(
+      const { parties, countItemsAll } = await GetProductPartiesForPageAsync(
         productId,
-        0
+        numberPage
       );
       setData(parties);
       setCount(countItemsAll);
@@ -72,9 +72,9 @@ export default function Researches() {
 
   const handleGetPartiesByUserId = async (numberPage: number) => {
     if (userId) {
-      const { parties, countItemsAll} = await GetUserPartiesForPageAsync(
+      const { parties, countItemsAll } = await GetUserPartiesForPageAsync(
         userId,
-        0
+        numberPage
       );
       setData(parties);
       setCount(countItemsAll);
@@ -235,13 +235,14 @@ export default function Researches() {
           tableName="Parties"
           searchText={searchQuery}
           countItemsAll={countItemsAll}
+          numberPage={numberPage}
           handleDelete={handleDelete}
-          handleGet={manufacturerId ? handleGetPartiesByManufacturerId
-            : supplierId ? handleGetPartiesBySupplierId
-            : productId ? handleGetPartiesByProductId
-            : userId ? handleGetPartiesByUserId
-            : handleGet
-          }
+          // handleGet={manufacturerId ? handleGetPartiesByManufacturerId
+          //   : supplierId ? handleGetPartiesBySupplierId
+          //   : productId ? handleGetPartiesByProductId
+          //   : userId ? handleGetPartiesByUserId
+          //   : handleGet
+          // }
           handleSearch={handleSearch}
         />
       </div>
