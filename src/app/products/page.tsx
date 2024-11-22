@@ -11,8 +11,10 @@ import { GetSupplierProductsForPageAsync } from "@/services/SupplierServices/Get
 
 export default function Products() {
   const [data, setData] = useState<ProductModel[]>([]);
+  const [filteredData, setFilterdData] = useState<ProductModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
   const [supplierId, setSupplierId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDelete = async (
     selectedItems: Set<ProductModel>,
@@ -45,6 +47,21 @@ export default function Products() {
     }
   };
 
+  const handleSearch = (searchQuery: string) => {
+    setSearchQuery(searchQuery)
+    const newFilteredData = data.filter(item =>
+      item.productName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    if (newFilteredData.length > 0) {
+      setFilterdData(newFilteredData);
+    } else {
+      setFilterdData([]);
+      setTimeout(() => {
+        alert('В результате поиска совпадения не были найдены.');
+      }, 500);
+    }
+  };
+
   // const products: ProductModel[] = [
   //   {
   //     id: "1",
@@ -73,6 +90,7 @@ export default function Products() {
       } else {
         const response = await GetProductsForPageAsync(0);
         setData(response.products);
+        //setData(products);
         setCount(response.countItemsAll);
       }
     };
@@ -88,12 +106,13 @@ export default function Products() {
     return (
       <div>
         <DataTable
-          data={data}
+          data={filteredData.length > 0 ? filteredData : data}
           tableName="Products"
-          searchText=""
           countItemsAll={countItemsAll}
+          searchText={searchQuery}
           handleDelete={handleDelete}
           handleGet={supplierId ? handleGetSupplierProducts : handleGet}
+          handleSearch={handleSearch}
         />
       </div>
     );

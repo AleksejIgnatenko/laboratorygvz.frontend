@@ -13,12 +13,13 @@ import { GetUserPartiesForPageAsync } from "@/services/UserServices/GetUserParti
 
 export default function Researches() {
   const [data, setData] = useState<PartyModel[]>([]);
+  const [filteredData, setFilterdData] = useState<PartyModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
-
   const [manufacturerId, setManufacturerId] = useState<string | null>(null);
   const [supplierId, setSupplierId] = useState<string | null>(null);
   const [productId, setProductId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDelete = async (
     selectedItems: Set<PartyModel>,
@@ -34,6 +35,80 @@ export default function Researches() {
     const { parties, countItemsAll } = await GetPartiesForPageAsync(numberPage);
     setData(parties);
     setCount(countItemsAll);
+  };
+
+  const handleGetPartiesByManufacturerId = async (numberPage: number) => {
+    if (manufacturerId) {
+      const { parties, countItemsAll} = await GetManufacturerPartiesForPageAsync(
+        manufacturerId,
+        0
+      );
+      setData(parties);
+      setCount(countItemsAll);
+    }
+  };
+
+  const handleGetPartiesBySupplierId = async (numberPage: number) => {
+    if (supplierId) {
+      const { parties, countItemsAll} = await GetSupplierPartiesForPageAsync(
+        supplierId,
+        0
+      );
+      setData(parties);
+      setCount(countItemsAll);
+    }
+  };
+
+  const handleGetPartiesByProductId = async (numberPage: number) => {
+    if (productId) {
+      const { parties, countItemsAll} = await GetProductPartiesForPageAsync(
+        productId,
+        0
+      );
+      setData(parties);
+      setCount(countItemsAll);
+    }
+  };
+
+  const handleGetPartiesByUserId = async (numberPage: number) => {
+    if (userId) {
+      const { parties, countItemsAll} = await GetUserPartiesForPageAsync(
+        userId,
+        0
+      );
+      setData(parties);
+      setCount(countItemsAll);
+    }
+  };
+
+  const handleSearch = (searchQuery: string) => {
+    setSearchQuery(searchQuery)
+    const newFilteredData = data.filter(item =>
+      item.batchNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.dateOfReceipt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.supplierName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.manufacturerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.batchSize.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.sampleSize.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.ttn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.documentOnQualityAndSafety.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.testReport.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.dateOfManufacture.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.expirationDate.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.packaging.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.marking.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.result.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.note.toLowerCase().includes(searchQuery.toLowerCase()) 
+    );
+    if (newFilteredData.length > 0) {
+      setFilterdData(newFilteredData);
+    } else {
+      setFilterdData([]);
+      setTimeout(() => {
+        alert('В результате поиска совпадения не были найдены.');
+      }, 500);
+    }
   };
 
   // const parties: PartyModel[] = [
@@ -123,6 +198,7 @@ export default function Researches() {
       } else {
         const response = await GetPartiesForPageAsync(0);
         setData(response.parties);
+        //setData(parties);
         setCount(response.countItemsAll);
       }
     };
@@ -155,12 +231,18 @@ export default function Researches() {
     return (
       <div>
         <DataTable
-          data={data}
+          data={filteredData.length > 0 ? filteredData : data}
           tableName="Parties"
-          searchText=""
+          searchText={searchQuery}
           countItemsAll={countItemsAll}
           handleDelete={handleDelete}
-          handleGet={handleGet}
+          handleGet={manufacturerId ? handleGetPartiesByManufacturerId
+            : supplierId ? handleGetPartiesBySupplierId
+            : productId ? handleGetPartiesByProductId
+            : userId ? handleGetPartiesByUserId
+            : handleGet
+          }
+          handleSearch={handleSearch}
         />
       </div>
     );

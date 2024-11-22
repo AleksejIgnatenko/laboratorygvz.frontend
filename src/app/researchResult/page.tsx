@@ -10,31 +10,11 @@ import { DeleteResearchResultsAsync } from "@/services/ResearchResultServices/De
 
 export default function ResearchResult() {
   const [data, setData] = useState<ResearchResultModel[]>([]);
+  const [filteredData, setFilterdData] = useState<ResearchResultModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
-
   const [partyId, setPartyId] = useState<string | null>(null);
   const [researchId, setResearchId] = useState<string | null>(null);
-
-  // const researchResults: ResearchResultModel[] = [
-  //   {
-  //     id: "1",
-  //     researchName: "Исследование 1",
-  //     batchNumber: "Batch001",
-  //     result: "Результат 1"
-  //   },
-  //   {
-  //     id: "2",
-  //     researchName: "Исследование 2",
-  //     batchNumber: "Batch002",
-  //     result: ""
-  //   },
-  //   {
-  //     id: "3",
-  //     researchName: "Исследование 3",
-  //     batchNumber: "Batch003",
-  //     result: "Результат 3"
-  //   }
-  // ];
+  const [searchQuery, setSearchQuery] = useState('');
 
     const handleDelete = async (
       selectedItems: Set<ResearchResultModel>,
@@ -58,17 +38,60 @@ export default function ResearchResult() {
       }
     };
 
-  const handleGetByPartyId = async (partyId: string, numberPage: number) => {
+  const handleGetResearchResultsByPartyId = async (numberPage: number) => {
+    if(partyId) {
     const { researchResults, countItemsAll } = await GetResearchResultByPartyIdForPageAsync(partyId, numberPage);
     setData(researchResults);
     setCount(countItemsAll);
+    }
   };
 
-  const handleGetByResearchId = async (partyId: string, numberPage: number) => {
-    const { researchResults, countItemsAll } = await GetResearchResultByPartyIdForPageAsync(partyId, numberPage);
+  const handleGetResearchResultsByResearchId = async (numberPage: number) => {
+    if(researchId) {
+    const { researchResults, countItemsAll } = await GetResearchResultByPartyIdForPageAsync(researchId, numberPage);
     setData(researchResults);
     setCount(countItemsAll);
+    }
   };
+
+  const handleSearch = (searchQuery: string) => {
+    setSearchQuery(searchQuery)
+    const newFilteredData = data.filter(item =>
+      item.batchNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.researchName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.batchNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.result.toLowerCase().includes(searchQuery.toLowerCase()) 
+    );
+    if (newFilteredData.length > 0) {
+      setFilterdData(newFilteredData);
+    } else {
+      setFilterdData([]);
+      setTimeout(() => {
+        alert('В результате поиска совпадения не были найдены.');
+      }, 500);
+    }
+  };
+
+    // const researchResults: ResearchResultModel[] = [
+  //   {
+  //     id: "1",
+  //     researchName: "Исследование 1",
+  //     batchNumber: "Batch001",
+  //     result: "Результат 1"
+  //   },
+  //   {
+  //     id: "2",
+  //     researchName: "Исследование 2",
+  //     batchNumber: "Batch002",
+  //     result: ""
+  //   },
+  //   {
+  //     id: "3",
+  //     researchName: "Исследование 3",
+  //     batchNumber: "Batch003",
+  //     result: "Результат 3"
+  //   }
+  // ];
 
   useEffect(() => {
     const ResearchResult = async () => {
@@ -107,18 +130,19 @@ export default function ResearchResult() {
     return (
       <div>
         <DataTable
-          data={data}
+          data={filteredData.length > 0 ? filteredData : data}
           tableName="ResearchResults"
           countItemsAll={countItemsAll}
-          searchText=""
+          searchText={searchQuery}
           handleDelete={handleDelete}
-          handleGetById={
+          handleGet={
             partyId
-              ? handleGetByPartyId
+              ? handleGetResearchResultsByPartyId
               : paramResearchId
-              ? handleGetByResearchId
+              ? handleGetResearchResultsByResearchId
               : undefined
           }
+          handleSearch={handleSearch}
         />
       </div>
     );

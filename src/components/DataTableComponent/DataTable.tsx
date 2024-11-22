@@ -29,13 +29,10 @@ interface DataTableProps<T extends object> {
   handleGet?: (
     numberPage: number
   ) => void;
-  handleGetById?: (
-    id: string,
-    numberPage: number
-  ) => void;
   handleSearch?: (
     searchQuery: string,
   ) => void;
+  handleExportToExcel?: () => void;
 }
 
 type Order = 'asc' | 'desc';
@@ -45,7 +42,7 @@ interface SortConfig<T> {
   direction: Order | undefined;
 }
 
-const DataTable = <T extends object>({ data, tableName, countItemsAll, searchText, handleDelete, handleGet, handleSearch }: DataTableProps<T>) => {
+const DataTable = <T extends object>({ data, tableName, countItemsAll, searchText, handleDelete, handleGet, handleSearch, handleExportToExcel }: DataTableProps<T>) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<T>>({
     key: undefined,
     direction: undefined,
@@ -70,26 +67,32 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
 
         case "Suppliers":
           setTitleName("Поставщики");
+          setSearchQuery(searchText);
           break;
 
         case "Products":
           setTitleName("Продукты");
+          setSearchQuery(searchText);
           break;
 
         case "Researches":
           setTitleName("Исследования");
+          setSearchQuery(searchText);
           break;
 
         case "ResearchResults":
           setTitleName("Результаты исследований");
+          setSearchQuery(searchText);
           break;
 
         case "Parties":
           setTitleName("Партии");
+          setSearchQuery(searchText);
           break;
 
         case "Users":
           setTitleName("Пользователи");
+          setSearchQuery(searchText);
           const userIsManager = await IsManagerAsync();
           if (userIsManager) {
             setIsManager(userIsManager);
@@ -227,6 +230,12 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
     }
   };
 
+  const handleExportToExcelClick = async () => {
+    if (handleExportToExcel) {
+      await handleExportToExcel();
+    }
+  };
+
 
   // const handleDelete = async () => {
   //   switch (tableName) {
@@ -296,11 +305,16 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
           </div>
 
           <div className="flex gap-1 items-center action-buttons">
-            <img className="img-style" src="/images/excel.png"></img>
+            <img
+              className="img-style"
+              src="/images/excel.png"
+              alt="Экспорт в Excel"
+              onClick={handleExportToExcelClick}
+            />
             <input
               id="search-input"
               className="search-input"
-              type="search"
+              type="search" 
               placeholder="Поиск..."
               value={searchQuery}
               onChange={handleSearchChange}

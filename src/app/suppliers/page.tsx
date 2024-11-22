@@ -10,8 +10,10 @@ import { GetProductSuppliersForPageAsync } from "@/services/ProductServices/GetP
 
 export default function Suppliers() {
   const [data, setData] = useState<SupplierModel[]>([]);
+  const [filteredData, setFilterdData] = useState<SupplierModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
   const [productId, setProductId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDelete = async (
     selectedItems: Set<SupplierModel>,
@@ -44,20 +46,34 @@ export default function Suppliers() {
     }
   };
 
-  // const supplierss: SupplierModel[] = [
+  const handleSearch = (searchQuery: string) => {
+    setSearchQuery(searchQuery)
+    const newFilteredData = data.filter(item =>
+      item.supplierName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    if (newFilteredData.length > 0) {
+      setFilterdData(newFilteredData);
+    } else {
+      setFilterdData([]);
+      setTimeout(() => {
+        alert('В результате поиска совпадения не были найдены.');
+      }, 500);
+    }
+  };
+
+  // const suppliers: SupplierModel[] = [
   //   {
   //     id: "1",
   //     supplierName: "Supplier 1"
   //   },
   //   {
   //     id: "2",
-  //     supplierName: "Supplier 2",
+  //     supplierName: "Supplier a",
   //   },
   //   {
   //     id: "3",
   //     supplierName: "Supplier 3",
   //   },
-  //   // Добавьте другие поставщики по аналогии
   // ];
 
   useEffect(() => {
@@ -72,6 +88,7 @@ export default function Suppliers() {
       } else {
         const response = await GetSuppliersForPageAsync(0);
         setData(response.suppliers);
+        //setData(suppliers);
         setCount(response.countItemsAll);
       }
     };
@@ -87,12 +104,13 @@ export default function Suppliers() {
     return (
       <div>
         <DataTable
-          data={data}
+          data={filteredData.length > 0 ? filteredData : data}
           tableName="Suppliers"
           countItemsAll={countItemsAll}
-          searchText=""
+          searchText={searchQuery}
           handleDelete={handleDelete}
           handleGet={productId ? handleGetProductSuppliers : handleGet}
+          handleSearch={handleSearch}
         />
       </div>
     );

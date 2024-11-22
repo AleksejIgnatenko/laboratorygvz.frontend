@@ -7,6 +7,7 @@ import { GetManufacturersForPageAsync } from "@/services/ManufacturerServices/Ge
 import { DeleteManufacturersAsync } from "@/services/ManufacturerServices/DeleteManufacturersAsync";
 import { useSearchParams } from "next/navigation";
 import { GetSupplierManufacturersForPageAsync } from "@/services/SupplierServices/GetSupplierManufacturersForPageAsync";
+import { ExportManufacturerToExcelAsync } from "@/services/ManufacturerServices/ExportManufacturerToExcelAsync";
 
 export default function Manufacturers() {
   const [data, setData] = useState<ManufacturerModel[]>([]);
@@ -51,23 +52,34 @@ export default function Manufacturers() {
     const newFilteredData = data.filter(item =>
       item.manufacturerName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setFilterdData(newFilteredData);
+    if (newFilteredData.length > 0) {
+      setFilterdData(newFilteredData);
+    } else {
+      setFilterdData([]);
+      setTimeout(() => {
+        alert('В результате поиска совпадения не были найдены.');
+      }, 500);
+    }
   };
 
-  // const manufacturers: ManufacturerModel[] = [
-  //   {
-  //     id: "1",
-  //     manufacturerName: "Manufacturer A"
-  //   },
-  //   {
-  //     id: "2",
-  //     manufacturerName: "Manufacturer B"
-  //   },
-  //   {
-  //     id: "3",
-  //     manufacturerName: "Manufacturer C"
-  //   }
-  // ];
+  const handleExportToExcel = async() => {
+    await ExportManufacturerToExcelAsync();
+  }
+
+  const manufacturers: ManufacturerModel[] = [
+    {
+      id: "1",
+      manufacturerName: "Manufacturer A"
+    },
+    {
+      id: "2",
+      manufacturerName: "Manufacturer B"
+    },
+    {
+      id: "3",
+      manufacturerName: "Manufacturer C"
+    }
+  ];
 
   // useEffect(() => {
   //   const getManufacturers = async () => {
@@ -93,8 +105,8 @@ export default function Manufacturers() {
         setCount(response.countItemsAll);
       } else {
         const response = await GetManufacturersForPageAsync(0);
-        setData(response.manufacturers);
-        //setData(manufacturers)
+        //setData(response.manufacturers);
+        setData(manufacturers)
         setCount(response.countItemsAll);
       }
     };
@@ -117,6 +129,7 @@ export default function Manufacturers() {
           handleDelete={handleDelete}
           handleGet={supplierId ? handleGetSupplierManufacturers : handleGet}
           handleSearch={handleSearch}
+          handleExportToExcel={handleExportToExcel}
         />
       </div>
     );

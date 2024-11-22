@@ -7,6 +7,36 @@ import { GetUsersForPageAsync } from "@/services/UserServices/GetUsersForPageAsy
 import "./style.css";
 
 export default function Users() {
+  const [data, setData] = useState<UserModel[]>([]);
+  const [filteredData, setFilterdData] = useState<UserModel[]>([]);
+  const [countItemsAll, setCount] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleGet = async (numberPage: number) => {
+    const { users, countItemsAll } = await GetUsersForPageAsync(numberPage);
+      setData(users);
+      setCount(countItemsAll);
+  };
+
+  const handleSearch = (searchQuery: string) => {
+    setSearchQuery(searchQuery)
+    const newFilteredData = data.filter(item =>
+      item.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.surname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.patronymic.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.email.toLowerCase().includes(searchQuery.toLowerCase()) 
+    );
+    if (newFilteredData.length > 0) {
+      setFilterdData(newFilteredData);
+    } else {
+      setFilterdData([]);
+      setTimeout(() => {
+        alert('В результате поиска совпадения не были найдены.');
+      }, 500);
+    }
+  };
+
   // const users: UserModel[] = [
   //   {
   //     id: "1",
@@ -34,9 +64,6 @@ export default function Users() {
   //   }
   // ];
 
-  const [data, setData] = useState<UserModel[]>([]);
-  const [countItemsAll, setCount] = useState<number>(0);
-
   useEffect(() => {
     const getUsers = async () => {
       const { users, countItemsAll } = await GetUsersForPageAsync(0);
@@ -50,10 +77,12 @@ export default function Users() {
   return (
     <div className="users-page">
       <DataTable
-        data={data}
-        searchText=""
+        data={filteredData.length > 0 ? filteredData : data}
+        searchText={searchQuery}
         tableName="Users"
         countItemsAll={countItemsAll}
+        handleGet={handleGet}
+        handleSearch={handleSearch}
       />
     </div>
   );
