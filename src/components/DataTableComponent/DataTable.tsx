@@ -134,7 +134,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
     );
   }
 
-  const itemsPerPage = 20;
+  // const itemsPerPage = 20;
   // let numberPage = 0;
   const columns: (keyof T)[] = Object.keys(data[0]) as (keyof T)[];
 

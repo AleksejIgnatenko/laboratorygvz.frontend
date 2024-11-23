@@ -10,18 +10,21 @@ import { GetManufacturerPartiesForPageAsync } from "@/services/ManufacturerServi
 import { GetSupplierPartiesForPageAsync } from "@/services/SupplierServices/GetSupplierPartiesForPageAsync";
 import { GetProductPartiesForPageAsync } from "@/services/ProductServices/GetProductPartiesForPageAsync";
 import { GetUserPartiesForPageAsync } from "@/services/UserServices/GetUserPartiesForPageAsync";
+import { ExportPartiesToExcelAsync } from "@/services/PartyServices/ExportPartiesToExcelAsync";
+import { SearchPartiesAsync } from "@/services/PartyServices/SearchPartiesAsync";
 
 export default function Researches() {
   const [data, setData] = useState<PartyModel[]>([]);
   const [filteredData, setFilterdData] = useState<PartyModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
+  const [countItemsSearch, setCountItemsSearch] = useState<number>(0);
   const [manufacturerId, setManufacturerId] = useState<string | null>(null);
   const [supplierId, setSupplierId] = useState<string | null>(null);
   const [productId, setProductId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const numberPage = 0;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [numberPage, setNumberPage] = useState(0);
+  const [maxPageNumber, setMaxPageNumber] = useState(0);
 
   const handleDelete = async (
     selectedItems: Set<PartyModel>,
@@ -37,6 +40,8 @@ export default function Researches() {
     const { parties, countItemsAll } = await GetPartiesForPageAsync(numberPage);
     setData(parties);
     setCount(countItemsAll);
+    const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+    setMaxPageNumber(maxPageNumber);
   };
 
   const handleGetPartiesByManufacturerId = async (numberPage: number) => {
@@ -45,6 +50,8 @@ export default function Researches() {
         await GetManufacturerPartiesForPageAsync(manufacturerId, numberPage);
       setData(parties);
       setCount(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     }
   };
 
@@ -56,6 +63,8 @@ export default function Researches() {
       );
       setData(parties);
       setCount(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     }
   };
 
@@ -67,6 +76,8 @@ export default function Researches() {
       );
       setData(parties);
       setCount(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     }
   };
 
@@ -78,37 +89,157 @@ export default function Researches() {
       );
       setData(parties);
       setCount(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     }
   };
 
-  const handleSearch = (searchQuery: string) => {
-    setSearchQuery(searchQuery)
-    const newFilteredData = data.filter(item =>
-      item.batchNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.dateOfReceipt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.supplierName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.manufacturerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.batchSize.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.sampleSize.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.ttn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.documentOnQualityAndSafety.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.testReport.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.dateOfManufacture.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.expirationDate.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.packaging.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.marking.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.result.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.note.toLowerCase().includes(searchQuery.toLowerCase()) 
+  const handleSearch = async (searchText: string, numberPage: number) => {
+    if (searchText !== "") {
+      if (searchQuery === "") {
+        numberPage = 0;
+        setNumberPage(numberPage);
+      }
+      setSearchQuery(searchText);
+
+    const { parties, countItemsAll } = await SearchPartiesAsync(
+      searchText,
+      numberPage
     );
-    if (newFilteredData.length > 0) {
-      setFilterdData(newFilteredData);
+
+    if (parties.length > 0) {
+      setFilterdData(parties);
+      setCountItemsSearch(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     } else {
       setFilterdData([]);
+      setCountItemsSearch(0);
+
+      if (manufacturerId) {
+        const response = await GetManufacturerPartiesForPageAsync(
+          manufacturerId,
+          0
+        );
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else if (supplierId) {
+        const response = await GetSupplierPartiesForPageAsync(supplierId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else if (productId) {
+        const response = await GetProductPartiesForPageAsync(productId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else if (userId) {
+        const response = await GetUserPartiesForPageAsync(userId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else {
+        const response = await GetPartiesForPageAsync(0);
+        setData(response.parties);
+        //setData(parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      }
+
       setTimeout(() => {
-        alert('В результате поиска совпадения не были найдены.');
+        alert("В результате поиска совпадения не были найдены.");
       }, 500);
     }
+  } else {
+    setSearchQuery(searchText);
+
+    setFilterdData([]);
+      setCountItemsSearch(0);
+
+      if (manufacturerId) {
+        const response = await GetManufacturerPartiesForPageAsync(
+          manufacturerId,
+          0
+        );
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else if (supplierId) {
+        const response = await GetSupplierPartiesForPageAsync(supplierId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else if (productId) {
+        const response = await GetProductPartiesForPageAsync(productId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else if (userId) {
+        const response = await GetUserPartiesForPageAsync(userId, 0);
+        setData(response.parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else {
+        const response = await GetPartiesForPageAsync(0);
+        setData(response.parties);
+        //setData(parties);
+        setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      }
+    }
+  };
+
+  const handleExportToExcel = async () => {
+    await ExportPartiesToExcelAsync();
+  };
+
+  const decrementValue = () => {
+    setNumberPage((prevPage) => {
+      const newPage = Math.max(prevPage - 1, 0); // Уменьшаем номер страницы, но не меньше 0
+
+      if (manufacturerId) {
+        handleGetPartiesByManufacturerId(newPage); // Отправляем новый номер страницы + 1 на сервер
+      } else if (supplierId) {
+        handleGetPartiesBySupplierId(newPage);
+      } else if (productId) {
+        handleGetPartiesByProductId(newPage);
+      } else if (userId) {
+        handleGetPartiesByUserId(newPage)
+      } else {
+        handleGet(newPage);
+      }
+      return newPage; // Обновляем состояние
+    });
+  };
+
+  const incrementValue = () => {
+    setNumberPage((prevPage) => {
+      const newPage = prevPage + 1; // Увеличиваем номер страницы
+
+      if (manufacturerId) {
+        handleGetPartiesByManufacturerId(newPage); // Отправляем новый номер страницы + 1 на сервер
+      } else if (supplierId) {
+        handleGetPartiesBySupplierId(newPage);
+      } else if (productId) {
+        handleGetPartiesByProductId(newPage);
+      } else if (userId) {
+        handleGetPartiesByUserId(newPage);
+      } else {
+        handleGet(newPage);
+      }
+      return newPage; // Обновляем состояние
+    });
   };
 
   // const parties: PartyModel[] = [
@@ -183,23 +314,33 @@ export default function Researches() {
         );
         setData(response.parties);
         setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
       } else if (supplierId) {
         const response = await GetSupplierPartiesForPageAsync(supplierId, 0);
         setData(response.parties);
         setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
       } else if (productId) {
         const response = await GetProductPartiesForPageAsync(productId, 0);
         setData(response.parties);
         setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
       } else if (userId) {
         const response = await GetUserPartiesForPageAsync(userId, 0);
         setData(response.parties);
         setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
       } else {
         const response = await GetPartiesForPageAsync(0);
         setData(response.parties);
         //setData(parties);
         setCount(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
       }
     };
 
@@ -234,7 +375,7 @@ export default function Researches() {
           data={filteredData.length > 0 ? filteredData : data}
           tableName="Parties"
           searchText={searchQuery}
-          countItemsAll={countItemsAll}
+          countItemsAll={countItemsSearch > 0 ? countItemsSearch : countItemsAll}
           numberPage={numberPage}
           handleDelete={handleDelete}
           // handleGet={manufacturerId ? handleGetPartiesByManufacturerId
@@ -244,6 +385,10 @@ export default function Researches() {
           //   : handleGet
           // }
           handleSearch={handleSearch}
+          handleExportToExcel={handleExportToExcel}
+          handleDecrementValue={decrementValue}
+          handleIncrementValue={incrementValue}
+          maxPageNumber={maxPageNumber}
         />
       </div>
     );

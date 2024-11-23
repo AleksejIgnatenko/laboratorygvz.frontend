@@ -7,7 +7,7 @@ import { GetManufacturersForPageAsync } from "@/services/ManufacturerServices/Ge
 import { DeleteManufacturersAsync } from "@/services/ManufacturerServices/DeleteManufacturersAsync";
 import { useSearchParams } from "next/navigation";
 import { GetSupplierManufacturersForPageAsync } from "@/services/SupplierServices/GetSupplierManufacturersForPageAsync";
-import { ExportManufacturerToExcelAsync } from "@/services/ManufacturerServices/ExportManufacturerToExcelAsync";
+import { ExportManufacturersToExcelAsync } from "@/services/ManufacturerServices/ExportManufacturersToExcelAsync";
 import { SearchManufacturersAsync } from "@/services/ManufacturerServices/SearchManufacturersAsync";
 
 export default function Manufacturers() {
@@ -18,6 +18,7 @@ export default function Manufacturers() {
   const [supplierId, setSupplierId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [numberPage, setNumberPage] = useState(0);
+  const [maxPageNumber, setMaxPageNumber] = useState(0);
 
   const handleDelete = async (
     selectedItems: Set<ManufacturerModel>,
@@ -37,6 +38,8 @@ export default function Manufacturers() {
     );
     setData(manufacturers);
     setCountItemsAll(countItemsAll);
+    const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+    setMaxPageNumber(maxPageNumber);
   };
 
   const handleGetSupplierManufacturers = async (numberPage: number) => {
@@ -47,37 +50,85 @@ export default function Manufacturers() {
       );
       setData(manufacturers);
       setCountItemsAll(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     }
   };
 
-  const handleSearch = async (searchQuery: string, numberPage: number) => {
-    setSearchQuery(searchQuery);
+  const handleSearch = async (searchText: string, numberPage: number) => {
+    if (searchText !== "") {
+      if (searchQuery === "") {
+        numberPage = 0;
+        setNumberPage(numberPage);
+      }
+      setSearchQuery(searchText);
 
-    const { manufacturers, countItemsAll} = await SearchManufacturersAsync(
-      searchQuery,
-      numberPage
-    );
+      const { manufacturers, countItemsAll } = await SearchManufacturersAsync(
+        searchText,
+        numberPage
+      );
 
-    if (manufacturers.length > 0) {
-      setFilterdData(manufacturers);
-      setCountItemsSearch(countItemsAll);
+      if (manufacturers.length > 0) {
+        setFilterdData(manufacturers);
+        setCountItemsSearch(countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else {
+        setFilterdData([]);
+        setCountItemsSearch(0);
+        if (supplierId) {
+          const response = await GetSupplierManufacturersForPageAsync(
+            supplierId,
+            0
+          );
+          setData(response.manufacturers);
+          setCountItemsAll(response.countItemsAll);
+          const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
+          setMaxPageNumber(maxPageNumber);
+        } else {
+          const response = await GetManufacturersForPageAsync(0);
+          setData(response.manufacturers);
+          //setData(manufacturers)
+          setCountItemsAll(response.countItemsAll);
+          const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
+          setMaxPageNumber(maxPageNumber);
+        }
+        setTimeout(() => {
+          alert("В результате поиска совпадения не были найдены.");
+        }, 500);
+      }
     } else {
+      setSearchQuery(searchText);
+
       setFilterdData([]);
       setCountItemsSearch(0);
-      setTimeout(() => {
-        alert("В результате поиска совпадения не были найдены.");
-      }, 500);
+      if (supplierId) {
+        const response = await GetSupplierManufacturersForPageAsync(
+          supplierId,
+          0
+        );
+        setData(response.manufacturers);
+        setCountItemsAll(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else {
+        const response = await GetManufacturersForPageAsync(0);
+        setData(response.manufacturers);
+        //setData(manufacturers)
+        setCountItemsAll(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      }
     }
   };
 
   const handleExportToExcel = async () => {
-    await ExportManufacturerToExcelAsync();
+    await ExportManufacturersToExcelAsync();
   };
 
   const decrementValue = () => {
     setNumberPage((prevPage) => {
       const newPage = Math.max(prevPage - 1, 0); // Уменьшаем номер страницы, но не меньше 0
-      console.log(newPage);
 
       if (supplierId) {
         handleGetSupplierManufacturers(newPage); // Отправляем новый номер страницы + 1 на сервер
@@ -91,14 +142,16 @@ export default function Manufacturers() {
   const incrementValue = () => {
     setNumberPage((prevPage) => {
       const newPage = prevPage + 1; // Увеличиваем номер страницы
-      console.log(newPage);
 
-      if (supplierId) {
-        handleGetSupplierManufacturers(newPage); // Отправляем новый номер страницы + 1 на сервер
-      } else {
-        handleGet(newPage);
+      if (newPage < maxPageNumber) {
+        if (supplierId) {
+          handleGetSupplierManufacturers(newPage); // Отправляем новый номер страницы + 1 на сервер
+        } else {
+          handleGet(newPage);
+        }
+        return newPage; // Обновляем состояние
       }
-      return newPage; // Обновляем состояние
+      return prevPage;
     });
   };
 
@@ -139,11 +192,15 @@ export default function Manufacturers() {
         );
         setData(response.manufacturers);
         setCountItemsAll(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
       } else {
         const response = await GetManufacturersForPageAsync(0);
         setData(response.manufacturers);
         //setData(manufacturers)
         setCountItemsAll(response.countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
       }
     };
 
@@ -168,6 +225,7 @@ export default function Manufacturers() {
           handleExportToExcel={handleExportToExcel}
           handleDecrementValue={decrementValue}
           handleIncrementValue={incrementValue}
+          maxPageNumber={maxPageNumber}
         />
       </div>
     );

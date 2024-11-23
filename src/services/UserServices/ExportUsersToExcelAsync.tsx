@@ -1,15 +1,18 @@
 import { getCookie } from "../Infrastructure/getCookie";
 
-export const ExportManufacturerToExcelAsync = async () => {
+export const ExportUsersToExcelAsync = async () => {
   try {
     const jwtToken = getCookie("jwtToken");
 
-    const response = await fetch("http://localhost:5002/api/Manufacturer/ExportToExcel", {
-      method: "GET", 
-      headers: {
-        "Authorization": `Bearer ${jwtToken}`,
-      },
-    });
+    const response = await fetch(
+      "http://localhost:5000/api/User/exportUsersToExcel",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      }
+    );
 
     if (!response.ok) {
       alert("При экспорте возникла ошибка");

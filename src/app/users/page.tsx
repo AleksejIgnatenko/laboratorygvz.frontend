@@ -5,38 +5,93 @@ import { UserModel } from "@/Models/UserModels/UserModel";
 import DataTable from "@/components/DataTableComponent/DataTable";
 import { GetUsersForPageAsync } from "@/services/UserServices/GetUsersForPageAsync";
 import "./style.css";
+import { SearchUsersAsync } from "@/services/UserServices/SearchUsersAsync";
+import { ExportUsersToExcelAsync } from "@/services/UserServices/ExportUsersToExcelAsync";
 
 export default function Users() {
   const [data, setData] = useState<UserModel[]>([]);
   const [filteredData, setFilterdData] = useState<UserModel[]>([]);
   const [countItemsAll, setCount] = useState<number>(0);
+  const [countItemsSearch, setCountItemsSearch] = useState<number>(0); 
   const [searchQuery, setSearchQuery] = useState('');
-
-  const numberPage = 0;
+  const [numberPage, setNumberPage] = useState(0);
+  const [maxPageNumber, setMaxPageNumber] = useState(0);
 
   const handleGet = async (numberPage: number) => {
     const { users, countItemsAll } = await GetUsersForPageAsync(numberPage);
       setData(users);
       setCount(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
   };
 
-  const handleSearch = (searchQuery: string) => {
-    setSearchQuery(searchQuery)
-    const newFilteredData = data.filter(item =>
-      item.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.surname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.patronymic.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.email.toLowerCase().includes(searchQuery.toLowerCase()) 
-    );
-    if (newFilteredData.length > 0) {
-      setFilterdData(newFilteredData);
+  const handleSearch = async (searchText: string, numberPage: number) => {
+    if (searchText !== "") {
+      if (searchQuery === "") {
+        numberPage = 0;
+        setNumberPage(numberPage);
+      }
+      setSearchQuery(searchText);
+
+      const { users, countItemsAll } = await SearchUsersAsync(
+        searchText,
+        numberPage
+      );
+
+      if (users.length > 0) {
+        setFilterdData(users);
+        setCountItemsSearch(countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+      } else {
+        setFilterdData([]);
+        setCountItemsSearch(0);
+
+        const { users, countItemsAll } = await GetUsersForPageAsync(0);
+        setData(users);
+        setCount(countItemsAll);
+        const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+        setMaxPageNumber(maxPageNumber);
+
+        setTimeout(() => {
+          alert("В результате поиска совпадения не были найдены.");
+        }, 500);
+      }
     } else {
+      setSearchQuery(searchText);
       setFilterdData([]);
-      setTimeout(() => {
-        alert('В результате поиска совпадения не были найдены.');
-      }, 500);
+      setCountItemsSearch(0);
+
+      const { users, countItemsAll } = await GetUsersForPageAsync(0);
+      setData(users);
+      setCount(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     }
+  };
+
+  const handleExportToExcel = async () => {
+    await ExportUsersToExcelAsync();
+  };
+
+  const decrementValue = () => {
+    setNumberPage((prevPage) => {
+      const newPage = Math.max(prevPage - 1, 0); // Уменьшаем номер страницы, но не меньше 0
+      handleGet(newPage);
+      return newPage; // Обновляем состояние
+    });
+  };
+
+  const incrementValue = () => {
+    setNumberPage((prevPage) => {
+      const newPage = prevPage + 1; // Увеличиваем номер страницы
+
+      if (newPage <= maxPageNumber) {
+        handleGet(newPage);
+        return newPage; // Обновляем состояние
+      }
+      return prevPage;
+    });
   };
 
   // const users: UserModel[] = [
@@ -71,6 +126,8 @@ export default function Users() {
       const { users, countItemsAll } = await GetUsersForPageAsync(0);
       setData(users);
       setCount(countItemsAll);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
+      setMaxPageNumber(maxPageNumber);
     };
 
     getUsers();
@@ -82,10 +139,14 @@ export default function Users() {
         data={filteredData.length > 0 ? filteredData : data}
         searchText={searchQuery}
         tableName="Users"
-        countItemsAll={countItemsAll}
+        countItemsAll={countItemsSearch > 0 ? countItemsSearch : countItemsAll}
         numberPage={numberPage}
         //handleGet={handleGet}
         handleSearch={handleSearch}
+        handleExportToExcel={handleExportToExcel}
+        handleDecrementValue={decrementValue}
+        handleIncrementValue={incrementValue}
+        maxPageNumber={maxPageNumber}
       />
     </div>
   );

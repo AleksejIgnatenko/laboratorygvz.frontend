@@ -1,12 +1,12 @@
 import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
-//import { getCookie } from "../Infrastructure/getCookie";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const SearchManufacturersAsync = async (
   searchQuery: string,
   pageNumber: number
 ): Promise<{ manufacturers: ManufacturerModel[]; countItemsAll: number }> => {
   try {
-    //const jwtToken = getCookie("jwtToken");
+    const jwtToken = getCookie("jwtToken");
 
     const response = await fetch(
       `http://localhost:5002/api/Manufacturer/searchManufacturers?searchQuery=${searchQuery}&pageNumber=${pageNumber}`,
@@ -14,12 +14,10 @@ export const SearchManufacturersAsync = async (
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          //"Authorization": `Bearer ${jwtToken}`,
+          "Authorization": `Bearer ${jwtToken}`,
         },
       }
     );
-
-    console.log(response);
 
     if (response.ok) {
       const responseData = await response.json();
