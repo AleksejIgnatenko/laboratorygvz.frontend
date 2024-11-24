@@ -16,7 +16,7 @@ export const ExportResearchResultsToExcelAsync = async () => {
 
     if (!response.ok) {
       alert("При экспорте возникла ошибка");
-      console.error("Error exporting manufacturers:", response.statusText);
+      console.error("Error exporting research results:", response.statusText);
       return;
     }
 

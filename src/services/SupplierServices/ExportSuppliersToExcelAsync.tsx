@@ -16,7 +16,7 @@ export const ExportSuppliersToExcelAsync = async () => {
 
     if (!response.ok) {
       alert("При экспорте возникла ошибка");
-      console.error("Error exporting manufacturers:", response.statusText);
+      console.error("Error exporting suppliers:", response.statusText);
       return;
     }
 
