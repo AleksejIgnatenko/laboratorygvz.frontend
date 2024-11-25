@@ -77,7 +77,11 @@ export default function Users() {
   const decrementValue = () => {
     setNumberPage((prevPage) => {
       const newPage = Math.max(prevPage - 1, 0); // Уменьшаем номер страницы, но не меньше 0
-      handleGet(newPage);
+      if (searchQuery !== "") {
+        handleSearch(searchQuery, newPage);
+      } else {
+        handleGet(newPage);
+      }
       return newPage; // Обновляем состояние
     });
   };
@@ -87,7 +91,11 @@ export default function Users() {
       const newPage = prevPage + 1; // Увеличиваем номер страницы
 
       if (newPage <= maxPageNumber) {
-        handleGet(newPage);
+        if (searchQuery !== "") {
+          handleSearch(searchQuery, newPage);
+        } else {
+          handleGet(newPage);
+        }
         return newPage; // Обновляем состояние
       }
       return prevPage;

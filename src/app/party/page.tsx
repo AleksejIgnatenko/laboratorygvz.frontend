@@ -215,7 +215,9 @@ export default function Researches() {
       } else if (productId) {
         handleGetPartiesByProductId(newPage);
       } else if (userId) {
-        handleGetPartiesByUserId(newPage)
+        handleGetPartiesByUserId(newPage);
+      } else if (searchQuery !== "") {
+        handleSearch(searchQuery, newPage);
       } else {
         handleGet(newPage);
       }
@@ -227,16 +229,20 @@ export default function Researches() {
     setNumberPage((prevPage) => {
       const newPage = prevPage + 1; // Увеличиваем номер страницы
 
-      if (manufacturerId) {
-        handleGetPartiesByManufacturerId(newPage); // Отправляем новый номер страницы + 1 на сервер
-      } else if (supplierId) {
-        handleGetPartiesBySupplierId(newPage);
-      } else if (productId) {
-        handleGetPartiesByProductId(newPage);
-      } else if (userId) {
-        handleGetPartiesByUserId(newPage);
-      } else {
-        handleGet(newPage);
+      if (newPage < maxPageNumber) {
+        if (manufacturerId) {
+          handleGetPartiesByManufacturerId(newPage); // Отправляем новый номер страницы + 1 на сервер
+        } else if (supplierId) {
+          handleGetPartiesBySupplierId(newPage);
+        } else if (productId) {
+          handleGetPartiesByProductId(newPage);
+        } else if (userId) {
+          handleGetPartiesByUserId(newPage);
+        } else if (searchQuery !== "") {
+          handleSearch(searchQuery, newPage);
+        } else {
+          handleGet(newPage);
+        }
       }
       return newPage; // Обновляем состояние
     });

@@ -93,7 +93,7 @@ export default function Profile() {
                       name="surname"
                       id="surname"
                       placeholder={userData?.surname}
-                      value={formData.surname || userData?.surname}
+                      value={formData.surname}
                       onChange={handleInputChange}
                     />
                     <span className="error-message">{userErrors.Surname}</span>
@@ -112,7 +112,7 @@ export default function Profile() {
                       name="userName"
                       id="userName"
                       placeholder={userData?.userName}
-                      value={formData.userName || userData?.userName}
+                      value={formData.userName}
                       onChange={handleInputChange}
                     />
                     <span className="error-message">{userErrors.UserName}</span>
@@ -131,7 +131,7 @@ export default function Profile() {
                       name="patronymic"
                       id="patronymic"
                       placeholder={userData?.patronymic}
-                      value={formData.patronymic || userData?.patronymic}
+                      value={formData.patronymic}
                       onChange={handleInputChange}
                     />
                     <span className="error-message">

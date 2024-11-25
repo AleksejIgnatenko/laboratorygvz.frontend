@@ -15,6 +15,7 @@ import { RoleEnum } from "@/Enums/RoleEnum";
 import { ManufacturerModel } from "@/Models/ManufacturerModels/ManufacturerModel";
 import { PartyModel } from "@/Models/PartyModels/PartyModel";
 import { ResearchModel } from "@/Models/ResearchModels/ResearchModel";
+import { CreationOfAQualityAndSafetyCertificateAsync } from "@/services/PartyServices/CreationOfAQualityAndSafetyCertificateAsync";
 // import { GetSuppliersForPageAsync } from "@/services/SupplierServices/GetSuppliersForPageAsync";
 
 interface DataTableProps<T extends object> {
@@ -218,6 +219,10 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
       await handleExportToExcel();
     }
   };
+
+const handleCreationOfAQualityAndSafetyCertificateAsync = async (partyId: string) => {
+    await CreationOfAQualityAndSafetyCertificateAsync(partyId);
+};
 
 
   // const handleDelete = async () => {
@@ -615,13 +620,7 @@ const DataTable = <T extends object>({ data, tableName, countItemsAll, searchTex
                         <img
                           className="img-style"
                           src="/images/word.png"
-                          onClick={() => {
-                            const queryString = new URLSearchParams({
-                              tableName: tableName,
-                              item: JSON.stringify(item),
-                            }).toString();
-                            router.push(`/updatePage?${queryString}`);
-                          }}
+                          onClick={() => handleCreationOfAQualityAndSafetyCertificateAsync((item as PartyModel).id)}
                         />
                       </>
                     )}

@@ -129,6 +129,8 @@ export default function Researches() {
 
       if (productId) {
         handleGetProductResearches(newPage); // Отправляем новый номер страницы + 1 на сервер
+      } else if (searchQuery !== "") {
+        handleSearch(searchQuery, newPage);
       } else {
         handleGet(newPage);
       }
@@ -143,6 +145,8 @@ export default function Researches() {
       if (newPage <= maxPageNumber) {
         if (productId) {
           handleGetProductResearches(newPage); // Отправляем новый номер страницы + 1 на сервер
+        } else if (searchQuery !== "") {
+          handleSearch(searchQuery, newPage);
         } else {
           handleGet(newPage);
         }

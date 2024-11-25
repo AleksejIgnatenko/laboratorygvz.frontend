@@ -132,6 +132,8 @@ export default function Manufacturers() {
 
       if (supplierId) {
         handleGetSupplierManufacturers(newPage); // Отправляем новый номер страницы + 1 на сервер
+      } else if (searchQuery !== "") {
+        handleSearch(searchQuery, newPage);
       } else {
         handleGet(newPage);
       }
@@ -146,6 +148,8 @@ export default function Manufacturers() {
       if (newPage < maxPageNumber) {
         if (supplierId) {
           handleGetSupplierManufacturers(newPage); // Отправляем новый номер страницы + 1 на сервер
+        } else if(searchQuery !== '') {
+          handleSearch(searchQuery, newPage);
         } else {
           handleGet(newPage);
         }

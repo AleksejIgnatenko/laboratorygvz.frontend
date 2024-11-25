@@ -143,6 +143,8 @@ export default function ResearchResult() {
           handleGetResearchResultsByPartyId(newPage); // Отправляем новый номер страницы + 1 на сервер
         } else if (researchId) {
           handleGetResearchResultsByResearchId(newPage);
+        } else if (searchQuery !== "") {
+          handleSearch(searchQuery, newPage);
         }
         return newPage;
       }
@@ -159,6 +161,8 @@ export default function ResearchResult() {
           handleGetResearchResultsByPartyId(newPage); // Отправляем новый номер страницы + 1 на сервер
         } else if (researchId) {
           handleGetResearchResultsByResearchId(newPage);
+        } else if (searchQuery !== "") {
+          handleSearch(searchQuery, newPage);
         }
         return newPage;
       }

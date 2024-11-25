@@ -62,6 +62,8 @@ export default function Products() {
 
       if (supplierId) {
         handleGetSupplierProducts(newPage); // Отправляем новый номер страницы + 1 на сервер
+      } else if (searchQuery !== "") {
+        handleSearch(searchQuery, newPage);
       } else {
         handleGet(newPage);
       }
@@ -76,6 +78,8 @@ export default function Products() {
       if (newPage <= maxPageNumber) {
         if (supplierId) {
           handleGetSupplierProducts(newPage); // Отправляем новый номер страницы + 1 на сервер
+        } else if (searchQuery !== "") {
+          handleSearch(searchQuery, newPage);
         } else {
           handleGet(newPage);
         }
