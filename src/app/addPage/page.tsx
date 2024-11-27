@@ -59,6 +59,7 @@ const inputConfig: Record<string, InputConfig[]> = {
 
   Products: [
     { name: "productName", placeholder: "Название продукта" },
+    { name: "unitsOfMeasurement", placeholder: "Единицы измерения" },
     { name: "supplier", placeholder: "Поставщик(и):", isCheckbox: true },
   ],
   Researches: [
@@ -497,6 +498,7 @@ function AddPageContent() {
         const addProductModel = formData as AddProductModel;
         const createProductRequest: CreateProductRequest = {
           productName: addProductModel.productName,
+          unitsOfMeasurement: addProductModel.unitsOfMeasurement,
           suppliersIds: selectedCheckbox,
         };
         const productResult = await AddProductAsync(createProductRequest);

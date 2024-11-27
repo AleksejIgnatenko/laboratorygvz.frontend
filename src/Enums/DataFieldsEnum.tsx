@@ -18,6 +18,7 @@ export enum DataFieldsEnum {
 
   //ProductModel
   productName = "Продукт",
+  unitsOfMeasurement = "Единицы измерения",
 
   //ResearchModel
   researchName = "Название исследования",

@@ -2,5 +2,6 @@
 
 export interface ProductValidationErrorModel {
   [key: string]: string | undefined;
-  productName?: string; 
+  productName?: string;
+  unitsOfMeasurement?: string;
 }

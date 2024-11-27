@@ -77,6 +77,7 @@ const inputConfig: Record<string, InputConfig[]> = {
   Products: [
     { name: "id", placeholder: "" },
     { name: "productName", placeholder: "Название продукта" },
+    { name: "unitsOfMeasurement", placeholder: "Единицы измерения" },
     { name: "supplier", placeholder: "Поставщик(и):", isCheckbox: true },
   ],
   Researches: [
@@ -739,12 +740,13 @@ function UpdatePageContent() {
                   : productItem[key as keyof ProductModel];
               return acc;
             },
-            { id: productItem.id, productName: "" }
+            { id: productItem.id, productName: "", unitsOfMeasurement: "" }
           );
 
           const updateProductModel: UpdateProductModel = {
             id: updateItem.id,
             productName: updateItem.productName,
+            unitsOfMeasurement: updateItem.unitsOfMeasurement,
             suppliersIds: selectedCheckbox,
           };
 
