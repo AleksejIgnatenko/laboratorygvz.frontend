@@ -57,7 +57,7 @@ export default function Registration() {
                   type="text"
                   name="surname"
                   id="surname"
-                  placeholder="Your surname"
+                  placeholder="Фамилия"
                   value={formData.surname}
                   onChange={handleInputChange}
                 />
@@ -68,7 +68,7 @@ export default function Registration() {
                   type="text"
                   name="userName"
                   id="userName"
-                  placeholder="Your Name"
+                  placeholder="Имя"
                   value={formData.userName}
                   onChange={handleInputChange}
                 />
@@ -79,7 +79,7 @@ export default function Registration() {
                   type="text"
                   name="patronymic"
                   id="patronymic"
-                  placeholder="Your Patronymic"
+                  placeholder="Отчество"
                   value={formData.patronymic}
                   onChange={handleInputChange}
                 />
@@ -90,7 +90,7 @@ export default function Registration() {
                   type="email"
                   name="email"
                   id="email"
-                  placeholder="Email"
+                  placeholder="Почта"
                   value={formData.email}
                   onChange={handleInputChange}
                 />
@@ -104,7 +104,7 @@ export default function Registration() {
                   type="password"
                   name="password"
                   id="pass"
-                  placeholder="Password"
+                  placeholder="Пароль"
                   value={formData.password}
                   onChange={handleInputChange}
                 />
@@ -118,7 +118,7 @@ export default function Registration() {
                   type="password"
                   name="repeatPassword"
                   id="repeatPassword"
-                  placeholder="Repeat your password"
+                  placeholder="Повторите свой пароль"
                   value={formData.repeatPassword}
                   onChange={handleInputChange}
                 />
