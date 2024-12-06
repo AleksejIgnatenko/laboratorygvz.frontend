@@ -1,16 +1,20 @@
 import { ResearchResultModel } from "@/Models/ResearchResultModel/ResearchResultModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const GetResearchResultByPartyIdForPageAsync = async (
   partyId: string,
   pageNumber: number
 ): Promise<{ researchResults: ResearchResultModel[]; countItemsAll: number }> => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch(
       `http://localhost:5005/api/ResearchResults/researchResultsByPartyIdForPage?partyId=${partyId}&pageNumber=${pageNumber}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`,
         },
       }
     );

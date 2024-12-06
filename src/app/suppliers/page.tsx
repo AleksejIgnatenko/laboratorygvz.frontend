@@ -38,7 +38,7 @@ export default function Suppliers() {
     );
     setData(suppliers);
     setCount(countItemsAll);
-    const maxPageNumber = Math.ceil(countItemsAll / 20);
+    const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
     setMaxPageNumber(maxPageNumber);
   };
 
@@ -48,7 +48,7 @@ export default function Suppliers() {
         await GetProductSuppliersForPageAsync(productId, numberPage);
       setData(suppliers);
       setCount(countItemsAll);
-      const maxPageNumber = Math.ceil(countItemsAll / 20);
+      const maxPageNumber = Math.max(1, Math.ceil(countItemsAll / 20));
       setMaxPageNumber(maxPageNumber);
     }
   };
@@ -81,14 +81,14 @@ export default function Suppliers() {
           const response = await GetProductSuppliersForPageAsync(productId, 0);
           setData(response.suppliers);
           setCount(response.countItemsAll);
-          const maxPageNumber = Math.ceil(countItemsAll / 20);
+          const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
           setMaxPageNumber(maxPageNumber);
         } else {
           const response = await GetSuppliersForPageAsync(0);
           setData(response.suppliers);
           //setData(suppliers);
           setCount(response.countItemsAll);
-          const maxPageNumber = Math.ceil(countItemsAll / 20);
+          const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
           setMaxPageNumber(maxPageNumber);
         }
 
@@ -105,14 +105,14 @@ export default function Suppliers() {
         const response = await GetProductSuppliersForPageAsync(productId, 0);
         setData(response.suppliers);
         setCount(response.countItemsAll);
-        const maxPageNumber = Math.ceil(countItemsAll / 20);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
         setMaxPageNumber(maxPageNumber);
       } else {
         const response = await GetSuppliersForPageAsync(0);
         setData(response.suppliers);
         //setData(suppliers);
         setCount(response.countItemsAll);
-        const maxPageNumber = Math.ceil(countItemsAll / 20);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
         setMaxPageNumber(maxPageNumber);
       }
     }
@@ -172,14 +172,15 @@ export default function Suppliers() {
         const response = await GetProductSuppliersForPageAsync(productId, 0);
         setData(response.suppliers);
         setCount(response.countItemsAll);
-        const maxPageNumber = Math.ceil(countItemsAll / 20);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
         setMaxPageNumber(maxPageNumber);
       } else {
         const response = await GetSuppliersForPageAsync(0);
         setData(response.suppliers);
         //setData(suppliers);
         setCount(response.countItemsAll);
-        const maxPageNumber = Math.ceil(countItemsAll / 20);
+        const maxPageNumber = Math.max(1, Math.ceil(response.countItemsAll / 20));
+        console.log(maxPageNumber);
         setMaxPageNumber(maxPageNumber);
       }
     };

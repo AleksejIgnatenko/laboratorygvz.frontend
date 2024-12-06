@@ -1,14 +1,18 @@
 import { SupplierErrorMapper } from "@/Mappers/SupplierMappers/SupplierErrorMapper";
 import { UpdateSupplierModel } from "@/Models/SupplierModels/UpdateSupplierModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const UpdateSupplierAsync = async (supplier: UpdateSupplierModel) => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch(
       `http://localhost:5004/api/Supplier/${supplier.id}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(supplier),
       }

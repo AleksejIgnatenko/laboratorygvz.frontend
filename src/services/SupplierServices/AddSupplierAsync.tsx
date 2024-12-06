@@ -1,12 +1,16 @@
 import { SupplierErrorMapper } from "@/Mappers/SupplierMappers/SupplierErrorMapper";
 import { CreateSupplierRequest } from "@/Models/SupplierModels/CreateSupplierRequest";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const AddSupplierAsync = async (supplier: CreateSupplierRequest) => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch("http://localhost:5004/api/Supplier", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(supplier),
     });

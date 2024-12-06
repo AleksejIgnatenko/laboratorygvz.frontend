@@ -8,7 +8,7 @@ export const IsAdminAsync = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
+        "Authorization": `Bearer ${jwtToken}`,
       },
     });
 

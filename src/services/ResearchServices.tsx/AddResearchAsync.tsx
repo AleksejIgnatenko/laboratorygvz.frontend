@@ -1,13 +1,17 @@
 import { ResearchErrorMapper } from "@/Mappers/ResearchMappers/ResearchErrorMapper";
 import { CreateResearchRequest } from "@/Models/ResearchModels/CreateResearchRequest";
+import { getCookie } from "../Infrastructure/getCookie";
 
 
 export const AddResearchAsync = async (research: CreateResearchRequest) => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch("http://localhost:5005/api/Research", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(research),
     });

@@ -74,7 +74,7 @@ export default function Sidebar() {
         }
         // Alt + 3
         if (event.altKey && event.key === "3") {
-          router.push("/#");
+          router.push("/party");
         }
         // Alt + 4
         if (event.altKey && event.key === "4") {
@@ -86,6 +86,10 @@ export default function Sidebar() {
         }
         // Alt + 6
         if (event.altKey && event.key === "6") {
+          router.push("/manufacturers");
+        }
+        // Alt + 7
+        if (event.altKey && event.key === "7") {
           router.push("/users");
         }
         // // Alt + T

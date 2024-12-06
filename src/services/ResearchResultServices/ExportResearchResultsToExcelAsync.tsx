@@ -9,7 +9,7 @@ export const ExportResearchResultsToExcelAsync = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${jwtToken}`,
+          "Authorization": `Bearer ${jwtToken}`,
         },
       }
     );

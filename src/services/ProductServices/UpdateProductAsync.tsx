@@ -1,15 +1,19 @@
 import { ProductErrorMapper } from "@/Mappers/ProductMapper/ProductErrorMapper";
 import { UpdateProductModel } from "@/Models/ProductModels/UpdateProductModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 
 export const UpdateProductAsync = async (product: UpdateProductModel) => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch(
       `http://localhost:5003/api/Product/${product.id}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(product),
       }

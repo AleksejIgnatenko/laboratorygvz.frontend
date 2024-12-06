@@ -1,13 +1,17 @@
 import { ProductModel } from "@/Models/ProductModels/ProductModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const GetProductsAsync = async (): Promise<ProductModel[]> => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch(
-      'http://localhost:5003/api/Product/getProductsAsync',
+      "http://localhost:5003/api/Product/getProductsAsync",
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`,
         },
       }
     );

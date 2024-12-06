@@ -1,15 +1,19 @@
 import { PartyModel } from "@/Models/PartyModels/PartyModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 export const GetPartiesForPageAsync = async (
   pageNumber: number
 ): Promise<{ parties: PartyModel[]; countItemsAll: number }> => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch(
       `http://localhost:5006/api/Party?pageNumber=${pageNumber}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`,
         },
       }
     );

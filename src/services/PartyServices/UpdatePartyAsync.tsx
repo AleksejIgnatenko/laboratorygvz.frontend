@@ -1,15 +1,19 @@
 import { PartyErrorMapper } from "@/Mappers/PartyMapper/PartyErrorMapper";
 import { UpdatePartyModel } from "@/Models/PartyModels/UpdatePartyModel";
+import { getCookie } from "../Infrastructure/getCookie";
 
 
 export const UpdatePartyAsync = async (party: UpdatePartyModel) => {
   try {
+    const jwtToken = getCookie("jwtToken");
+
     const response = await fetch(
       `http://localhost:5006/api/Party/${party.id}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(party),
       }
